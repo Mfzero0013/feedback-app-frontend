@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <h1 class="text-2xl font-bold mb-10 pl-2"><span class="font-light">Feedback</span><span class="font-bold">Hub</span></h1>
                 <nav class="space-y-2 flex-grow" id="main-nav">
                     <a href="dashboard.html" class="block px-4 py-2.5 rounded-lg text-gray-200 hover:bg-indigo-700 hover:text-white">Dashboard</a>
-                    <a href="team.html" class="block px-4 py-2.5 rounded-lg text-gray-200 hover:bg-indigo-700 hover:text-white">Minha Equipe</a>
+                                        <a href="my-team.html" class="block px-4 py-2.5 rounded-lg text-gray-200 hover:bg-indigo-700 hover:text-white">Minha Equipe</a>
                     <a href="create-team.html" class="block px-4 py-2.5 rounded-lg text-gray-200 hover:bg-indigo-700 hover:text-white" data-permission="GESTOR,ADMINISTRADOR">Cadastrar Equipe</a>
                     <a href="reports.html" class="block px-4 py-2.5 rounded-lg text-gray-200 hover:bg-indigo-700 hover:text-white">Relatórios</a>
                     <a href="settings.html" class="block px-4 py-2.5 rounded-lg text-gray-200 hover:bg-indigo-700 hover:text-white">Configurações</a>
