@@ -26,8 +26,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadProfileData = async () => {
         try {
             const response = await api.get('/profile/me');
-            originalUserData = response.data.data;
-            populateProfileData(originalUserData);
+            try {
+                const userData = response.data.data;
+                if (!userData) {
+                    throw new Error('A resposta da API não contém os dados do usuário.');
+                }
+                originalUserData = userData;
+                populateProfileData(originalUserData);
+            } catch (e) {
+                alert(`Falha ao processar dados do perfil. Status: ${response.status}. Resposta: ${JSON.stringify(response.data)}`);
+            }
         } catch (error) {
             console.error('Erro ao carregar perfil:', error);
             alert('Não foi possível carregar os dados do perfil.');
