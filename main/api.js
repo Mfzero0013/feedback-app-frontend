@@ -1,4 +1,4 @@
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'https://feedback-app-backend-x87n.onrender.com/api';
 
 function getToken() {
     const token = localStorage.getItem('token');
