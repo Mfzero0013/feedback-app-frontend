@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://feedback-app-backend-x87n.onrender.com/api';
+const API_BASE_URL = 'https://feedback-app-backend-die8.onrender.com/api';
 
 function getToken() {
     const token = localStorage.getItem('authToken');
@@ -110,7 +110,7 @@ const api = {
     },
 
     // --- Users ---
-    async getAllUsers() {
+    async getUsers() {
         // Rota de admin para buscar todos os usuários
         return this.get('/admin/manage-users');
     },
@@ -183,5 +183,14 @@ const api = {
 
     async getMyTeam() {
         return this.get('/teams/my-team');
+    },
+
+    // --- Reports ---
+    async getGeneralReport() {
+        return this.get('/reports/general');
+    },
+
+    async getEngagementReport() {
+        return this.get('/reports/user-engagement');
     }
 };
