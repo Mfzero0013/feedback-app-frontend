@@ -94,11 +94,17 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             try {
-                await api.registerUser(userData);
-                showNotification('Cadastro realizado com sucesso! Você será redirecionado.', 'success');
-                setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+                const response = await api.registerUser(userData);
+                showNotification(response.message || 'Cadastro realizado com sucesso! Você será redirecionado para o login.', 'success');
+                
+                // Redireciona para a página de login após um pequeno atraso para que o usuário possa ler a notificação.
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+
             } catch (error) {
-                showNotification(error.message || 'Não foi possível realizar o cadastro.', 'error');
+                // Exibe a mensagem de erro retornada pela API ou uma mensagem genérica.
+                showNotification(error.message || 'Não foi possível realizar o cadastro. Verifique os dados e tente novamente.', 'error');
             }
         });
     }
@@ -208,10 +214,67 @@ document.addEventListener("DOMContentLoaded", () => {
     // Lógica específica para a página de Dashboard
     if (currentPage === 'dashboard.html') {
         loadDashboardData();
+        loadDashboardStatsAndCharts();
     }
 });
 
 // --- Funções da Página de Dashboard ---
+
+async function loadDashboardStatsAndCharts() {
+    try {
+        const stats = await api.get('/dashboard/stats');
+
+        document.getElementById('feedbacks-abertos').textContent = stats.feedbacksAbertos;
+        document.getElementById('media-avaliacoes').textContent = stats.mediaAvaliacoes.toFixed(1);
+        document.getElementById('colegas-equipe').textContent = stats.colegasEquipe;
+
+    } catch (error) {
+        console.error('Erro ao carregar estatísticas do dashboard:', error);
+        showNotification('Não foi possível carregar as estatísticas.', 'error');
+    }
+
+    // TODO: Implementar a busca de dados para os gráficos
+    const competenciasData = {
+        labels: ['Comunicação', 'Proatividade', 'Colaboração', 'Liderança', 'Inovação'],
+        datasets: [{
+            label: 'Pontuação Média',
+            data: [0, 0, 0, 0, 0],
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    const evolucaoData = {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+        datasets: [{
+            label: 'Sua Evolução',
+            data: [0, 0, 0, 0, 0, 0],
+            fill: false,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            tension: 0.1
+        }]
+    };
+
+    const competenceCtx = document.getElementById('competence-chart')?.getContext('2d');
+    if (competenceCtx) {
+        new Chart(competenceCtx, {
+            type: 'bar',
+            data: competenciasData,
+            options: { scales: { y: { beginAtZero: true, max: 10 } }, plugins: { legend: { display: false } } }
+        });
+    }
+
+    const evolutionCtx = document.getElementById('evolution-chart')?.getContext('2d');
+    if (evolutionCtx) {
+        new Chart(evolutionCtx, {
+            type: 'line',
+            data: evolucaoData,
+            options: { plugins: { legend: { display: false } } }
+        });
+    }
+}
+
 
 /**
  * Carrega os dados de feedbacks recebidos e enviados e os renderiza no dashboard.

@@ -1,7 +1,7 @@
 const API_BASE_URL = 'https://feedback-app-backend-x87n.onrender.com/api';
 
 function getToken() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
     if (!token) {
         forceLogout();
         throw new Error('Token de autenticação não encontrado.');
@@ -10,8 +10,9 @@ function getToken() {
 }
 
 function forceLogout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
+    localStorage.removeItem('redirectAfterLogin');
     if (!window.location.pathname.endsWith('index.html') && !window.location.pathname.endsWith('/')) {
         window.location.href = 'index.html';
     }
@@ -35,7 +36,7 @@ async function handleApiResponse(response) {
 
 const api = {
     async get(url) {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('authToken');
         const response = await fetch(`${API_BASE_URL}${url}`, {
             method: 'GET',
             headers: {
@@ -49,7 +50,7 @@ const api = {
     async post(url, data, needsAuth = false) {
         const headers = { 'Content-Type': 'application/json' };
         if (needsAuth) {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             if (token) {
                 headers['Authorization'] = `Bearer ${token}`;
             }
@@ -100,7 +101,7 @@ const api = {
 
     async updateUser(userId, userData) {
         // Assuming a generic 'put' method would be similar to 'post'
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('authToken');
         const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
             method: 'PUT',
             headers: {
@@ -129,7 +130,7 @@ const api = {
     },
 
     async updateTeam(id, teamData) {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('authToken');
         const response = await fetch(`${API_BASE_URL}/teams/${id}`, {
             method: 'PUT',
             headers: {
@@ -142,7 +143,7 @@ const api = {
     },
 
     async deleteTeam(id) {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('authToken');
         const response = await fetch(`${API_BASE_URL}/teams/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }

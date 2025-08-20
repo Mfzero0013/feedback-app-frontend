@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await api.patch('/profile/me', updatedData);
             originalUserData = response.data.user;
+            localStorage.setItem('userData', JSON.stringify(originalUserData)); // Atualiza o localStorage
             populateProfileData(originalUserData);
             toggleEditMode(false);
             alert('Perfil atualizado com sucesso!');
