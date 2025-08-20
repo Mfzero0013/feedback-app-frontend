@@ -20,7 +20,7 @@ let allUsers = [];
 
 async function loadCollaborators() {
     try {
-        allUsers = await fetchWithAuth('/api/users');
+        allUsers = await api.get('/users');
         renderCollaborators(allUsers);
     } catch (error) {
         console.error('Erro ao carregar colaboradores:', error);
@@ -56,15 +56,17 @@ function renderCollaborators(users) {
 
 async function loadTeams() {
     try {
-        const teams = await fetchWithAuth('/api/teams');
+        const teams = await api.get('/teams');
         const select = document.getElementById('collaboratorTeam');
         select.innerHTML = '<option value="">Selecione um setor</option>';
-        teams.forEach(team => {
-            const option = document.createElement('option');
-            option.value = team.id;
-            option.textContent = team.nome;
-            select.appendChild(option);
-        });
+        if (Array.isArray(teams)) {
+            teams.forEach(team => {
+                const option = document.createElement('option');
+                option.value = team.id;
+                option.textContent = team.nome;
+                select.appendChild(option);
+            });
+        }
     } catch (error) {
         console.error('Erro ao carregar equipes:', error);
     }
@@ -130,7 +132,7 @@ async function saveCollaborator(event) {
         email: document.getElementById('collaboratorEmail').value,
         jobTitle: document.getElementById('collaboratorJobTitle').value,
         accountType: document.getElementById('collaboratorRole').value,
-        departamento: teamSelect.options[teamSelect.selectedIndex].text,
+        equipeId: parseInt(teamSelect.value, 10),
     };
 
     const password = document.getElementById('collaboratorPassword').value;
@@ -139,17 +141,19 @@ async function saveCollaborator(event) {
     }
 
     const isEditing = !!id;
-    const url = isEditing ? `/api/users/${id}` : '/api/auth/register';
-    const method = isEditing ? 'PUT' : 'POST';
 
     try {
-        await fetchWithAuth(url, { method, body: payload });
+        if (isEditing) {
+            await api.put(`/users/${id}`, payload);
+        } else {
+            await api.post('/auth/register', payload);
+        }
         showNotification(`Colaborador ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`, 'success');
         closeCollaboratorModal();
         loadCollaborators();
     } catch (error) {
         console.error('Erro ao salvar colaborador:', error);
-        showNotification('Erro ao salvar colaborador.', 'error');
+        showNotification(error.message || 'Erro ao salvar colaborador.', 'error');
     }
 }
 
@@ -167,7 +171,7 @@ function closeConfirmationModal() {
 
 async function deleteCollaborator(userId) {
     try {
-        await fetchWithAuth(`/api/users/${userId}`, { method: 'DELETE' });
+        await api.delete(`/users/${userId}`);
         showNotification('Colaborador removido com sucesso!', 'success');
         closeConfirmationModal();
         loadCollaborators();

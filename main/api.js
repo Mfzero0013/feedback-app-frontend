@@ -111,8 +111,8 @@ const api = {
 
     // --- Users ---
     async getAllUsers() {
-        const data = await this.get('/users');
-        return data.users;
+        // Rota de admin para buscar todos os usuários
+        return this.get('/admin/manage-users');
     },
 
     async getUserById(userId) {
@@ -126,7 +126,7 @@ const api = {
     async updateUser(userId, userData) {
         // Assuming a generic 'put' method would be similar to 'post'
         const token = localStorage.getItem('authToken');
-        const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+        const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -139,23 +139,21 @@ const api = {
 
     // --- Teams ---
     async getTeamById(id) {
-        return this.get(`/teams/${id}`);
+        return this.get(`/admin/teams/${id}`);
     },
 
     async getAllTeams() {
-        // Rota pública, não precisa de autenticação
-        const response = await fetch(`${API_BASE_URL}/teams`);
-        const data = await handleApiResponse(response);
-        return data.teams;
+        // Rota de admin para buscar todas as equipes
+        return this.get('/admin/manage-teams');
     },
 
     async createTeam(teamData) {
-        return this.post('/teams', teamData, true);
+        return this.post('/admin/teams', teamData, true);
     },
 
     async updateTeam(id, teamData) {
         const token = localStorage.getItem('authToken');
-        const response = await fetch(`${API_BASE_URL}/teams/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/admin/teams/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -168,7 +166,7 @@ const api = {
 
     async deleteTeam(id) {
         const token = localStorage.getItem('authToken');
-        const response = await fetch(`${API_BASE_URL}/teams/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/admin/teams/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
