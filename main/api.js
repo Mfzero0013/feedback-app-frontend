@@ -67,7 +67,7 @@ const api = {
         if (!response.ok) {
             throw new Error(resJson.message || 'Falha ao buscar dados.');
         }
-        return resJson.data;
+        return resJson.data || resJson;
     },
 
     async post(url, data, needsAuth = false) {
