@@ -19,19 +19,37 @@ function forceLogout() {
 }
 
 async function handleApiResponse(response) {
-    if (response.status === 401) {
-        forceLogout();
-        throw new Error('Sessão expirada. Por favor, faça login novamente.');
-    }
-    if (response.status === 204) {
-        return;
-    }
-    const resJson = await response.json();
+    const contentType = response.headers.get('content-type');
+
     if (!response.ok) {
-        throw new Error(resJson.error?.message || resJson.message || 'Ocorreu um erro na requisição.');
+        let errorData;
+        // Se a resposta for JSON, tenta extrair a mensagem de erro
+        if (contentType && contentType.includes('application/json')) {
+            try {
+                errorData = await response.json();
+            } catch (e) {
+                // Mantém uma mensagem de erro genérica se o JSON for inválido
+                errorData = { message: `Erro ${response.status}: ${response.statusText}` };
+            }
+        } else {
+            // Se não for JSON (ex: HTML de erro), usa o status da resposta
+            errorData = { message: `Erro no servidor: ${response.status} ${response.statusText}` };
+        }
+        throw new Error(errorData.message || 'Ocorreu um erro na comunicação com o servidor.');
     }
-    // Retorna a propriedade 'data' se existir, caso contrário, o objeto de resposta completo.
-    return resJson.data || resJson;
+
+    // Se a resposta for bem-sucedida, mas não for JSON, não tenta fazer o parse
+    if (!contentType || !contentType.includes('application/json')) {
+        return response.text(); // Retorna como texto ou pode ser adaptado
+    }
+
+    // Tenta fazer o parse do JSON e retorna os dados
+    try {
+        const responseData = await response.json();
+        return responseData.data || responseData; // Compatibilidade com diferentes formatos de resposta
+    } catch (error) {
+        throw new Error('Falha ao processar a resposta do servidor.');
+    }
 }
 
 const api = {
