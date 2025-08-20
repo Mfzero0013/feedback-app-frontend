@@ -403,17 +403,8 @@ async function renderGeneralReport() {
     const reportContainer = document.getElementById('general-report-container');
     if (!reportContainer) return;
 
-    const token = localStorage.getItem('authToken');
-    if (!token) return;
-
     try {
-        const response = await fetch('/api/reports/general', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!response.ok) throw new Error('Falha ao buscar relatório geral.');
-
-        const result = await response.json();
-        const data = result.data;
+        const data = await api.get('/reports/general');
 
         reportContainer.innerHTML = ''; // Limpa o container
 
@@ -451,17 +442,8 @@ async function renderEngagementReport() {
     const engagementContainer = document.getElementById('engagement-report-container');
     if (!engagementContainer) return;
 
-    const token = localStorage.getItem('authToken');
-    if (!token) return;
-
     try {
-        const response = await fetch('/api/reports/user-engagement', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!response.ok) throw new Error('Falha ao buscar relatório de engajamento.');
-
-        const result = await response.json();
-        const data = result.data;
+        const data = await api.get('/reports/user-engagement');
 
         engagementContainer.innerHTML = ''; // Limpa o container
 
