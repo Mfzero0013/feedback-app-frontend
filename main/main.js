@@ -167,10 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
         populateProfileData();
     }
 
-    // Lógica específica para a página de equipe
-    if (window.location.pathname.endsWith('team.html')) {
-        renderCollaboratorsTable();
-    }
 
     if (window.location.pathname.endsWith('reports.html')) {
         renderGeneralReport();
