@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - FeedbackHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/output.css">
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex min-h-screen">
+        <!-- Placeholder for the navigation sidebar -->
+        <div id="nav-placeholder"></div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6 ml-64">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800">Meu Perfil</h2>
+                <div>
+                    <button id="edit-profile-button" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Editar Perfil</button>
+                    <button id="save-profile-button" class="hidden bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">Salvar</button>
+                    <button id="cancel-edit-button" class="hidden bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 ml-2">Cancelar</button>
+                </div>
+            </div>
+
+            <!-- User Information Card -->
+            <div class="bg-white p-8 rounded-xl shadow-md max-w-4xl mx-auto">
+                <div id="profile-view">
+                    <div class="flex items-center space-x-6 mb-6">
+                        <img id="profile-avatar" src="https://i.pravatar.cc/150" class="w-24 h-24 rounded-full object-cover border-4 border-indigo-200">
+                        <div>
+                            <h3 id="profile-name" class="text-2xl font-bold text-gray-800">Carregando...</h3>
+                            <p id="profile-job-title" class="text-lg text-gray-600">...</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t pt-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Email</label>
+                            <p id="profile-email" class="text-gray-900 font-semibold"></p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Nível de Acesso</label>
+                            <p id="profile-role" class="text-gray-900 font-semibold"></p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Equipe</label>
+                            <p id="profile-team" class="text-gray-900 font-semibold"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Edit Form -->
+                <div id="profile-edit" class="hidden">
+                     <form id="profile-form" class="space-y-4">
+                        <div class="flex items-center space-x-6 mb-6">
+                            <img id="edit-profile-avatar" src="https://i.pravatar.cc/150" class="w-24 h-24 rounded-full object-cover border-4 border-indigo-200">
+                            <div class="w-full">
+                                <div>
+                                    <label for="edit-profile-name" class="block text-sm font-medium text-gray-700">Nome Completo</label>
+                                    <input type="text" id="edit-profile-name" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                <div class="mt-4">
+                                    <label for="edit-profile-job-title" class="block text-sm font-medium text-gray-700">Seu Cargo</label>
+                                    <input type="text" id="edit-profile-job-title" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main/api.js"></script>
+    <script src="main/nav-loader.js"></script>
+    <script src="main/profile.js"></script>
+</body>
+</html>

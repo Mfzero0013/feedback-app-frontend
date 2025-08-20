@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - FeedbackHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/output.css">
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+    <h1 class="text-2xl font-bold mb-6 text-center text-indigo-800">Entrar na sua conta</h1>
+    <div id="notification" class="hidden p-4 mb-4 text-sm text-white rounded-lg" role="alert">
+        <span class="font-medium"></span> <span id="notification-message"></span>
+    </div>
+    <form id="login-form">
+      <div class="mb-4">
+        <label class="block mb-2 text-sm font-medium text-gray-700" for="email">Email</label>
+        <input type="email" id="email" class="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500" required>
+        <div id="email-error" class="text-red-500 text-sm h-4 mt-1"></div>
+      </div>
+
+      <div class="mb-6">
+        <label class="block mb-2 text-sm font-medium text-gray-700" for="password">Senha</label>
+        <input type="password" id="password" class="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500" required>
+        <div id="password-error" class="text-red-500 text-sm h-4 mt-1"></div>
+      </div>
+
+      <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700 transition-colors">Entrar</button>
+    </form>
+    <div class="flex items-center justify-between mt-4 text-sm">
+      <a href="cadastro.html" class="text-indigo-600 hover:text-indigo-700">Criar conta</a>
+      <a href="#" class="text-indigo-600 hover:text-indigo-700">Esqueci minha senha</a>
+    </div>
+  </div>
+
+  <script src="main/api.js"></script>
+  <script src="main/main.js"></script>
+</body>
+</html>

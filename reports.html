@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatórios - FeedbackHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            clifford: '#da373d',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/output.css">
+</head>
+<body class="bg-gray-50 font-sans">
+  <!-- Top bar (mobile) -->
+  <div class="md:hidden flex items-center justify-between px-4 py-3 bg-white shadow">
+    <div class="text-xl font-bold text-indigo-800">FeedbackHub</div>
+    <button onclick="toggleSidebar()" class="p-2 rounded border border-gray-300">Menu</button>
+  </div>
+  
+  <!-- Overlay para mobile -->
+  <div id="overlay" class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar()"></div>
+  
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <div id="sidebar" class="bg-indigo-800 text-white w-64 px-4 py-6 md:block fixed md:relative inset-y-0 left-0 z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+      <h1 class="text-2xl font-bold mb-8"><span class="text-indigo-200">Feedback</span>Hub</h1>
+      <nav class="space-y-2">
+        <a href="dashboard.html" class="block px-4 py-2 hover:bg-indigo-700 rounded">Dashboard</a>
+        <a href="teams.html" class="block px-4 py-2 hover:bg-indigo-700 rounded" data-permission="ADMIN,GESTOR">Equipes</a>
+        <a href="team.html" class="block px-4 py-2 hover:bg-indigo-700 rounded">Minha Equipe</a>
+        <a href="reports.html" class="block px-4 py-2 bg-indigo-900 rounded">Relatórios</a>
+        <a href="settings.html" class="block px-4 py-2 hover:bg-indigo-700 rounded">Configurações</a>
+        <a href="profile.html" class="block px-4 py-2 hover:bg-indigo-700 rounded">Meu Perfil</a>
+        <a href="admin.html" class="block px-4 py-2 hover:bg-indigo-700 rounded">Administração</a>
+      </nav>
+      <div class="mt-auto">
+        <a href="#" id="logout-button" class="block px-4 py-2 hover:bg-indigo-700 rounded">Sair</a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-6">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-bold text-gray-800">Relatórios</h2>
+        <button onclick="exportar()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+          Exportar
+        </button>
+      </div>
+
+      <!-- Container para Relatório Geral -->
+      <div id="general-report-container" class="mb-8">
+        <!-- O relatório geral será renderizado aqui pelo main.js -->
+      </div>
+
+      <!-- Container para Relatório de Engajamento -->
+      <div id="engagement-report-container">
+        <!-- O relatório de engajamento será renderizado aqui pelo main.js -->
+      </div>
+    </div>
+  </div>
+
+  <script src="main/main.js"></script>
+</body>
+</html>

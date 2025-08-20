@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Equipe - FeedbackHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/output.css">
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex min-h-screen">
+        <!-- Placeholder for the navigation sidebar -->
+        <div id="nav-placeholder"></div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6 ml-64">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Minha Equipe</h2>
+                <a href="feedback.html" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 font-semibold">+ Novo Feedback</a>
+            </div>
+
+            <!-- Team Members Container -->
+            <div id="team-members-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Member cards will be dynamically inserted here -->
+                <p class="text-gray-500 col-span-full">Carregando membros da equipe...</p>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="main/api.js"></script>
+    <script src="main/nav-loader.js"></script>
+    <script src="main/team.js"></script>
+</body>
+</html>
