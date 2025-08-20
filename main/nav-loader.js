@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <nav class="space-y-2 flex-grow" id="main-nav">
                     <a href="dashboard.html" class="block px-4 py-2.5 rounded-lg text-gray-200 hover:bg-indigo-700 hover:text-white">Dashboard</a>
                     <a href="team.html" class="block px-4 py-2.5 rounded-lg text-gray-200 hover:bg-indigo-700 hover:text-white">Minha Equipe</a>
+                    <a href="create-team.html" class="block px-4 py-2.5 rounded-lg text-gray-200 hover:bg-indigo-700 hover:text-white" data-permission="GESTOR,ADMINISTRADOR">Cadastrar Equipe</a>
                     <a href="reports.html" class="block px-4 py-2.5 rounded-lg text-gray-200 hover:bg-indigo-700 hover:text-white">Relatórios</a>
                     <a href="settings.html" class="block px-4 py-2.5 rounded-lg text-gray-200 hover:bg-indigo-700 hover:text-white">Configurações</a>
                     <a href="profile.html" class="block px-4 py-2.5 rounded-lg text-gray-200 hover:bg-indigo-700 hover:text-white">Meu Perfil</a>

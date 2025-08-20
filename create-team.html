@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Equipe - FeedbackHub</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="css/output.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex">
+    <div id="nav-placeholder"></div>
+
+    <main class="flex-1 p-10 ml-64">
+        <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Cadastrar Nova Equipe</h2>
+            <form id="create-team-form">
+                <div class="mb-4">
+                    <label for="nome" class="block text-gray-700 text-sm font-bold mb-2">Nome da Equipe</label>
+                    <input type="text" id="nome" name="nome" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label for="descricao" class="block text-gray-700 text-sm font-bold mb-2">Descrição</label>
+                    <textarea id="descricao" name="descricao" rows="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="gestorId" class="block text-gray-700 text-sm font-bold mb-2">Gestor da Equipe</label>
+                    <select id="gestorId" name="gestorId" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="">Nenhum gestor selecionado</option>
+                    </select>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Salvar Equipe
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="main/api.js"></script>
+    <script src="main/nav-loader.js"></script>
+    <script src="main/create-team.js"></script>
+</body>
+</html>

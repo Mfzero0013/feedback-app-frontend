@@ -31,7 +31,7 @@ async function handleApiResponse(response) {
         throw new Error(resJson.error?.message || resJson.message || 'Ocorreu um erro na requisição.');
     }
     // A maioria das respostas da API encapsula o resultado em uma propriedade 'data'
-    return resJson.data || resJson;
+    return resJson.data.data || resJson;
 }
 
 const api = {
@@ -44,7 +44,12 @@ const api = {
                 'Authorization': `Bearer ${token}`
             }
         });
-        return handleApiResponse(response);
+
+        const resJson = await response.json();
+        if (!response.ok) {
+            throw new Error(resJson.message || 'Falha ao buscar dados.');
+        }
+        return resJson.data;
     },
 
     async post(url, data, needsAuth = false) {
