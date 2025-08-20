@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadProfileData = async () => {
         try {
             const response = await api.get('/profile/me');
-            originalUserData = response.data;
+            originalUserData = response.data.data;
             populateProfileData(originalUserData);
         } catch (error) {
             console.error('Erro ao carregar perfil:', error);
