@@ -224,9 +224,9 @@ async function loadDashboardStatsAndCharts() {
     try {
         const stats = await api.get('/dashboard/stats');
 
-        document.getElementById('feedbacks-abertos').textContent = stats.feedbacksAbertos;
-        document.getElementById('media-avaliacoes').textContent = stats.mediaAvaliacoes.toFixed(1);
-        document.getElementById('colegas-equipe').textContent = stats.colegasEquipe;
+        document.getElementById('stats-pending-feedbacks').textContent = stats.feedbacksAbertos;
+        document.getElementById('stats-average-rating').textContent = stats.mediaAvaliacoes.toFixed(1);
+        document.getElementById('stats-colleagues').textContent = stats.colegasEquipe;
 
     } catch (error) {
         console.error('Erro ao carregar estatísticas do dashboard:', error);
