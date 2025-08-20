@@ -30,8 +30,8 @@ async function handleApiResponse(response) {
     if (!response.ok) {
         throw new Error(resJson.error?.message || resJson.message || 'Ocorreu um erro na requisição.');
     }
-    // A maioria das respostas da API encapsula o resultado em uma propriedade 'data'
-    return resJson.data.data || resJson;
+    // Retorna a propriedade 'data' se existir, caso contrário, o objeto de resposta completo.
+    return resJson.data || resJson;
 }
 
 const api = {
@@ -63,9 +63,10 @@ const api = {
 
         const response = await fetch(`${API_BASE_URL}${url}`, {
             method: 'POST',
-            headers,
+            headers: headers,
             body: JSON.stringify(data)
         });
+
         return handleApiResponse(response);
     },
 
