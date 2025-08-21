@@ -1,40 +1,54 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - FeedbackHub</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/output.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - FeedbackHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/output.css">
 </head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-    <h1 class="text-2xl font-bold mb-6 text-center text-indigo-800">Entrar na sua conta</h1>
-    <div id="notification" class="hidden p-4 mb-4 text-sm text-white rounded-lg" role="alert">
-        <span class="font-medium"></span> <span id="notification-message"></span>
+<body class="bg-gray-50">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="relative flex flex-col m-6 space-y-8 bg-white shadow-2xl rounded-2xl md:flex-row md:space-y-0">
+            <!-- Coluna da Esquerda (Formulário) -->
+            <div class="flex flex-col justify-center p-8 md:p-14">
+                <span class="mb-3 text-4xl font-bold">Bem-vindo!</span>
+                <span class="font-light text-gray-400 mb-8">
+                    Faça login para acessar a plataforma FeedbackHub.
+                </span>
+                <form id="login-form">
+                    <div class="relative mb-4">
+                        <label class="block mb-2 text-sm font-medium text-gray-700" for="email">Email</label>
+                        <i class="fa fa-envelope absolute text-gray-400 top-10 left-3"></i>
+                        <input type="email" id="email" name="email" class="w-full p-2 pl-10 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                        <div id="email-error" class="text-red-500 text-sm h-4 mt-1"></div>
+                    </div>
+
+                    <div class="relative mb-6">
+                        <label class="block mb-2 text-sm font-medium text-gray-700" for="password">Senha</label>
+                        <i class="fa fa-lock absolute text-gray-400 top-10 left-3"></i>
+                        <input type="password" id="password" name="senha" class="w-full p-2 pl-10 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                        <i class="fa fa-eye absolute text-gray-400 top-10 right-3 cursor-pointer" id="toggle-password"></i>
+                        <div id="password-error" class="text-red-500 text-sm h-4 mt-1"></div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition-colors font-bold">Entrar</button>
+                </form>
+                <div class="flex items-center justify-between mt-6 text-sm">
+                    <a href="cadastro.html" class="text-indigo-600 hover:underline">Criar conta</a>
+                    <a href="#" class="text-gray-400 hover:underline">Esqueci minha senha</a>
+                </div>
+            </div>
+
+            <!-- Coluna da Direita (Branding) -->
+            <div class="relative">
+                <img src="images/logo.svg" alt="Image" class="w-[400px] h-full hidden rounded-r-2xl md:block object-cover" />
+            </div>
+        </div>
     </div>
-    <form id="login-form">
-      <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-700" for="email">Email</label>
-        <input type="email" id="email" class="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500" required>
-        <div id="email-error" class="text-red-500 text-sm h-4 mt-1"></div>
-      </div>
 
-      <div class="mb-6">
-        <label class="block mb-2 text-sm font-medium text-gray-700" for="password">Senha</label>
-        <input type="password" id="password" class="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500" required>
-        <div id="password-error" class="text-red-500 text-sm h-4 mt-1"></div>
-      </div>
-
-      <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700 transition-colors">Entrar</button>
-    </form>
-    <div class="flex items-center justify-between mt-4 text-sm">
-      <a href="cadastro.html" class="text-indigo-600 hover:text-indigo-700">Criar conta</a>
-      <a href="#" class="text-indigo-600 hover:text-indigo-700">Esqueci minha senha</a>
-    </div>
-  </div>
-
-  <script src="main/api.js"></script>
-  <script src="main/main.js"></script>
+    <script src="main/api.js"></script>
+    <script src="main/main.js"></script>
 </body>
 </html>

@@ -14,17 +14,27 @@ document.addEventListener("DOMContentLoaded", () => {
         return; // Impede a execução do resto do script
     }
 
-    // Exibe os dados do usuário no cabeçalho
+    // Exibe os dados do usuário na interface (barra lateral, cabeçalho, etc.)
     if (userData) {
-        const userName = document.getElementById('user-name');
-        const userRole = document.getElementById('user-role');
-        // const userAvatar = document.getElementById('user-avatar'); // O avatar pode ser implementado no futuro
+        const firstName = userData.name ? userData.name.split(' ')[0] : 'Usuário';
+        const userAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name || 'User')}&background=random&color=fff`;
 
-        if (userName) {
-            userName.textContent = userData.name || 'Usuário';
+        const elementsToUpdate = {
+            'user-name-display': userData.name || 'Usuário',
+            'user-firstname-display': firstName,
+            'user-role-display': userData.cargo || 'Perfil não definido'
+        };
+
+        for (const id in elementsToUpdate) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = elementsToUpdate[id];
+            }
         }
-        if (userRole) {
-            userRole.textContent = userData.cargo || 'Perfil não definido';
+
+        const avatarElement = document.getElementById('user-avatar-display');
+        if (avatarElement) {
+            avatarElement.src = userAvatarUrl;
         }
     }
 
@@ -45,111 +55,53 @@ document.addEventListener("DOMContentLoaded", () => {
     // Lógica para o formulário de CADASTRO
     const registrationForm = document.getElementById('registration-form');
     if (registrationForm) {
-        const nameInput = document.getElementById('name');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const jobTitleInput = document.getElementById('jobTitle');
-        const departmentInput = document.getElementById('department');
-        const accountTypeInput = document.getElementById('accountType');
-
-        const showError = (field, message) => {
-            const errorEl = document.getElementById(`${field}-error`);
-            if (errorEl) errorEl.textContent = message;
-        };
-
-        const clearError = (field) => {
-            const errorEl = document.getElementById(`${field}-error`);
-            if (errorEl) errorEl.textContent = '';
-        };
-
-        const validateField = (input, fieldName, message) => {
-            if (input.value.trim() === '') {
-                showError(fieldName, message);
-                return false;
-            }
-            clearError(fieldName);
-            return true;
-        };
-
-        registrationForm.addEventListener('submit', async function (e) {
+        registrationForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const fields = {
+                nome: { required: true, message: 'O nome é obrigatório.' },
+                email: { required: true, message: 'O e-mail é obrigatório.' },
+                senha: { required: true, message: 'A senha é obrigatória.' },
+                departamento: { required: true, message: 'O departamento é obrigatório.' },
+                jobTitle: { required: false },
+                accountType: { required: false },
+            };
 
-            const isNameValid = validateField(nameInput, 'name', 'O nome é obrigatório.');
-            const isEmailValid = validateField(emailInput, 'email', 'O e-mail é obrigatório.');
-            const isPasswordValid = validateField(passwordInput, 'password', 'A senha é obrigatória.');
-            const isDepartmentValid = validateField(departmentInput, 'department', 'O departamento é obrigatório.');
-
-            if (!isNameValid || !isEmailValid || !isPasswordValid || !isDepartmentValid) {
+            const { isValid, data } = validateForm(registrationForm, fields);
+            if (!isValid) {
                 showNotification('Por favor, preencha todos os campos obrigatórios.', 'warning');
                 return;
             }
 
-            const userData = {
-                nome: nameInput.value,
-                email: emailInput.value,
-                senha: passwordInput.value,
-                jobTitle: jobTitleInput.value,
-                departamento: departmentInput.value,
-                accountType: accountTypeInput.value,
-            };
-
             try {
-                const response = await api.registerUser(userData);
-                showNotification(response.message || 'Cadastro realizado com sucesso! Você será redirecionado para o login.', 'success');
-                
-                // Redireciona para a página de login após um pequeno atraso para que o usuário possa ler a notificação.
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
-
+                const response = await api.registerUser(data);
+                showNotification(response.message || 'Cadastro realizado com sucesso! Redirecionando...', 'success');
+                setTimeout(() => { window.location.href = 'index.html'; }, 2000);
             } catch (error) {
-                // Exibe a mensagem de erro retornada pela API ou uma mensagem genérica.
-                showNotification(error.message || 'Não foi possível realizar o cadastro. Verifique os dados e tente novamente.', 'error');
+                showNotification(error.message || 'Não foi possível realizar o cadastro.', 'error');
             }
         });
     }
 
     // Lógica para o formulário de LOGIN
-        const loginForm = document.getElementById('login-form');
+    const loginForm = document.getElementById('login-form');
     if (loginForm) {
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-
-        const showError = (field, message) => {
-            const errorEl = document.getElementById(`${field}-error`);
-            if (errorEl) errorEl.textContent = message;
-        };
-
-        const clearError = (field) => {
-            const errorEl = document.getElementById(`${field}-error`);
-            if (errorEl) errorEl.textContent = '';
-        };
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const fields = {
+                email: { required: true, message: 'O e-mail é obrigatório.' },
+                senha: { required: true, message: 'A senha é obrigatória.' },
+            };
 
-            let isValid = true;
-            if (emailInput.value.trim() === '') {
-                showError('email', 'O e-mail é obrigatório.');
-                isValid = false;
-            } else {
-                clearError('email');
-            }
-
-            if (passwordInput.value.trim() === '') {
-                showError('password', 'A senha é obrigatória.');
-                isValid = false;
-            } else {
-                clearError('password');
-            }
-
+            const { isValid, data: formData } = validateForm(loginForm, fields);
             if (!isValid) return;
 
             try {
-                const data = await api.loginUser(emailInput.value, passwordInput.value);
-                localStorage.setItem('authToken', data.token);
-                localStorage.setItem('userData', JSON.stringify(data.user));
+                const responseData = await api.loginUser(formData.email, formData.senha);
+                localStorage.setItem('authToken', responseData.token);
+                localStorage.setItem('userData', JSON.stringify(responseData.user)); // Corrigido para pegar `responseData.user`
                 showNotification('Login realizado com sucesso! Redirecionando...', 'success');
+                
                 const redirectUrl = localStorage.getItem('redirectAfterLogin') || 'dashboard.html';
                 localStorage.removeItem('redirectAfterLogin');
                 setTimeout(() => { window.location.href = redirectUrl; }, 1500);
@@ -404,28 +356,29 @@ async function renderGeneralReport() {
     if (!reportContainer) return;
 
     try {
-        const data = await api.get('/reports/general');
+        const report = await api.getGeneralReport();
 
         reportContainer.innerHTML = ''; // Limpa o container
 
         const title = document.createElement('h3');
-        title.className = 'text-lg font-semibold mb-4';
-        title.textContent = 'Visão Geral do Sistema';
+        title.className = 'text-xl font-bold text-gray-800 mb-4';
+        title.textContent = 'Visão Geral dos Feedbacks';
         reportContainer.appendChild(title);
 
         const grid = document.createElement('div');
-        grid.className = 'grid grid-cols-1 md:grid-cols-3 gap-4';
+        grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4';
 
-        const stats = [
-            { label: 'Total de Usuários', value: data.totalUsers },
-            { label: 'Total de Equipes', value: data.totalEquipes },
-            { label: 'Total de Feedbacks', value: data.totalFeedbacks }
-        ];
+        // Card para total de feedbacks
+        const totalCard = document.createElement('div');
+        totalCard.className = 'bg-white p-4 rounded-lg shadow';
+        totalCard.innerHTML = `<h4 class="text-gray-500">Total de Feedbacks</h4><p class="text-2xl font-bold">${report.totalFeedbacks}</p>`;
+        grid.appendChild(totalCard);
 
-        stats.forEach(stat => {
+        // Cards para status
+        report.feedbacksByStatus.forEach(item => {
             const card = document.createElement('div');
             card.className = 'bg-white p-4 rounded-lg shadow';
-            card.innerHTML = `<h4 class="text-gray-500">${stat.label}</h4><p class="text-2xl font-bold">${stat.value}</p>`;
+            card.innerHTML = `<h4 class="text-gray-500">${item.status.replace('_', ' ')}</h4><p class="text-2xl font-bold">${item._count.status}</p>`;
             grid.appendChild(card);
         });
 
@@ -443,47 +396,35 @@ async function renderEngagementReport() {
     if (!engagementContainer) return;
 
     try {
-        const data = await api.get('/reports/user-engagement');
+        const users = await api.getEngagementReport();
 
         engagementContainer.innerHTML = ''; // Limpa o container
 
         const title = document.createElement('h3');
-        title.className = 'text-lg font-semibold mb-4 mt-6';
-        title.textContent = 'Engajamento de Usuários';
+        title.className = 'text-xl font-bold text-gray-800 mb-4 mt-8';
+        title.textContent = 'Top 10 Usuários Mais Engajados (Feedbacks Enviados)';
         engagementContainer.appendChild(title);
 
-        const listsContainer = document.createElement('div');
-        listsContainer.className = 'grid grid-cols-1 md:grid-cols-2 gap-6';
+        const list = document.createElement('ul');
+        list.className = 'bg-white p-4 rounded-lg shadow divide-y divide-gray-200';
 
-        const createList = (title, users, countField) => {
-            const listWrapper = document.createElement('div');
-            const listTitle = document.createElement('h4');
-            listTitle.className = 'font-semibold mb-2';
-            listTitle.textContent = title;
-            listWrapper.appendChild(listTitle);
+        if (!users || users.length === 0) {
+            list.innerHTML = '<li class="text-gray-500">Nenhum dado de engajamento disponível.</li>';
+        } else {
+            users.forEach(user => {
+                const item = document.createElement('li');
+                item.className = 'flex justify-between items-center py-3';
+                item.innerHTML = `
+                    <div>
+                        <p class="font-semibold text-gray-800">${user.nome}</p>
+                        <p class="text-sm text-gray-500">${user.email}</p>
+                    </div>
+                    <span class="font-bold text-lg text-indigo-600">${user._count.feedbacks}</span>`;
+                list.appendChild(item);
+            });
+        }
 
-            const list = document.createElement('ul');
-            list.className = 'bg-white p-4 rounded-lg shadow';
-
-            if (users.length === 0) {
-                list.innerHTML = '<li class="text-gray-500">Nenhum dado disponível.</li>';
-            } else {
-                users.forEach(user => {
-                    const item = document.createElement('li');
-                    item.className = 'flex justify-between items-center py-2 border-b';
-                    item.innerHTML = `<span>${user.nome}</span><span class="font-bold">${user._count[countField]}</span>`;
-                    list.appendChild(item);
-                });
-            }
-
-            listWrapper.appendChild(list);
-            return listWrapper;
-        };
-
-        listsContainer.appendChild(createList('Top 10 - Mais Receberam Feedbacks', data.topReceivers, 'RecebidosPeloUsuario'));
-        listsContainer.appendChild(createList('Top 10 - Mais Enviaram Feedbacks', data.topSenders, 'CriadosPeloUsuario'));
-
-        engagementContainer.appendChild(listsContainer);
+        engagementContainer.appendChild(list);
 
     } catch (error) {
         console.error('Erro ao renderizar relatório de engajamento:', error);
@@ -492,6 +433,40 @@ async function renderEngagementReport() {
 }
 
 // --- Funções Auxiliares (não precisam estar no DOMContentLoaded) ---
+
+/**
+ * Valida um formulário com base em um conjunto de regras.
+ * @param {HTMLFormElement} form - O elemento do formulário.
+ * @param {object} fields - Um objeto onde as chaves são os `name` dos inputs e os valores são regras.
+ * @returns {{isValid: boolean, data: object}} - Retorna um objeto com o status da validação e os dados do formulário.
+ */
+function validateForm(form, fields) {
+    const data = {};
+    let isValid = true;
+
+    // Limpa erros antigos
+    form.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+    for (const fieldName in fields) {
+        const rules = fields[fieldName];
+        const input = form.elements[fieldName];
+        const errorEl = document.getElementById(`${fieldName}-error`);
+
+        if (!input) continue;
+
+        const value = input.value.trim();
+        data[fieldName] = value;
+
+        if (rules.required && value === '') {
+            isValid = false;
+            if (errorEl) {
+                errorEl.textContent = rules.message || `O campo ${fieldName} é obrigatório.`;
+            }
+        }
+    }
+
+    return { isValid, data };
+}
 
 /**
  * Aplica as permissões de visualização aos elementos da página.

@@ -20,7 +20,7 @@ let allUsers = [];
 
 async function loadCollaborators() {
     try {
-        allUsers = await api.get('/users');
+        allUsers = await api.getUsers();
         renderCollaborators(allUsers);
     } catch (error) {
         console.error('Erro ao carregar colaboradores:', error);
@@ -56,7 +56,7 @@ function renderCollaborators(users) {
 
 async function loadTeams() {
     try {
-        const teams = await api.get('/teams');
+        const teams = await api.getAllTeams();
         const select = document.getElementById('collaboratorTeam');
         select.innerHTML = '<option value="">Selecione um setor</option>';
         if (Array.isArray(teams)) {

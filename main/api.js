@@ -1,196 +1,111 @@
+// TODO: Mover para um arquivo de configuração ou variáveis de ambiente
 const API_BASE_URL = 'https://feedback-app-backend-die8.onrender.com/api';
 
-function getToken() {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-        forceLogout();
-        throw new Error('Token de autenticação não encontrado.');
-    }
-    return token;
-}
-
+/**
+ * Redireciona o usuário para a página de login, limpando o armazenamento local.
+ */
 function forceLogout() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
-    localStorage.removeItem('redirectAfterLogin');
     if (!window.location.pathname.endsWith('index.html') && !window.location.pathname.endsWith('/')) {
         window.location.href = 'index.html';
     }
 }
 
+/**
+ * Processa a resposta de uma requisição à API, tratando sucessos e erros.
+ * @param {Response} response - O objeto de resposta da API.
+ * @returns {Promise<any>} Os dados da resposta.
+ */
 async function handleApiResponse(response) {
+    // Se o token for inválido ou expirado, o backend retorna 401
+    if (response.status === 401) {
+        forceLogout();
+        throw new Error('Sessão expirada. Por favor, faça login novamente.');
+    }
+
     const contentType = response.headers.get('content-type');
-
-    if (!response.ok) {
-        let errorData;
-        // Se a resposta for JSON, tenta extrair a mensagem de erro
-        if (contentType && contentType.includes('application/json')) {
-            try {
-                errorData = await response.json();
-            } catch (e) {
-                // Mantém uma mensagem de erro genérica se o JSON for inválido
-                errorData = { message: `Erro ${response.status}: ${response.statusText}` };
-            }
-        } else {
-            // Se não for JSON (ex: HTML de erro), usa o status da resposta
-            errorData = { message: `Erro no servidor: ${response.status} ${response.statusText}` };
-        }
-        throw new Error(errorData.message || 'Ocorreu um erro na comunicação com o servidor.');
-    }
-
-    // Se a resposta for bem-sucedida, mas não for JSON, não tenta fazer o parse
-    if (!contentType || !contentType.includes('application/json')) {
-        return response.text(); // Retorna como texto ou pode ser adaptado
-    }
-
-    // Tenta fazer o parse do JSON e retorna os dados
+    const isJson = contentType && contentType.includes('application/json');
+    
+    let data;
     try {
-        const responseData = await response.json();
-        return responseData.data || responseData; // Compatibilidade com diferentes formatos de resposta
+        data = isJson ? await response.json() : await response.text();
     } catch (error) {
         throw new Error('Falha ao processar a resposta do servidor.');
     }
+
+    if (!response.ok) {
+        const message = (isJson && data.message) ? data.message : `Erro ${response.status}: ${response.statusText}`;
+        throw new Error(message);
+    }
+
+    // Caso especial para o login, que retorna o token no corpo principal da resposta.
+    if (response.url.endsWith('/auth/login')) {
+        return data; // Retorna o objeto completo com { token, data: { user } }
+    }
+
+    // Para outras requisições, retorna a propriedade `data` se existir.
+    return data.data || data;
 }
 
+/**
+ * Realiza uma requisição genérica para a API.
+ * @param {string} url - O caminho do endpoint (ex: '/users').
+ * @param {object} options - Opções da requisição (method, body, etc.).
+ * @returns {Promise<any>} Os dados da resposta.
+ */
+async function request(url, options = {}) {
+    const token = localStorage.getItem('authToken');
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers,
+    };
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}${url}`, { ...options, headers });
+    return handleApiResponse(response);
+}
+
+// Objeto que agrupa todos os métodos da API de forma organizada
 const api = {
-    async get(url) {
-        const token = localStorage.getItem('authToken');
-        const response = await fetch(`${API_BASE_URL}${url}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        });
+    get: (url) => request(url, { method: 'GET' }),
+    post: (url, data) => request(url, { method: 'POST', body: JSON.stringify(data) }),
+    put: (url, data) => request(url, { method: 'PUT', body: JSON.stringify(data) }),
+    delete: (url) => request(url, { method: 'DELETE' }),
 
-        const resJson = await response.json();
-        if (!response.ok) {
-            throw new Error(resJson.message || 'Falha ao buscar dados.');
-        }
-        return resJson.data || resJson;
-    },
+    // --- Auth ---
+    loginUser: (email, password) => api.post('/auth/login', { email, senha: password }),
+    registerUser: (userData) => api.post('/auth/register', userData),
 
-    async post(url, data, needsAuth = false) {
-        const headers = { 'Content-Type': 'application/json' };
-        if (needsAuth) {
-            const token = localStorage.getItem('authToken');
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
-        }
-
-        const response = await fetch(`${API_BASE_URL}${url}`, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(data)
-        });
-
-        return handleApiResponse(response);
-    },
-
-    async loginUser(email, password) {
-        return this.post('/auth/login', { email, senha: password });
-    },
-
-    async registerUser(userData) {
-        return this.post('/auth/register', userData);
-    },
+    // --- Profile ---
+    getProfile: () => api.get('/profile/me'),
+    updateProfile: (profileData) => api.put('/profile/me', profileData),
 
     // --- Feedbacks ---
-    async getReceivedFeedbacks() {
-        return this.get('/feedback?type=received');
-    },
+    getReceivedFeedbacks: () => api.get('/feedback?type=received'),
+    sendFeedback: (feedbackData) => api.post('/feedback', feedbackData),
+    getSentFeedbacks: () => api.get('/feedback?type=sent'),
 
-    async sendFeedback(feedbackData) {
-        return this.post('/feedback', feedbackData, true);
-    },
+    // --- Users (Admin) ---
+    getUsers: () => api.get('/admin/manage-users'),
+    createUser: (userData) => api.post('/admin/users', userData),
+    updateUser: (userId, userData) => api.put(`/admin/users/${userId}`, userData),
+    deleteUser: (userId) => api.delete(`/admin/users/${userId}`),
 
-    async getSentFeedbacks() {
-        return this.get('/feedback?type=sent');
-    },
+    // --- Teams (Admin) ---
+    getTeamById: (id) => api.get(`/admin/teams/${id}`),
+    getAllTeams: () => api.get('/admin/manage-teams'),
+    createTeam: (teamData) => api.post('/admin/teams', teamData),
+    updateTeam: (id, teamData) => api.put(`/admin/teams/${id}`, teamData),
+    deleteTeam: (id) => api.delete(`/admin/teams/${id}`),
 
-    // --- Users ---
-    async getUsers() {
-        // Rota de admin para buscar todos os usuários
-        return this.get('/admin/manage-users');
-    },
-
-    async getUserById(userId) {
-        return this.get(`/users/${userId}`);
-    },
-
-    async createUser(userData) {
-        return this.post('/admin/users', userData, true);
-    },
-
-    async updateUser(userId, userData) {
-        // Assuming a generic 'put' method would be similar to 'post'
-        const token = localStorage.getItem('authToken');
-        const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(userData)
-        });
-        return handleApiResponse(response);
-    },
-
-    // --- Teams ---
-    async getTeamById(id) {
-        return this.get(`/admin/teams/${id}`);
-    },
-
-    async getAllTeams() {
-        // Rota de admin para buscar todas as equipes
-        return this.get('/admin/manage-teams');
-    },
-
-    async createTeam(teamData) {
-        return this.post('/admin/teams', teamData, true);
-    },
-
-    async updateTeam(id, teamData) {
-        const token = localStorage.getItem('authToken');
-        const response = await fetch(`${API_BASE_URL}/admin/teams/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(teamData)
-        });
-        return handleApiResponse(response);
-    },
-
-    async deleteTeam(id) {
-        const token = localStorage.getItem('authToken');
-        const response = await fetch(`${API_BASE_URL}/admin/teams/${id}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        return handleApiResponse(response);
-    },
-
-    async addTeamMember(data) {
-        return this.post('/teams/add-member', data, true);
-    },
-
-    async removeTeamMember(data) {
-        return this.post('/teams/remove-member', data, true);
-    },
-
-    async getMyTeam() {
-        return this.get('/teams/my-team');
-    },
+    // --- Teams (User) ---
+    getMyTeam: () => api.get('/teams/my-team'),
 
     // --- Reports ---
-    async getGeneralReport() {
-        return this.get('/reports/general');
-    },
-
-    async getEngagementReport() {
-        return this.get('/reports/user-engagement');
-    }
+    getGeneralReport: () => api.get('/reports/general'),
+    getEngagementReport: () => api.get('/reports/user-engagement'),
 };

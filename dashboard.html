@@ -5,64 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - FeedbackHub</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="css/output.css">
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-gray-100 font-sans">
     <div class="flex min-h-screen">
-        <!-- Placeholder for the navigation sidebar -->
-        <div id="nav-placeholder"></div>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-6 ml-64">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+        <!-- Barra Lateral de Navegação -->
+        <aside class="w-64 bg-white shadow-md flex flex-col fixed h-full">
+            <div class="p-6 text-center border-b">
+                <a href="dashboard.html" class="text-2xl font-bold text-indigo-600">FeedbackHub</a>
+            </div>
+            <nav class="flex-1 px-4 py-4 space-y-2">
+                <a href="dashboard.html" class="flex items-center px-4 py-2.5 text-white bg-indigo-600 rounded-md font-semibold">
+                    <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
+                </a>
+                <a href="feedbacks.html" class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-200 rounded-md">
+                    <i class="fas fa-comment-dots mr-3"></i> Feedbacks
+                </a>
+                <a href="team.html" class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-200 rounded-md">
+                    <i class="fas fa-users mr-3"></i> Equipe
+                </a>
+                <a href="reports.html" class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-200 rounded-md">
+                    <i class="fas fa-chart-line mr-3"></i> Relatórios
+                </a>
+            </nav>
+            <div class="p-4 border-t">
                 <div id="user-profile-widget" class="flex items-center space-x-3">
-                    <span id="user-name-display" class="font-medium text-gray-700 hidden sm:block">Carregando...</span>
                     <a href="profile.html">
-                        <img id="user-avatar-display" src="https://ui-avatars.com/api/?name=?&background=random" alt="Avatar" class="w-10 h-10 rounded-full cursor-pointer">
+                        <img id="user-avatar-display" src="https://ui-avatars.com/api/?name=?&background=random" alt="Avatar" class="w-10 h-10 rounded-full">
                     </a>
+                    <div class="flex-1">
+                        <span id="user-name-display" class="font-semibold text-gray-800 text-sm">Carregando...</span>
+                        <span id="user-role-display" class="text-xs text-gray-500 block"></span>
+                    </div>
+                    <button id="logout-button" class="text-gray-500 hover:text-indigo-600">
+                        <i class="fas fa-sign-out-alt fa-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="flex-1 p-8 ml-64">
+            <!-- Cabeçalho -->
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Olá, <span id="user-firstname-display"></span>!</h1>
+                    <p class="text-gray-500">Aqui está um resumo da sua atividade.</p>
+                </div>
+                <div>
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition-colors">
+                        <i class="fas fa-paper-plane mr-2"></i> Solicitar Feedback
+                    </button>
                 </div>
             </div>
 
-            <!-- Stat Cards -->
+            <!-- Cards de Estatísticas -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-xl shadow-md flex items-center justify-between">
+                <div class="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-4">
+                    <div class="bg-blue-100 p-3 rounded-full"><i class="fas fa-inbox fa-2x text-blue-500"></i></div>
                     <div>
                         <p class="text-sm text-gray-500">Feedbacks Pendentes</p>
-                        <p id="stats-pending-feedbacks" class="text-3xl font-bold">0</p>
+                        <p id="stats-pending-feedbacks" class="text-3xl font-bold text-gray-800">0</p>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md flex items-center justify-between">
+                <div class="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-4">
+                    <div class="bg-green-100 p-3 rounded-full"><i class="fas fa-star-half-alt fa-2x text-green-500"></i></div>
                     <div>
                         <p class="text-sm text-gray-500">Média de Avaliação</p>
-                        <p id="stats-average-rating" class="text-3xl font-bold">0.0</p>
+                        <p id="stats-average-rating" class="text-3xl font-bold text-gray-800">0.0</p>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md flex items-center justify-between">
+                <div class="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-4">
+                    <div class="bg-purple-100 p-3 rounded-full"><i class="fas fa-user-friends fa-2x text-purple-500"></i></div>
                     <div>
-                        <p class="text-sm text-gray-500">Colaboradores</p>
-                        <p id="stats-colleagues" class="text-3xl font-bold">0</p>
+                        <p class="text-sm text-gray-500">Colaboradores</e>
+                        <p id="stats-colleagues" class="text-3xl font-bold text-gray-800">0</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Charts -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-md">
-                    <h2 class="text-lg font-semibold mb-4">Desempenho por Competência</h2>
+            <!-- Gráficos -->
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <div class="lg:col-span-3 bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-lg font-semibold mb-4 text-gray-700">Desempenho por Competência</h2>
                     <canvas id="competence-chart"></canvas>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md">
-                    <h2 class="text-lg font-semibold mb-4">Evolução dos Feedbacks</h2>
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-lg font-semibold mb-4 text-gray-700">Evolução dos Feedbacks</h2>
                     <canvas id="evolution-chart"></canvas>
                 </div>
             </div>
         </main>
     </div>
 
-    <script src="./main/api.js?v=1.1"></script>
-    <script src="./main/nav-loader.js?v=1.1"></script>
-    <script src="./main/main.js?v=1.1"></script>
+    <script src="./main/api.js"></script>
+    <script src="./main/main.js"></script>
 </body>
 </html>

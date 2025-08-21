@@ -4,34 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Equipe - FeedbackHub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/output.css">
 </head>
-<body class="bg-gray-50 font-sans">
-    <div class="flex min-h-screen">
-        <!-- Placeholder for the navigation sidebar -->
-        <div id="nav-placeholder"></div>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen bg-gray-50">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-md flex-shrink-0">
+            <div class="p-6 flex items-center justify-center">
+                <img src="images/logo.svg" alt="FeedbackHub Logo" class="h-10">
+            </div>
+            <nav class="mt-6">
+                <a href="dashboard.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-tachometer-alt w-6 text-center"></i>
+                    <span class="ml-4">Dashboard</span>
+                </a>
+                <a href="feedback.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-comments w-6 text-center"></i>
+                    <span class="ml-4">Feedbacks</span>
+                </a>
+                <a href="team.html" class="flex items-center px-6 py-3 text-indigo-600 bg-gray-100 font-bold">
+                    <i class="fas fa-users w-6 text-center"></i>
+                    <span class="ml-4">Equipe</span>
+                </a>
+                <a href="reports.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-chart-line w-6 text-center"></i>
+                    <span class="ml-4">Relatórios</span>
+                </a>
+            </nav>
+            <div class="absolute bottom-0 w-full">
+                <div class="p-4 border-t border-gray-200">
+                    <div class="flex items-center">
+                        <img id="user-avatar-display" src="https://ui-avatars.com/api/?name=User&background=random&color=fff" alt="User Avatar" class="h-10 w-10 rounded-full object-cover">
+                        <div class="ml-3">
+                            <p id="user-name-display" class="text-sm font-semibold text-gray-800">Carregando...</p>
+                            <p id="user-role-display" class="text-xs text-gray-500">Carregando...</p>
+                        </div>
+                    </div>
+                    <button id="logout-button" class="mt-4 w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md">
+                        <i class="fas fa-sign-out-alt w-6 text-center"></i>
+                        <span class="ml-2">Sair</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
 
         <!-- Main Content -->
-        <div class="flex-1 p-6 ml-64">
-            <!-- Header -->
+        <main class="flex-1 p-6 sm:p-8 overflow-y-auto">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-800">Minha Equipe</h2>
-                <a href="feedback.html" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 font-semibold">+ Novo Feedback</a>
+                <a href="feedback.html" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 font-semibold shadow-md transition-transform transform hover:scale-105">+ Novo Feedback</a>
             </div>
 
             <!-- Team Members Container -->
-            <div id="team-members-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="team-members-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <!-- Member cards will be dynamically inserted here -->
                 <p class="text-gray-500 col-span-full">Carregando membros da equipe...</p>
             </div>
-        </div>
+        </main>
     </div>
 
-
+    <script src="main/main.js"></script>
     <script src="main/api.js"></script>
-    <script src="main/nav-loader.js"></script>
     <script src="main/team.js"></script>
 </body>
 </html>
