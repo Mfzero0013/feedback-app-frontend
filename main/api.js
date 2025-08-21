@@ -1,5 +1,5 @@
 // TODO: Mover para um arquivo de configuração ou variáveis de ambiente
-const API_BASE_URL = 'https://feedback-app-backend-die8.onrender.com/api';
+const API_BASE_URL = 'https://feedback-app-backend-x87n.onrender.com/api';
 
 /**
  * Redireciona o usuário para a página de login, limpando o armazenamento local.
