@@ -1,4 +1,50 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('userId');
+    const feedbackForm = document.getElementById('feedbackForm');
+
+    if (userId) {
+        loadFeedbackHistory(userId);
+    } else {
+        setupFeedbackForm();
+    }
+});
+
+async function loadFeedbackHistory(userId) {
+    const pageTitle = document.getElementById('pageTitle');
+    const feedbackForm = document.getElementById('feedbackForm');
+    const historySection = document.getElementById('feedbackHistory');
+    const historyBody = document.getElementById('feedback-history-body');
+
+    pageTitle.textContent = 'Histórico de Feedbacks Recebidos';
+    feedbackForm.classList.add('hidden');
+    historySection.classList.remove('hidden');
+    historyBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Carregando histórico...</td></tr>';
+
+    try {
+        const feedbacks = await api.getFeedbacksForUser(userId);
+        if (feedbacks && feedbacks.length > 0) {
+            historyBody.innerHTML = '';
+            feedbacks.forEach(fb => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">${new Date(fb.createdAt).toLocaleDateString()}</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">${fb.tipo.nome}</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap">${fb.nota || 'N/A'}</td>
+                    <td class="px-6 py-4">${fb.conteudo}</td>
+                `;
+                historyBody.appendChild(row);
+            });
+        } else {
+            historyBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Nenhum feedback encontrado para este usuário.</td></tr>';
+        }
+    } catch (error) {
+        console.error('Erro ao carregar histórico de feedbacks:', error);
+        historyBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-red-500">Falha ao carregar o histórico.</td></tr>';
+    }
+}
+
+function setupFeedbackForm() {
     const feedbackForm = document.getElementById('feedbackForm');
     const avaliadoIdSelect = document.getElementById('avaliadoId');
     const currentUser = JSON.parse(localStorage.getItem('userData'));
@@ -71,4 +117,4 @@ document.addEventListener('DOMContentLoaded', () => {
     if (feedbackForm) {
         loadUsers();
     }
-});
+}

@@ -113,20 +113,8 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comentário</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <!-- Linhas de exemplo, serão preenchidas dinamicamente -->
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">15/06/2023</td>
-                                <td class="px-6 py-4 whitespace-nowrap">Desempenho</td>
-                                <td class="px-6 py-4 whitespace-nowrap">9</td>
-                                <td class="px-6 py-4">Ótimo desempenho no último projeto.</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">10/03/2023</td>
-                                <td class="px-6 py-4 whitespace-nowrap">Comportamento</td>
-                                <td class="px-6 py-4 whitespace-nowrap">8</td>
-                                <td class="px-6 py-4">Boa colaboração com a equipe.</td>
-                            </tr>
+                        <tbody id="feedback-history-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Feedback history will be loaded here -->
                         </tbody>
                     </table>
                 </div>
@@ -135,13 +123,7 @@
     </div>
 
     <script>
-        // Verifica se existe parâmetro ID na URL para mostrar o histórico
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('id')) {
-            document.getElementById('pageTitle').innerText = "Detalhes do Colaborador";
-            const historySection = document.getElementById('feedbackHistory');
-            if(historySection) historySection.classList.remove('hidden');
-        }
+        // Logic to handle feedback history display is now in feedback.js
     </script>
     <script src="main/main.js"></script>
     <script src="main/api.js"></script>

@@ -86,6 +86,7 @@ const api = {
 
     // --- Feedbacks ---
     getReceivedFeedbacks: () => api.get('/feedback?type=received'),
+    getFeedbacksForUser: (userId) => api.get(`/feedback?type=received&userId=${userId}`),
     sendFeedback: (feedbackData) => api.post('/feedback', feedbackData),
     getSentFeedbacks: () => api.get('/feedback?type=sent'),
 
