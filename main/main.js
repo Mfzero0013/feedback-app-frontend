@@ -16,11 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Exibe os dados do usuário na interface (barra lateral, cabeçalho, etc.)
     if (userData) {
-        const firstName = userData.name ? userData.name.split(' ')[0] : 'Usuário';
-        const userAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name || 'User')}&background=random&color=fff`;
+        const firstName = userData.nome ? userData.nome.split(' ')[0] : 'Usuário';
+        const userAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.nome || 'User')}&background=random&color=fff`;
 
         const elementsToUpdate = {
-            'user-name-display': userData.name || 'Usuário',
+            'user-name-display': userData.nome || 'Usuário',
             'user-firstname-display': firstName,
             'user-role-display': userData.cargo || 'Perfil não definido'
         };

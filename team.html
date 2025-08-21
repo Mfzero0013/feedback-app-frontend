@@ -28,9 +28,11 @@
                     <i class="fas fa-users w-6 text-center"></i>
                     <span class="ml-4">Equipe</span>
                 </a>
-                <a href="reports.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
-                    <i class="fas fa-chart-line w-6 text-center"></i>
-                    <span class="ml-4">Relatórios</span>
+                <a href="reports.html" class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-200 rounded-md">
+                    <i class="fas fa-chart-line mr-3"></i> Relatórios
+                </a>
+                <a href="settings.html" class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-200 rounded-md">
+                    <i class="fas fa-cog mr-3"></i> Configurações
                 </a>
             </nav>
             <div class="absolute bottom-0 w-full">
@@ -54,7 +56,10 @@
         <main class="flex-1 p-6 sm:p-8 overflow-y-auto">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-800">Minha Equipe</h2>
-                <a href="feedback.html" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 font-semibold shadow-md transition-transform transform hover:scale-105">+ Novo Feedback</a>
+                <div class="flex space-x-4">
+                    <a href="feedback.html" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 font-semibold shadow-md transition-transform transform hover:scale-105">+ Novo Feedback</a>
+                    <button id="add-member-button" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 font-semibold shadow-md transition-transform transform hover:scale-105">+ Novo Membro</button>
+                </div>
             </div>
 
             <!-- Team Members Container -->
@@ -63,6 +68,37 @@
                 <p class="text-gray-500 col-span-full">Carregando membros da equipe...</p>
             </div>
         </main>
+
+    <!-- Add Member Modal -->
+    <div id="add-member-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 text-center">Adicionar Novo Membro</h3>
+                <form id="add-member-form" class="mt-4 space-y-4">
+                    <div>
+                        <label for="nome" class="block text-sm font-medium text-gray-700">Nome Completo</label>
+                        <input type="text" name="nome" id="nome" class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="Nome completo" required>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" name="email" id="email" class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="exemplo@empresa.com" required>
+                    </div>
+                    <div>
+                        <label for="jobTitle" class="block text-sm font-medium text-gray-700">Cargo</label>
+                        <input type="text" name="jobTitle" id="jobTitle" class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="Cargo do colaborador" required>
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Senha</label>
+                        <input type="password" name="password" id="password" class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="Senha (mínimo 6 caracteres)" required>
+                    </div>
+                    <div class="flex justify-end pt-4">
+                        <button id="cancel-add-member" type="button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg mr-2 hover:bg-gray-300">Cancelar</button>
+                        <button id="submit-add-member" type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Adicionar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     </div>
 
     <script src="main/main.js"></script>

@@ -1,5 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadMyTeam();
+
+    const addMemberButton = document.getElementById('add-member-button');
+    const addMemberModal = document.getElementById('add-member-modal');
+    const cancelAddMemberButton = document.getElementById('cancel-add-member');
+    const addMemberForm = document.getElementById('add-member-form');
+
+    addMemberButton.addEventListener('click', () => {
+        addMemberModal.classList.remove('hidden');
+    });
+
+    cancelAddMemberButton.addEventListener('click', () => {
+        addMemberModal.classList.add('hidden');
+    });
+
+    addMemberForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(addMemberForm);
+        const userData = Object.fromEntries(formData.entries());
+
+        try {
+            await api.createUser(userData);
+            showNotification('Membro adicionado com sucesso!', 'success');
+            addMemberForm.reset();
+            addMemberModal.classList.add('hidden');
+            loadMyTeam(); // Recarrega a lista da equipe
+        } catch (error) {
+            showNotification(error.message || 'Erro ao adicionar membro.', 'error');
+        }
+    });
 });
 
 async function loadMyTeam() {
@@ -50,7 +79,7 @@ function createMemberCard(member, teamName) {
                 <p><strong>Próximo feedback:</strong> ${nextFeedbackDate}</p>
             </div>
         </div>
-        <button onclick="viewMemberDetails(${member.id})" class="w-full mt-auto bg-indigo-100 text-indigo-700 font-semibold py-2 px-4 rounded-lg hover:bg-indigo-200 transition-colors">
+        <button onclick="viewMemberDetails('${member.id}')" class="w-full mt-auto bg-indigo-100 text-indigo-700 font-semibold py-2 px-4 rounded-lg hover:bg-indigo-200 transition-colors">
             Ver Detalhes
         </button>
     `;

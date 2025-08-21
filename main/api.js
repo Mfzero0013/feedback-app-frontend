@@ -106,6 +106,12 @@ const api = {
     getMyTeam: () => api.get('/teams/my-team'),
 
     // --- Reports ---
-    getGeneralReport: () => api.get('/reports/general'),
-    getEngagementReport: () => api.get('/reports/user-engagement'),
+    getGeneralReport: (filters = {}) => {
+        const query = new URLSearchParams(filters).toString();
+        return api.get(`/reports/general?${query}`);
+    },
+    getEngagementReport: (filters = {}) => {
+        const query = new URLSearchParams(filters).toString();
+        return api.get(`/reports/user-engagement?${query}`);
+    },
 };

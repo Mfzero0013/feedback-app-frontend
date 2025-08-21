@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadUsers = async () => {
         try {
-            const users = await api.getAllUsers();
+            const users = await api.getUsers();
             avaliadoIdSelect.innerHTML = '<option value="">Selecione um colaborador...</option>';
             users.forEach(user => {
                 if (user.id !== currentUser.id) {
