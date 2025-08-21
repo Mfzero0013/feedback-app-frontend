@@ -1,250 +1,228 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administração - FeedbackHub</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            clifford: '#da373d',
-          }
-        }
-      }
-    }
-  </script>
-  <link rel="stylesheet" href="css/output.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administração - FeedbackHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/output.css">
 </head>
-<body>
-  <!-- Loader -->
-  <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white"></div>
-  </div>
-  <div class="bg-gray-50 font-sans">
-  <!-- Top bar (mobile) -->
-  <div class="md:hidden flex items-center justify-between px-4 py-3 bg-white shadow">
-    <div class="text-xl font-bold text-indigo-800">FeedbackHub</div>
-    <button onclick="toggleSidebar()" class="p-2 rounded border border-gray-300">Menu</button>
-  </div>
-  
-  <!-- Overlay para mobile -->
-  <div id="overlay" class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar()"></div>
-  
-  <div class="flex min-h-screen">
-    <!-- Placeholder for the navigation sidebar -->
-    <div id="nav-placeholder"></div>
-
-    <!-- Main Content -->
-    <div class="flex-1 p-6 ml-64">
-      <div class="flex flex-wrap justify-between items-center mb-8 gap-4">
-        <h2 class="text-2xl font-bold text-gray-800">Administração do Sistema</h2>
-        <div class="flex items-center space-x-4">
-          <select id="companyFilter" onchange="filterByTeam()" class="border rounded-lg px-3 py-2 bg-white">
-            <option value="all">Todas as Equipes</option>
-          </select>
-          <button onclick="openNewTeamModal()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-            + Adicionar Equipe
-          </button>
-          <button onclick="openNewUserModal()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-            + Adicionar Usuário
-          </button>
-        </div>
-      </div>
-
-      <!-- Estatísticas Gerais -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-500">
-          <p class="text-gray-500">Total de Usuários</p>
-          <h3 class="text-2xl font-bold">156</h3>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-green-500">
-          <p class="text-gray-500">Administradores</p>
-          <h3 class="text-2xl font-bold">8</h3>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-yellow-500">
-          <p class="text-gray-500">Gestores</p>
-          <h3 class="text-2xl font-bold">24</h3>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-purple-500">
-          <p class="text-gray-500">Usuários</p>
-          <h3 class="text-2xl font-bold">124</h3>
-        </div>
-      </div>
-
-      <!-- Gerenciamento de Equipes -->
-      <div class="bg-white p-6 rounded-xl shadow-md mb-8">
-        <h3 class="font-semibold text-lg text-gray-800 mb-4">Gerenciamento de Equipes</h3>
-        <div id="company-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Cards de equipes serão inseridos aqui -->
-        </div>
-      </div>
-
-      <!-- Gerenciamento de Usuários -->
-      <div class="bg-white p-6 rounded-xl shadow-md mb-8">
-        <h3 class="font-semibold text-lg text-gray-800 mb-4">Gerenciamento de Usuários</h3>
-        <div id="user-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Cards de usuários serão inseridos aqui -->
-        </div>
-      </div>
-
-      <!-- Configurações do Sistema -->
-      <div class="bg-white p-6 rounded-xl shadow-md">
-        <h3 class="font-semibold text-lg text-gray-800 mb-4">Configurações do Sistema</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h4 class="font-medium text-gray-800 mb-3">Permissões por Perfil</h4>
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-600">Administrador</span>
-                <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Acesso Total</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-600">Gestor</span>
-                <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Gerenciar Equipe</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-600">Usuário</span>
-                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Acesso Básico</span>
-              </div>
-            </div>
-          </div>
-          <div>
-            <h4 class="font-medium text-gray-800 mb-3">Configurações Gerais</h4>
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-600">Backup Automático</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" checked class="sr-only peer">
-                  <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                </label>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-600">Logs de Auditoria</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" checked class="sr-only peer">
-                  <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<body class="bg-gray-100 font-sans">
+    <!-- Loader -->
+    <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white"></div>
     </div>
-  </div>
 
-  <!-- Modal para Adicionar/Editar Usuário -->
-  <div id="user-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
-      <div class="flex justify-between items-center pb-3">
-        <h3 id="user-modal-title" class="text-lg font-medium text-gray-900">Adicionar Novo Usuário</h3>
-        <button onclick="closeUserModal()" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-        </button>
-      </div>
-      <form id="user-form" onsubmit="saveUser(event)">
-        <input type="hidden" id="userId">
-        <div class="space-y-4">
-          <div>
-            <label for="userName" class="block text-sm font-medium text-gray-700">Nome</label>
-            <input type="text" id="userName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-          </div>
-          <div>
-            <label for="userEmail" class="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" id="userEmail" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-          </div>
-          <div>
-            <label for="userJobTitle" class="block text-sm font-medium text-gray-700">Cargo</label>
-            <input type="text" id="userJobTitle" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-          </div>
-          <div>
-            <label for="userPassword" class="block text-sm font-medium text-gray-700">Senha</label>
-            <input type="password" id="userPassword" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-          </div>
-          <div>
-            <label for="userRole" class="block text-sm font-medium text-gray-700">Perfil</label>
-            <select id="userRole" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-              <option value="user">Usuário</option>
-              <option value="admin">Administrador</option>
-            </select>
-          </div>
-          <div>
-            <label for="userCompany" class="block text-sm font-medium text-gray-700">Empresa</label>
-            <select id="userCompany" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-              <!-- Options will be populated by JS -->
-            </select>
-          </div>
-        </div>
-        <div class="mt-6 flex justify-end space-x-3">
-          <button type="button" onclick="closeUserModal()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300">Cancelar</button>
-          <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Salvar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal para Adicionar/Editar Empresa -->
-  <!-- Modal para Adicionar/Editar Equipe -->
-<div id="team-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-  <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
-    <div class="flex justify-between items-center pb-3">
-      <h3 id="team-modal-title" class="text-lg font-medium text-gray-900">Adicionar Nova Equipe</h3>
-      <button onclick="closeTeamModal()" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-      </button>
-    </div>
-    <form id="team-form" onsubmit="saveTeam(event)">
-      <input type="hidden" id="teamId">
-      <div class="space-y-4">
-        <div>
-          <label for="teamName" class="block text-sm font-medium text-gray-700">Nome da Equipe</label>
-          <input type="text" id="teamName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
-        </div>
-        <div>
-          <label for="teamManager" class="block text-sm font-medium text-gray-700">Gestor da Equipe</label>
-          <select id="teamManager" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-            <!-- Options will be populated by JS -->
-            <option value="">Selecione um gestor</option>
-          </select>
-        </div>
-      </div>
-      <div class="mt-6 flex justify-end space-x-3">
-        <button type="button" onclick="closeTeamModal()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300">Cancelar</button>
-        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Salvar</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-  <!-- Modal de Confirmação Genérico -->
-  <div id="confirmation-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
-        <div class="text-center">
-            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-                <svg class="h-6 w-6 text-red-600" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
+    <div class="flex h-screen bg-gray-50">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-md flex-shrink-0">
+            <div class="p-6 flex items-center justify-center">
+                <img src="images/logo.svg" alt="FeedbackHub Logo" class="h-10">
             </div>
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mt-5" id="confirmation-modal-title">Excluir Item</h3>
-            <div class="mt-2 px-7 py-3">
-                <p class="text-sm text-gray-500" id="confirmation-modal-message">Tem certeza de que deseja excluir este item? Esta ação não pode ser desfeita.</p>
+            <nav class="mt-6">
+                <a href="dashboard.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-tachometer-alt w-6 text-center"></i>
+                    <span class="ml-4">Dashboard</span>
+                </a>
+                <a href="feedback.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-comments w-6 text-center"></i>
+                    <span class="ml-4">Feedbacks</span>
+                </a>
+                <a href="team.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-users w-6 text-center"></i>
+                    <span class="ml-4">Equipe</span>
+                </a>
+                <a href="reports.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-chart-line w-6 text-center"></i>
+                    <span class="ml-4">Relatórios</span>
+                </a>
+                 <a href="admin.html" class="flex items-center px-6 py-3 text-indigo-600 bg-gray-100 font-bold" data-permission="ADMIN">
+                    <i class="fas fa-cogs w-6 text-center"></i>
+                    <span class="ml-4">Administração</span>
+                </a>
+            </nav>
+            <div class="absolute bottom-0 w-full">
+                <div class="p-4 border-t border-gray-200">
+                    <div class="flex items-center">
+                        <img id="user-avatar-display" src="https://ui-avatars.com/api/?name=User&background=random&color=fff" alt="User Avatar" class="h-10 w-10 rounded-full object-cover">
+                        <div class="ml-3">
+                            <p id="user-name-display" class="text-sm font-semibold text-gray-800">Carregando...</p>
+                            <p id="user-role-display" class="text-xs text-gray-500">Carregando...</p>
+                        </div>
+                    </div>
+                    <button id="logout-button" class="mt-4 w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md">
+                        <i class="fas fa-sign-out-alt w-6 text-center"></i>
+                        <span class="ml-2">Sair</span>
+                    </button>
+                </div>
             </div>
-            <div class="items-center px-4 py-3 space-x-4">
-                <button id="confirmation-modal-cancel-button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                    Cancelar
-                </button>
-                <button id="confirmation-modal-confirm-button" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                    Confirmar
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 sm:p-8 overflow-y-auto">
+            <div class="flex flex-wrap justify-between items-center mb-8 gap-4">
+                <h2 class="text-2xl font-bold text-gray-800">Administração do Sistema</h2>
+                <div class="flex items-center space-x-4">
+                    <select id="companyFilter" onchange="filterByTeam()" class="border rounded-lg px-3 py-2 bg-white">
+                        <option value="all">Todas as Equipes</option>
+                    </select>
+                    <button onclick="openNewTeamModal()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                        + Adicionar Equipe
+                    </button>
+                    <button onclick="openNewUserModal()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                        + Adicionar Usuário
+                    </button>
+                </div>
+            </div>
+
+            <!-- Estatísticas Gerais -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-500">
+                    <p class="text-gray-500">Total de Usuários</p>
+                    <h3 id="total-users-stat" class="text-2xl font-bold">...</h3>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-green-500">
+                    <p class="text-gray-500">Administradores</p>
+                    <h3 id="admin-users-stat" class="text-2xl font-bold">...</h3>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-yellow-500">
+                    <p class="text-gray-500">Gestores</p>
+                    <h3 id="manager-users-stat" class="text-2xl font-bold">...</h3>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-purple-500">
+                    <p class="text-gray-500">Usuários</p>
+                    <h3 id="regular-users-stat" class="text-2xl font-bold">...</h3>
+                </div>
+            </div>
+
+            <!-- Gerenciamento de Equipes -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+                <h3 class="font-semibold text-lg text-gray-800 mb-4">Gerenciamento de Equipes</h3>
+                <div id="company-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards de equipes serão inseridos aqui -->
+                </div>
+            </div>
+
+            <!-- Gerenciamento de Usuários -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+                <h3 class="font-semibold text-lg text-gray-800 mb-4">Gerenciamento de Usuários</h3>
+                <div id="user-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards de usuários serão inseridos aqui -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para Adicionar/Editar Usuário -->
+    <div id="user-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3">
+                <h3 id="user-modal-title" class="text-lg font-medium text-gray-900">Adicionar Novo Usuário</h3>
+                <button onclick="closeUserModal()" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                 </button>
             </div>
+            <form id="user-form" onsubmit="saveUser(event)">
+                <input type="hidden" id="userId">
+                <div class="space-y-4">
+                    <div>
+                        <label for="userName" class="block text-sm font-medium text-gray-700">Nome</label>
+                        <input type="text" id="userName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="userEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="userEmail" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="userJobTitle" class="block text-sm font-medium text-gray-700">Cargo</label>
+                        <input type="text" id="userJobTitle" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="userPassword" class="block text-sm font-medium text-gray-700">Senha</label>
+                        <input type="password" id="userPassword" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Deixe em branco para não alterar">
+                    </div>
+                    <div>
+                        <label for="userRole" class="block text-sm font-medium text-gray-700">Perfil</label>
+                        <select id="userRole" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="USER">Usuário</option>
+                            <option value="GESTOR">Gestor</option>
+                            <option value="ADMIN">Administrador</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="userTeam" class="block text-sm font-medium text-gray-700">Equipe</label>
+                        <select id="userTeam" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <!-- Options will be populated by JS -->
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeUserModal()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300">Cancelar</button>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Salvar</button>
+                </div>
+            </form>
         </div>
     </div>
-</div>
 
-  <script src="main/api.js"></script>
-  <script src="main/nav-loader.js"></script>
-  <script src="main/admin.js"></script>
+    <!-- Modal para Adicionar/Editar Equipe -->
+    <div id="team-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3">
+                <h3 id="team-modal-title" class="text-lg font-medium text-gray-900">Adicionar Nova Equipe</h3>
+                <button onclick="closeTeamModal()" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+            <form id="team-form" onsubmit="saveTeam(event)">
+                <input type="hidden" id="teamId">
+                <div class="space-y-4">
+                    <div>
+                        <label for="teamName" class="block text-sm font-medium text-gray-700">Nome da Equipe</label>
+                        <input type="text" id="teamName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="teamManager" class="block text-sm font-medium text-gray-700">Gestor da Equipe</label>
+                        <select id="teamManager" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Selecione um gestor</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeTeamModal()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300">Cancelar</button>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação Genérico -->
+    <div id="confirmation-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                    <svg class="h-6 w-6 text-red-600" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mt-5" id="confirmation-modal-title">Excluir Item</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500" id="confirmation-modal-message">Tem certeza de que deseja excluir este item? Esta ação não pode ser desfeita.</p>
+                </div>
+                <div class="items-center px-4 py-3 space-x-4">
+                    <button id="confirmation-modal-cancel-button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                        Cancelar
+                    </button>
+                    <button id="confirmation-modal-confirm-button" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main/main.js"></script>
+    <script src="main/api.js"></script>
+    <script src="main/admin.js"></script>
 </body>
 </html>
