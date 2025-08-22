@@ -24,16 +24,18 @@ async function loadReports() {
     const filters = getReportFilters();
 
     try {
-        const generalReport = await api.getGeneralReport(filters);
-        renderGeneralReport(generalReport);
+        const [generalReport, engagementReport] = await Promise.all([
+            api.getGeneralReport(filters),
+            api.getEngagementReport(filters)
+        ]);
 
-        const engagementReport = await api.getEngagementReport(filters);
+        renderGeneralReport(generalReport);
         renderEngagementReport(engagementReport);
 
     } catch (error) {
         console.error('Erro ao carregar relatórios:', error);
-        generalContainer.innerHTML = `<p class="text-red-500">Não foi possível carregar o relatório geral. ${error.message}</p>`;
-        engagementContainer.innerHTML = `<p class="text-red-500">Não foi possível carregar o relatório de engajamento. ${error.message}</p>`;
+        generalContainer.innerHTML = `<p class="text-red-500">Não foi possível carregar o relatório geral. Tente novamente.</p>`;
+        engagementContainer.innerHTML = `<p class="text-red-500">Não foi possível carregar o relatório de engajamento. Tente novamente.</p>`;
     }
 }
 
@@ -54,18 +56,28 @@ async function loadUsersForFilter() {
 
 function renderGeneralReport(report) {
     const container = document.getElementById('general-report-container');
-    const data = report.data;
+    // A API já retorna o objeto de dados diretamente. Adicionamos uma verificação de segurança.
+    if (!report || typeof report.totalFeedbacks === 'undefined') {
+        container.innerHTML = '<p class="text-gray-500">Não há dados para o relatório geral.</p>';
+        return;
+    }
+
     container.innerHTML = `
         <h3 class="text-lg font-semibold text-gray-700 mb-4">Visão Geral dos Feedbacks</h3>
-        <p><strong>Total de Feedbacks:</strong> ${data.totalFeedbacks}</p>
+        <p><strong>Total de Feedbacks:</strong> ${report.totalFeedbacks}</p>
         <!-- Adicionar mais detalhes do relatório geral aqui -->
     `;
 }
 
-function renderEngagementReport(report) {
+function renderEngagementReport(users) {
     const container = document.getElementById('engagement-report-container');
-    const users = report.data;
-    let userListHTML = users.map(user => `<li>${user.nome} (${user._count.feedbacksCriados} feedbacks)</li>`).join('');
+    // A API já retorna a lista de usuários diretamente. Adicionamos uma verificação.
+    if (!users || users.length === 0) {
+        container.innerHTML = '<p class="text-gray-500">Não há dados de engajamento para exibir.</p>';
+        return;
+    }
+
+    let userListHTML = users.map(user => `<li>${user.nome} (${user._count.feedbacksCriados || 0} feedbacks)</li>`).join('');
 
     container.innerHTML = `
         <h3 class="text-lg font-semibold text-gray-700 mb-4">Top 10 Usuários Mais Engajados</h3>

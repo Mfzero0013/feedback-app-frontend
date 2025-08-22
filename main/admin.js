@@ -6,11 +6,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadTeams() {
     try {
-        const response = await api.getAllTeams();
-        renderTeamCards(response.data); 
-        populateTeamFilters(response.data);
+        const teams = await api.getAllTeams();
+        if (Array.isArray(teams)) {
+            renderTeamCards(teams);
+            populateTeamFilters(teams);
+        } else {
+            console.error('A resposta da API para equipes não é um array:', teams);
+        }
     } catch (error) {
         console.error('Erro ao carregar equipes:', error);
+        const container = document.getElementById('company-cards-container');
+        if (container) {
+            container.innerHTML = '<p class="text-red-500">Não foi possível carregar as equipes.</p>';
+        }
     }
 }
 
@@ -58,17 +66,18 @@ async function populateManagerSelect(selectedManagerId = null) {
     const managerSelect = document.getElementById('teamManager');
     managerSelect.innerHTML = '<option value="">Selecione um gestor</option>';
     try {
-        const response = await api.getManagers(); // Usa a nova rota
-        const managers = response.data;
-        managers.forEach(user => {
-            const option = document.createElement('option');
-            option.value = user.id;
-            option.textContent = user.nome;
-            if (user.id === selectedManagerId) {
-                option.selected = true;
-            }
-            managerSelect.appendChild(option);
-        });
+        const managers = await api.getManagers(); // Usa a nova rota
+        if (Array.isArray(managers)) {
+            managers.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = user.nome;
+                if (user.id === selectedManagerId) {
+                    option.selected = true;
+                }
+                managerSelect.appendChild(option);
+            });
+        }
     } catch (error) {
         console.error('Erro ao popular gestores:', error);
     }
@@ -144,17 +153,20 @@ function openNewUserModal() {
 
 async function openEditUserModal(id) {
     try {
-        const user = await api.getUserById(id);
-        document.getElementById('user-modal-title').innerText = 'Editar Usuário';
-        document.getElementById('userId').value = user.id;
-        document.getElementById('userName').value = user.nome;
-        document.getElementById('userEmail').value = user.email;
-        document.getElementById('userJobTitle').value = user.perfil?.jobTitle;
-        document.getElementById('userCompany').value = user.equipeId;
-        document.getElementById('userRole').value = user.perfil?.cargo === 'ADMINISTRADOR' ? 'admin' : 'user';
-        document.getElementById('userPassword').value = '';
-        document.getElementById('userPassword').required = false;
-        document.getElementById('user-modal').classList.remove('hidden');
+        // A API de usuários não foi criada, então essa função não pode ser implementada ainda.
+        // const user = await api.getUserById(id);
+        console.warn('A função openEditUserModal ainda não foi implementada pois a rota da API não existe.');
+        // O código abaixo é um placeholder e não vai funcionar sem a API.
+        // document.getElementById('user-modal-title').innerText = 'Editar Usuário';
+        // document.getElementById('userId').value = user.id;
+        // document.getElementById('userName').value = user.nome;
+        // document.getElementById('userEmail').value = user.email;
+        // document.getElementById('userJobTitle').value = user.perfil?.jobTitle;
+        // document.getElementById('userCompany').value = user.equipeId;
+        // document.getElementById('userRole').value = user.perfil?.cargo === 'ADMINISTRADOR' ? 'admin' : 'user';
+        // document.getElementById('userPassword').value = '';
+        // document.getElementById('userPassword').required = false;
+        // document.getElementById('user-modal').classList.remove('hidden');
     } catch (error) {
         console.error('Erro ao buscar dados do usuário:', error);
     }

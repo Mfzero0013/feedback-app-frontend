@@ -230,8 +230,8 @@ async function loadDashboardData() {
         ]);
 
         // Acessa a propriedade 'data' da resposta da API
-        const receivedFeedbacks = receivedResponse.data;
-        const sentFeedbacks = sentResponse.data;
+        const receivedFeedbacks = receivedResponse;
+        const sentFeedbacks = sentResponse;
 
         renderFeedbacks('received-feedbacks-container', receivedFeedbacks, 'received');
         renderFeedbacks('sent-feedbacks-container', sentFeedbacks, 'sent');
