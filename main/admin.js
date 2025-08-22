@@ -33,7 +33,7 @@ function renderTeamCards(teams) {
             <div class="bg-gray-50 p-4 rounded-lg shadow">
                 <h4 class="font-bold text-lg text-gray-800">${team.nome}</h4>
                 <p class="text-sm text-gray-600">Gestor: ${managerName}</p>
-                <p class="text-sm text-gray-500">${team.usuarios.length} membros</p>
+                <p class="text-sm text-gray-500">${team.usuarios ? team.usuarios.length : 0} membros</p>
                 <div class="mt-4 flex justify-end space-x-2">
                     <button onclick="openEditTeamModal(${team.id})" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Editar</button>
                     <button onclick="deleteTeam(${team.id})" class="bg-red-500 text-white px-3 py-1 rounded text-sm">Remover</button>
