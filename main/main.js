@@ -72,16 +72,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Mapeamento CORRETO de tipo de conta para o valor esperado pelo backend
-            const cargoMapping = {
-                'colaborador': 'COLABORADOR',
-                'gestor': 'ADMINISTRADOR',
-                'rh': 'ADMINISTRADOR',
-                'diretoria': 'SUPER_ADMINISTRADOR'
+            // Mapeamento de tipo de conta para o valor esperado pelo backend ('user' ou 'admin')
+            const accountTypeMapping = {
+                'colaborador': 'user',
+                'gestor': 'admin',
+                'rh': 'admin',
+                'diretoria': 'admin' // O backend só aceita 'user' ou 'admin'. Mapeando diretoria para 'admin'.
             };
 
-            // Pega o valor do backend correspondente ao que foi selecionado no formulário
-            const backendAccountType = cargoMapping[data.accountType];
+            const backendAccountType = accountTypeMapping[data.accountType];
 
             // ATUALIZA o valor do campo accountType com o valor que o backend espera
             if (backendAccountType) {
