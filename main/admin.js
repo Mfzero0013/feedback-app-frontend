@@ -143,11 +143,37 @@ function deleteTeam(id) {
 
 // --- Gestão de Usuários (Modal) ---
 
+async function populateTeamSelect() {
+    const teamSelect = document.getElementById('userCompany');
+    if (!teamSelect) {
+        console.error("Elemento 'userCompany' não encontrado.");
+        return;
+    }
+
+    try {
+        const teams = await api.getAllTeams();
+        teamSelect.innerHTML = '<option value="">Selecione uma equipe</option>';
+
+        if (Array.isArray(teams)) {
+            teams.forEach(team => {
+                const option = document.createElement('option');
+                option.value = team.id;
+                option.textContent = team.nome;
+                teamSelect.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Erro ao popular a lista de equipes:', error);
+        teamSelect.innerHTML = '<option value="" disabled>Erro ao carregar equipes</option>';
+    }
+}
+
 function openNewUserModal() {
     document.getElementById('user-modal-title').innerText = 'Adicionar Novo Usuário';
     document.getElementById('user-form').reset();
     document.getElementById('userId').value = '';
     document.getElementById('userPassword').required = true;
+    populateTeamSelect();
     document.getElementById('user-modal').classList.remove('hidden');
 }
 
