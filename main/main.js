@@ -134,13 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
         renderTeamsTable();
     }
 
-    const addCollaboratorForm = document.getElementById('add-collaborator-form');
-    if(addCollaboratorForm) {
-        addCollaboratorForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            addNewCollaborator();
-        });
-    }
 
     const saveButton = document.getElementById('save-collaborator-button');
     if(saveButton) {
@@ -230,12 +223,15 @@ async function loadDashboardStatsAndCharts() {
 async function loadDashboardData() {
     showLoader();
     try {
-        // Busca os feedbacks recebidos e enviados em paralelo
-        const receivedFeedbacksResponse = await api.getReceivedFeedbacks();
-        const sentFeedbacksResponse = await api.getSentFeedbacks();
+        // Busca os feedbacks recebidos e enviados em paralelo para otimizar o carregamento
+        const [receivedResponse, sentResponse] = await Promise.all([
+            api.getFeedbacks('received'),
+            api.getFeedbacks('sent')
+        ]);
 
-        const receivedFeedbacks = receivedFeedbacksResponse.feedbacks;
-        const sentFeedbacks = sentFeedbacksResponse.feedbacks;
+        // Acessa a propriedade 'data' da resposta da API
+        const receivedFeedbacks = receivedResponse.data;
+        const sentFeedbacks = sentResponse.data;
 
         renderFeedbacks('received-feedbacks-container', receivedFeedbacks, 'received');
         renderFeedbacks('sent-feedbacks-container', sentFeedbacks, 'sent');
@@ -356,9 +352,15 @@ async function renderGeneralReport() {
     if (!reportContainer) return;
 
     try {
-        const report = await api.getGeneralReport();
+        const response = await api.getGeneralReport();
+        const report = response.data; // Extrai os dados da propriedade 'data'
 
         reportContainer.innerHTML = ''; // Limpa o container
+
+        if (!report) {
+            reportContainer.innerHTML = '<p class="text-gray-500">Não há dados de relatório para exibir.</p>';
+            return;
+        }
 
         const title = document.createElement('h3');
         title.className = 'text-xl font-bold text-gray-800 mb-4';
@@ -371,16 +373,18 @@ async function renderGeneralReport() {
         // Card para total de feedbacks
         const totalCard = document.createElement('div');
         totalCard.className = 'bg-white p-4 rounded-lg shadow';
-        totalCard.innerHTML = `<h4 class="text-gray-500">Total de Feedbacks</h4><p class="text-2xl font-bold">${report.totalFeedbacks}</p>`;
+        totalCard.innerHTML = `<h4 class="text-gray-500">Total de Feedbacks</h4><p class="text-2xl font-bold">${report.totalFeedbacks || 0}</p>`;
         grid.appendChild(totalCard);
 
         // Cards para status
-        report.feedbacksByStatus.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'bg-white p-4 rounded-lg shadow';
-            card.innerHTML = `<h4 class="text-gray-500">${item.status.replace('_', ' ')}</h4><p class="text-2xl font-bold">${item._count.status}</p>`;
-            grid.appendChild(card);
-        });
+        if (report.feedbacksByStatus) {
+            report.feedbacksByStatus.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-4 rounded-lg shadow';
+                card.innerHTML = `<h4 class="text-gray-500">${item.status.replace('_', ' ')}</h4><p class="text-2xl font-bold">${item._count.status}</p>`;
+                grid.appendChild(card);
+            });
+        }
 
         reportContainer.appendChild(grid);
 

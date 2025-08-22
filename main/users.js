@@ -1,5 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadUsers();
+
+    const addCollaboratorButton = document.getElementById('add-collaborator-btn');
+    if (addCollaboratorButton) {
+        addCollaboratorButton.addEventListener('click', openNewUserModal);
+    }
 });
 
 async function loadUsers() {
@@ -33,8 +38,14 @@ function renderUsersTable(users) {
 }
 
 function openNewUserModal() {
-    // Lógica para abrir modal de novo usuário
-    console.log('Abrir modal de novo usuário');
+    document.getElementById('collaborator-modal-title').innerText = 'Adicionar Novo Colaborador';
+    document.getElementById('collaborator-form').reset();
+    document.getElementById('collaboratorId').value = '';
+    document.getElementById('collaborator-modal').classList.remove('hidden');
+}
+
+function closeCollaboratorModal() {
+    document.getElementById('collaborator-modal').classList.add('hidden');
 }
 
 function deleteUser(id) {
