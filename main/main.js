@@ -83,9 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
             data.cargo = cargoMapping[data.accountType];
             delete data.accountType; // Não enviar accountType para o backend
 
-            // Renomeia 'departamento' para 'equipeId' para corresponder ao backend
-            data.equipeId = data.departamento;
-            delete data.departamento;
 
             try {
                 const response = await api.registerUser(data);
