@@ -55,7 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Lógica para o formulário de CADASTRO
     const registrationForm = document.getElementById('registration-form');
     if (registrationForm) {
-        populateTeamsDropdown(); // Popula o dropdown de equipes ao carregar a página
 
         registrationForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -721,30 +720,6 @@ function hideConfirmationModal() {
     }
 }
 
-// --- Funções da Página de Cadastro ---
-
-/**
- * Busca as equipes da API e popula o dropdown de departamentos no formulário de cadastro.
- */
-async function populateTeamsDropdown() {
-    const departmentSelect = document.getElementById('departamento');
-    if (!departmentSelect) return;
-
-    try {
-        const teams = await api.getTeams(); // Usa a função existente em api.js
-        departmentSelect.innerHTML = '<option value="">Selecione um departamento</option>'; // Opção padrão
-
-        teams.forEach(team => {
-            const option = document.createElement('option');
-            option.value = team.id; // O valor será o ID da equipe
-            option.textContent = team.nome; // O texto será o nome da equipe
-            departmentSelect.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Erro ao carregar departamentos:', error);
-        departmentSelect.innerHTML = '<option value="">Não foi possível carregar os departamentos</option>';
-    }
-}
 
 // --- Funções da Página de Administração ---
 
