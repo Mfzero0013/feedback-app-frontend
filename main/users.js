@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const addCollaboratorButton = document.getElementById('add-collaborator-btn');
     if (addCollaboratorButton) {
-        addCollaboratorButton.addEventListener('click', openNewUserModal);
+        addCollaboratorButton.addEventListener('click', () => openCollaboratorModal());
     }
 });
 
