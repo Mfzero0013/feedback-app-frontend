@@ -72,15 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Mapeamento de tipo de conta para cargo
-            const cargoMapping = {
-                'colaborador': 'COLABORADOR',
-                'gestor': 'ADMINISTRADOR',
-                'rh': 'ADMINISTRADOR',
-                'diretoria': 'SUPER_ADMINISTRADOR'
-            };
-            data.cargo = cargoMapping[data.accountType];
-            delete data.accountType; // Não enviar accountType para o backend
 
 
             try {
