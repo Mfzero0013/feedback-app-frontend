@@ -96,6 +96,9 @@ const api = {
     updateUser: (userId, userData) => api.put(`/admin/users/${userId}`, userData),
     deleteUser: (userId) => api.delete(`/admin/users/${userId}`),
 
+    // --- Teams (Public) ---
+    getTeams: () => api.get('/public/teams'),
+
     // --- Teams (Admin) ---
     getTeamById: (id) => api.get(`/admin/teams/${id}`),
     getAllTeams: () => api.get('/admin/manage-teams'),
