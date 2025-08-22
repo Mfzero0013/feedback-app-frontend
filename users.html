@@ -61,9 +61,9 @@
         <!-- Main Content -->
         <main class="flex-1 p-6 sm:p-8 overflow-y-auto">
             <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold text-gray-800">Gerenciamento de Colaboradores</h2>
-                <button id="add-collaborator-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-                    + Adicionar Colaborador
+                <h2 class="text-2xl font-bold text-gray-800">Gerenciamento de Usuários</h2>
+                <button id="add-user-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                    + Adicionar Usuário
                 </button>
             </div>
 
@@ -80,7 +80,7 @@
                                 <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="collaborators-table-body" class="divide-y divide-gray-200">
+                        <tbody id="users-table-body" class="divide-y divide-gray-200">
                             <!-- Linhas da tabela serão inseridas dinamicamente -->
                         </tbody>
                     </table>
@@ -111,7 +111,7 @@
     <div id="collaborator-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
       <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
         <div class="flex justify-between items-center pb-3">
-          <h3 id="collaborator-modal-title" class="text-lg font-medium text-gray-900">Adicionar Novo Colaborador</h3>
+          <h3 id="user-modal-title" class="text-lg font-medium text-gray-900">Adicionar Novo Usuário</h3>
           <button onclick="closeCollaboratorModal()" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
           </button>

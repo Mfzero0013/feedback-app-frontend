@@ -1,30 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
-    loadUsers();
+    loadAllUsers();
 
-    const addCollaboratorButton = document.getElementById('add-collaborator-btn');
-    if (addCollaboratorButton) {
-        addCollaboratorButton.addEventListener('click', () => openCollaboratorModal());
+    const addUserButton = document.getElementById('add-user-btn');
+    if (addUserButton) {
+        addUserButton.addEventListener('click', openUserModal);
     }
 });
 
-async function loadUsers() {
+async function loadAllUsers() {
     try {
-        const response = await api.getUsers();
-        renderUsersTable(response.data);
+        // A rota getUsers() já busca todos os usuários (colaboradores e administradores)
+        const users = await api.getUsers(); 
+        renderUsersTable(users);
     } catch (error) {
         console.error('Erro ao carregar usuários:', error);
+        const tableBody = document.getElementById('users-table-body');
+        if(tableBody) tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Falha ao carregar usuários.</td></tr>';
     }
 }
 
 function renderUsersTable(users) {
-    const tableBody = document.getElementById('collaborators-table-body');
+    const tableBody = document.getElementById('users-table-body');
     if (!tableBody) return;
+
     tableBody.innerHTML = '';
+    if (!users || users.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Nenhum usuário encontrado.</td></tr>';
+        return;
+    }
+
     users.forEach(user => {
         const row = `
             <tr>
                 <td class="py-3 px-4">${user.nome}</td>
-                <td class="py-3 px-4">${user.jobTitle || 'N/A'}</td>
+                <td class="py-3 px-4">${user.cargo || 'N/A'}</td>
                 <td class="py-3 px-4">${user.equipe?.nome || 'Sem equipe'}</td>
                 <td class="py-3 px-4">${user.email}</td>
                 <td class="py-3 px-4">
@@ -37,20 +46,29 @@ function renderUsersTable(users) {
     });
 }
 
-function openNewUserModal() {
-    document.getElementById('collaborator-modal-title').innerText = 'Adicionar Novo Colaborador';
-    document.getElementById('collaborator-form').reset();
-    document.getElementById('collaboratorId').value = '';
-    document.getElementById('collaborator-modal').classList.remove('hidden');
+function openUserModal() {
+    // Esta função deve abrir o modal de usuário, que parece estar definido em users.html
+    // mas a lógica de abertura/fechamento pode estar em outro arquivo ou precisar ser criada.
+    // Por enquanto, vamos assumir que o modal tem o ID 'collaborator-modal' como no HTML.
+    const modal = document.getElementById('collaborator-modal');
+    if(modal) {
+        document.getElementById('user-modal-title').innerText = 'Adicionar Novo Usuário';
+        // Adicionar aqui a lógica para limpar o formulário se necessário
+        modal.classList.remove('hidden');
+    }
 }
 
 function closeCollaboratorModal() {
-    document.getElementById('collaborator-modal').classList.add('hidden');
+    const modal = document.getElementById('collaborator-modal');
+    if(modal) modal.classList.add('hidden');
 }
 
 function deleteUser(id) {
-    // Lógica para deletar usuário
     console.log(`Deletar usuário com ID: ${id}`);
+    // A lógica de exclusão precisa ser implementada, provavelmente chamando api.deleteUser(id)
 }
 
-// Adicione aqui a lógica para salvar e editar usuários, similar ao admin.js
+function openEditUserModal(id) {
+    console.log(`Editar usuário com ID: ${id}`);
+    // A lógica de edição precisa ser implementada
+}
