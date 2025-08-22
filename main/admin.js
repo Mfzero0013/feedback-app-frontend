@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadTeams();
-    loadUsers();
 });
 
 // --- Funções de Carregamento e Renderização --- 
@@ -8,21 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadTeams() {
     try {
         const response = await api.getAllTeams();
-        renderTeamCards(response); 
-        populateTeamFilters(response);
+        renderTeamCards(response.data); 
+        populateTeamFilters(response.data);
     } catch (error) {
         console.error('Erro ao carregar equipes:', error);
     }
 }
 
-async function loadUsers() {
-    try {
-        const users = await api.getAllUsers();
-        renderUserCards(users);
-    } catch (error) {
-        console.error('Erro ao carregar usuários:', error);
-    }
-}
 
 function renderTeamCards(teams) {
     const container = document.getElementById('company-cards-container');
@@ -45,25 +36,6 @@ function renderTeamCards(teams) {
     });
 }
 
-function renderUserCards(users) {
-    const container = document.getElementById('user-cards-container');
-    if (!container) return;
-    container.innerHTML = '';
-    users.forEach(user => {
-        const card = `
-            <div class="bg-gray-50 p-4 rounded-lg shadow">
-                <h4 class="font-bold text-lg text-gray-800">${user.nome}</h4>
-                <p class="text-sm text-gray-600">${user.perfil?.jobTitle || 'Cargo não definido'}</p>
-                <p class="text-sm text-gray-500">${user.equipe?.nome || 'Sem equipe'}</p>
-                <div class="mt-4 flex justify-end space-x-2">
-                    <button onclick="openEditUserModal(${user.id})" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Editar</button>
-                    <button onclick="deleteUser(${user.id})" class="bg-red-500 text-white px-3 py-1 rounded text-sm">Remover</button>
-                </div>
-            </div>
-        `;
-        container.innerHTML += card;
-    });
-}
 
 function populateTeamFilters(teams) {
     const teamFilter = document.getElementById('companyFilter'); // Mantido por consistência com HTML
@@ -86,8 +58,9 @@ async function populateManagerSelect(selectedManagerId = null) {
     const managerSelect = document.getElementById('teamManager');
     managerSelect.innerHTML = '<option value="">Selecione um gestor</option>';
     try {
-        const users = await api.getAllUsers();
-        users.forEach(user => {
+        const response = await api.getManagers(); // Usa a nova rota
+        const managers = response.data;
+        managers.forEach(user => {
             const option = document.createElement('option');
             option.value = user.id;
             option.textContent = user.nome;

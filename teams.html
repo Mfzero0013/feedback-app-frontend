@@ -26,9 +26,14 @@
         <div class="max-w-7xl mx-auto">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-3xl font-bold text-gray-800">Gestão de Equipes</h1>
-                <button id="add-team-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
-                    <i class="fas fa-plus mr-2"></i>Adicionar Equipe
-                </button>
+                <a href="teams.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100" data-permission="ADMIN">
+                    <i class="fas fa-shield-alt w-6 text-center"></i>
+                    <span class="ml-4">Equipes</span>
+                </a>
+                <a href="users.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100" data-permission="ADMIN">
+                    <i class="fas fa-users-cog w-6 text-center"></i>
+                    <span class="ml-4">Usuários</span>
+                </a>
             </div>
 
             <!-- Lista de Equipes -->

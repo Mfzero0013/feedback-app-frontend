@@ -85,12 +85,12 @@ const api = {
     updateProfile: (profileData) => api.put('/profile/me', profileData),
 
     // --- Feedbacks ---
-    getReceivedFeedbacks: () => api.get('/feedback?type=received'),
+    getFeedbacks: (type) => api.get(`/feedback?type=${type}`), // 'received' ou 'sent'
     getFeedbacksForUser: (userId) => api.get(`/feedback?type=received&userId=${userId}`),
     sendFeedback: (feedbackData) => api.post('/feedback', feedbackData),
-    getSentFeedbacks: () => api.get('/feedback?type=sent'),
 
     // --- Users (Admin) ---
+    getManagers: () => api.get('/admin/managers'), // Adicionada a nova rota
     getUsers: () => api.get('/admin/manage-users'),
     createUser: (userData) => api.post('/admin/users', userData),
     updateUser: (userId, userData) => api.put(`/admin/users/${userId}`, userData),
