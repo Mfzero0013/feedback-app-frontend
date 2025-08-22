@@ -85,8 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // ATUALIZA o valor do campo accountType com o valor que o backend espera
             if (backendAccountType) {
-                data.cargo = backendAccountType; // O backend espera o campo 'cargo'
-                delete data.accountType; // Remove o campo original
+                data.accountType = backendAccountType;
             } else {
                 showNotification('Tipo de conta selecionado não é reconhecido.', 'error');
                 return;
