@@ -72,6 +72,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            // Mapeamento CORRETO de tipo de conta para o valor esperado pelo backend
+            const cargoMapping = {
+                'colaborador': 'COLABORADOR',
+                'gestor': 'ADMINISTRADOR',
+                'rh': 'ADMINISTRADOR',
+                'diretoria': 'SUPER_ADMINISTRADOR'
+            };
+
+            // Pega o valor do backend correspondente ao que foi selecionado no formulário
+            const backendAccountType = cargoMapping[data.accountType];
+
+            // ATUALIZA o valor do campo accountType com o valor que o backend espera
+            if (backendAccountType) {
+                data.cargo = backendAccountType; // O backend espera o campo 'cargo'
+                delete data.accountType; // Remove o campo original
+            } else {
+                showNotification('Tipo de conta selecionado não é reconhecido.', 'error');
+                return;
+            }
+
 
 
             try {
