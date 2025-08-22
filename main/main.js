@@ -62,8 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 email: { required: true, message: 'O e-mail é obrigatório.' },
                 senha: { required: true, message: 'A senha é obrigatória.' },
                 departamento: { required: true, message: 'O departamento é obrigatório.' },
-                jobTitle: { required: false },
-                accountType: { required: false },
+                accountType: { required: true, message: 'O tipo de conta é obrigatório.' },
             };
 
             const { isValid, data } = validateForm(registrationForm, fields);
@@ -71,6 +70,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 showNotification('Por favor, preencha todos os campos obrigatórios.', 'warning');
                 return;
             }
+
+            // Mapeamento de tipo de conta para cargo
+            const cargoMapping = {
+                'colaborador': 'COLABORADOR',
+                'gestor': 'ADMINISTRADOR',
+                'rh': 'ADMINISTRADOR',
+                'diretoria': 'SUPER_ADMINISTRADOR'
+            };
+            data.cargo = cargoMapping[data.accountType];
+            delete data.accountType; // Não enviar accountType para o backend
 
             try {
                 const response = await api.registerUser(data);
