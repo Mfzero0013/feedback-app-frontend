@@ -15,7 +15,7 @@ async function loadAllUsers() {
     } catch (error) {
         console.error('Erro ao carregar usuários:', error);
         const tableBody = document.getElementById('users-table-body');
-        if(tableBody) tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Falha ao carregar usuários.</td></tr>';
+        if(tableBody) tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">Falha ao carregar usuários: ${error.message}</td></tr>`;
     }
 }
 
