@@ -210,16 +210,13 @@ async function saveUser(event) {
     const userData = {
         nome: document.getElementById('userName').value,
         email: document.getElementById('userEmail').value,
+        senha: document.getElementById('userPassword').value, // Adicionado o campo senha
         jobTitle: document.getElementById('userJobTitle').value,
         cargo: document.getElementById('userRole').value === 'admin' ? 'ADMINISTRADOR' : 'COLABORADOR',
         equipeId: equipeId || null,
         status: 'ATIVO' // Definindo status padrão no frontend
     };
 
-    const password = document.getElementById('userPassword').value;
-    if (password) {
-        userData.senha = password;
-    }
 
     try {
         if (userId) {
