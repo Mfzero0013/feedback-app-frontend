@@ -1,9 +1,38 @@
+let userIdToDelete = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     loadAllUsers();
 
     const addUserButton = document.getElementById('add-user-btn');
     if (addUserButton) {
         addUserButton.addEventListener('click', openUserModal);
+    }
+
+    // Lógica para o modal de exclusão
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (userIdToDelete) {
+                try {
+                    await api.deleteUser(userIdToDelete);
+                    loadAllUsers(); // Recarrega a lista
+                } catch (error) {
+                    console.error('Erro ao excluir usuário:', error);
+                } finally {
+                    closeDeleteModal();
+                    userIdToDelete = null;
+                }
+            }
+        });
+    }
+
+    if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener('click', () => {
+            closeDeleteModal();
+            userIdToDelete = null;
+        });
     }
 });
 
@@ -38,7 +67,7 @@ function renderUsersTable(users) {
                 <td class="py-3 px-4">${user.email}</td>
                 <td class="py-3 px-4">
                     <button onclick="openEditUserModal(${user.id})" class="text-indigo-600 hover:text-indigo-900">Editar</button>
-                    <button onclick="deleteUser(${user.id})" class="text-red-600 hover:text-red-900 ml-4">Excluir</button>
+                    <button onclick="openDeleteUserModal(${user.id})" class="text-red-600 hover:text-red-900 ml-4">Excluir</button>
                 </td>
             </tr>
         `;
@@ -63,9 +92,22 @@ function closeCollaboratorModal() {
     if(modal) modal.classList.add('hidden');
 }
 
-function deleteUser(id) {
-    console.log(`Deletar usuário com ID: ${id}`);
-    // A lógica de exclusão precisa ser implementada, provavelmente chamando api.deleteUser(id)
+function openDeleteUserModal(id) {
+    userIdToDelete = id;
+    const modal = document.getElementById('deleteModal');
+    if (modal) {
+        // Opcional: customizar o texto do modal para usuário
+        const modalText = modal.querySelector('p');
+        if(modalText) modalText.textContent = 'Você tem certeza de que deseja excluir este usuário? A ação não pode ser desfeita.';
+        modal.classList.remove('hidden');
+    }
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
 }
 
 function openEditUserModal(id) {
