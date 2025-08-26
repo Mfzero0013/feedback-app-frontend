@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadTeams();
+    loadUsers();
 });
 
 // --- Funções de Carregamento e Renderização --- 
@@ -22,6 +23,56 @@ async function loadTeams() {
     }
 }
 
+
+async function loadUsers() {
+    try {
+        const users = await api.getUsers();
+        if (Array.isArray(users)) {
+            renderUserCards(users);
+            updateStats(users);
+        } else {
+            console.error('A resposta da API para usuários não é um array:', users);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
+        const container = document.getElementById('user-cards-container');
+        if (container) {
+            container.innerHTML = '<p class="text-red-500">Não foi possível carregar os usuários.</p>';
+        }
+    }
+}
+
+function renderUserCards(users) {
+    const container = document.getElementById('user-cards-container');
+    if (!container) return;
+    container.innerHTML = '';
+    users.forEach(user => {
+        const card = `
+            <div class="bg-gray-50 p-4 rounded-lg shadow">
+                <h4 class="font-bold text-lg text-gray-800">${user.nome}</h4>
+                <p class="text-sm text-gray-600">${user.jobTitle || 'Cargo não definido'}</p>
+                <p class="text-sm text-gray-500">${user.email}</p>
+                <div class="mt-4 flex justify-end space-x-2">
+                    <button onclick="openEditUserModal(${user.id})" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Editar</button>
+                    <button onclick="deleteUser(${user.id})" class="bg-red-500 text-white px-3 py-1 rounded text-sm">Remover</button>
+                </div>
+            </div>
+        `;
+        container.innerHTML += card;
+    });
+}
+
+function updateStats(users) {
+    const totalUsers = users.length;
+    const adminUsers = users.filter(u => u.cargo === 'ADMINISTRADOR').length;
+    const managerUsers = users.filter(u => u.cargo === 'GESTOR').length;
+    const regularUsers = users.filter(u => u.cargo === 'COLABORADOR').length;
+
+    document.getElementById('total-users-stat').textContent = totalUsers;
+    document.getElementById('admin-users-stat').textContent = adminUsers;
+    document.getElementById('manager-users-stat').textContent = managerUsers;
+    document.getElementById('regular-users-stat').textContent = regularUsers;
+}
 
 function renderTeamCards(teams) {
     const container = document.getElementById('company-cards-container');

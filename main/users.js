@@ -72,3 +72,34 @@ function openEditUserModal(id) {
     console.log(`Editar usuário com ID: ${id}`);
     // A lógica de edição precisa ser implementada
 }
+
+async function saveCollaborator(event) {
+    event.preventDefault();
+    const userId = document.getElementById('collaboratorId').value;
+    const userData = {
+        nome: document.getElementById('collaboratorName').value,
+        email: document.getElementById('collaboratorEmail').value,
+        jobTitle: document.getElementById('collaboratorJobTitle').value,
+        // A senha só é enviada se for preenchida
+    };
+
+    const password = document.getElementById('collaboratorPassword').value;
+    if (password) {
+        userData.senha = password;
+    }
+
+    try {
+        if (userId) {
+            // Atualizar usuário existente
+            await api.updateUser(userId, userData);
+        } else {
+            // Criar novo usuário
+            await api.createUser(userData);
+        }
+        closeCollaboratorModal();
+        loadAllUsers(); // Recarrega a lista de usuários
+    } catch (error) {
+        console.error('Erro ao salvar usuário:', error);
+        // Adicionar feedback de erro para o usuário aqui, se desejar
+    }
+}
