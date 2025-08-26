@@ -72,7 +72,13 @@ async function request(url, options = {}) {
 // Objeto que agrupa todos os métodos da API de forma organizada
 const api = {
     get: (url) => request(url, { method: 'GET' }),
-    post: (url, data) => request(url, { method: 'POST', body: JSON.stringify(data) }),
+    post: (url, data) => {
+        const options = { method: 'POST' };
+        if (data) {
+            options.body = JSON.stringify(data);
+        }
+        return request(url, options);
+    },
     put: (url, data) => request(url, { method: 'PUT', body: JSON.stringify(data) }),
     delete: (url) => request(url, { method: 'DELETE' }),
 
