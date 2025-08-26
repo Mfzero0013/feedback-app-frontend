@@ -98,10 +98,10 @@ function setupFeedbackForm() {
 
         const feedbackData = {
             titulo: document.getElementById('titulo').value.trim(),
-            avaliadoId: document.getElementById('avaliadoId').value,
+            destinatarioId: document.getElementById('avaliadoId').value, // Corrigido para corresponder ao backend
             tipo: document.getElementById('tipo').value,
             descricao: document.getElementById('descricao').value.trim(),
-            isAnonymous: document.getElementById('isAnonymous').checked
+            anonimo: document.getElementById('isAnonymous').checked // Corrigido para corresponder ao backend
         };
 
         try {
