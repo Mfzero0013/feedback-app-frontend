@@ -66,8 +66,8 @@ function renderUsersTable(users) {
                 <td class="py-3 px-4">${user.equipe?.nome || 'Sem equipe'}</td>
                 <td class="py-3 px-4">${user.email}</td>
                 <td class="py-3 px-4">
-                    <button onclick="openEditUserModal(${user.id})" class="text-indigo-600 hover:text-indigo-900">Editar</button>
-                    <button onclick="openDeleteUserModal(${user.id})" class="text-red-600 hover:text-red-900 ml-4">Excluir</button>
+                    <button onclick="openEditUserModal('${user.id}')" class="text-indigo-600 hover:text-indigo-900">Editar</button>
+                    <button onclick="openDeleteUserModal('${user.id}')" class="text-red-600 hover:text-red-900 ml-4">Excluir</button>
                 </td>
             </tr>
         `;
