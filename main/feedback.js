@@ -83,6 +83,7 @@ function setupFeedbackForm() {
             validateField(document.getElementById('avaliadoId'), document.getElementById('avaliadoId-error'), 'Selecione um colaborador.'),
             validateField(document.getElementById('titulo'), document.getElementById('titulo-error'), 'O título é obrigatório.'),
             validateField(document.getElementById('tipo'), document.getElementById('tipo-error'), 'Selecione um tipo de feedback.'),
+            validateField(document.getElementById('nota'), document.getElementById('nota-error'), 'A nota é obrigatória.'),
             validateField(document.getElementById('descricao'), document.getElementById('descricao-error'), 'A descrição é obrigatória.')
         ];
         return validations.every(isValid => isValid);
@@ -100,6 +101,7 @@ function setupFeedbackForm() {
             titulo: document.getElementById('titulo').value.trim(),
             destinatarioId: document.getElementById('avaliadoId').value,
             tipo: document.getElementById('tipo').value,
+            nota: parseInt(document.getElementById('nota').value, 10),
             descricao: document.getElementById('descricao').value.trim(),
             anonimo: document.getElementById('isAnonymous').checked
         };
