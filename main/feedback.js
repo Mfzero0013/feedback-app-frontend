@@ -106,6 +106,8 @@ function setupFeedbackForm() {
             anonimo: document.getElementById('isAnonymous').checked
         };
 
+        console.log('Enviando dados do feedback:', feedbackData);
+
         try {
             await api.sendFeedback(feedbackData);
             showNotification('Feedback enviado com sucesso!', 'success');
