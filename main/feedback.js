@@ -10,6 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+function getClassificacaoBadge(classificacao) {
+    const colors = {
+        'OTIMO': 'bg-green-100 text-green-800',
+        'MEDIA': 'bg-yellow-100 text-yellow-800',
+        'RUIM': 'bg-red-100 text-red-800',
+    };
+    const defaultColor = 'bg-gray-100 text-gray-800';
+    const text = classificacao || 'N/A';
+    const colorClass = colors[classificacao] || defaultColor;
+    return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${colorClass}">${text}</span>`;
+}
+
 async function loadFeedbackHistory(userId) {
     const pageTitle = document.getElementById('pageTitle');
     const feedbackForm = document.getElementById('feedbackForm');
@@ -27,10 +39,9 @@ async function loadFeedbackHistory(userId) {
             historyBody.innerHTML = '';
             feedbacks.forEach(fb => {
                 const row = document.createElement('tr');
-                // TODO: Adicionar badge de cor para a classificação
                 row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap">${new Date(fb.createdAt).toLocaleDateString()}</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">${fb.classificacao || 'N/A'}</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap">${getClassificacaoBadge(fb.classificacao)}</td>
                     <td class="px-6 py-4 whitespace-nowrap">${fb.nota || 'N/A'}</td>
                     <td class="px-6 py-4">${fb.descricao}</td>
                 `;

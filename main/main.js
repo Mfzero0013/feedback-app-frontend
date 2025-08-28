@@ -296,10 +296,10 @@ function renderFeedbacks(containerId, feedbacks, type) {
             REJEITADO: 'bg-red-100 text-red-800'
         };
 
-        const typeClasses = {
-            ELOGIO: 'bg-green-100 text-green-800',
-            SUGESTAO: 'bg-purple-100 text-purple-800',
-            CRITICA: 'bg-orange-100 text-orange-800'
+        const classificacaoClasses = {
+            OTIMO: 'bg-green-100 text-green-800',
+            MEDIA: 'bg-yellow-100 text-yellow-800',
+            RUIM: 'bg-red-100 text-red-800'
         };
 
         const feedbackCard = document.createElement('div');
@@ -311,7 +311,7 @@ function renderFeedbacks(containerId, feedbacks, type) {
                     <p class="text-sm text-gray-600">${title}</p>
                 </div>
                 <div class="flex items-center space-x-2">
-                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${typeClasses[fb.tipo] || 'bg-gray-100 text-gray-800'}">${fb.tipo}</span>
+                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${classificacaoClasses[fb.classificacao] || 'bg-gray-100 text-gray-800'}">${fb.classificacao}</span>
                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClasses[fb.status] || 'bg-gray-100 text-gray-800'}">${fb.status.replace('_', ' ')}</span>
                 </div>
             </div>
