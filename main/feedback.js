@@ -47,7 +47,24 @@ async function loadFeedbackHistory(userId) {
 function setupFeedbackForm() {
     const feedbackForm = document.getElementById('feedbackForm');
     const avaliadoIdSelect = document.getElementById('avaliadoId');
+    const tipoSelect = document.getElementById('tipo'); // Adicionado
     const currentUser = JSON.parse(localStorage.getItem('userData'));
+
+    const loadFeedbackTypes = async () => {
+        try {
+            const feedbackTypes = await api.getFeedbackTypes();
+            tipoSelect.innerHTML = '<option value="">Selecione o tipo...</option>';
+            feedbackTypes.forEach(type => {
+                const option = document.createElement('option');
+                option.value = type.id;
+                option.textContent = type.nome;
+                tipoSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar tipos de feedback:', error);
+            showNotification('Falha ao carregar os tipos de feedback.', 'error');
+        }
+    };
 
     const loadUsers = async () => {
         try {
@@ -99,11 +116,11 @@ function setupFeedbackForm() {
 
         const feedbackData = {
             titulo: document.getElementById('titulo').value.trim(),
-            avaliadoId: document.getElementById('avaliadoId').value, // Chave alterada de destinatarioId
-            tipo: document.getElementById('tipo').value,
+            avaliadoId: document.getElementById('avaliadoId').value,
+            tipoId: document.getElementById('tipo').value,
             nota: parseInt(document.getElementById('nota').value, 10),
-            conteudo: document.getElementById('descricao').value.trim(), // Chave alterada de descricao
-            isAnonymous: document.getElementById('isAnonymous').checked // Chave alterada de anonimo
+            descricao: document.getElementById('descricao').value.trim(),
+            isAnonymous: document.getElementById('isAnonymous').checked
         };
 
         console.log('Enviando dados do feedback:', feedbackData);
@@ -121,5 +138,6 @@ function setupFeedbackForm() {
 
     if (feedbackForm) {
         loadUsers();
+        loadFeedbackTypes();
     }
 }

@@ -91,6 +91,7 @@ const api = {
     updateProfile: (profileData) => api.put('/profile/me', profileData),
 
     // --- Feedbacks ---
+    getFeedbackTypes: () => api.get('/feedback/types'), // Adicionado para buscar tipos
     getFeedbacks: (type) => api.get(`/feedback?type=${type}`), // 'received' ou 'sent'
     getFeedbacksForUser: (userId) => api.get(`/feedback?type=received&userId=${userId}`),
     sendFeedback: (feedbackData) => api.post('/feedback', feedbackData),
