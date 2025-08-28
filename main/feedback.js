@@ -99,11 +99,11 @@ function setupFeedbackForm() {
 
         const feedbackData = {
             titulo: document.getElementById('titulo').value.trim(),
-            destinatarioId: document.getElementById('avaliadoId').value,
+            avaliadoId: document.getElementById('avaliadoId').value, // Chave alterada de destinatarioId
             tipo: document.getElementById('tipo').value,
             nota: parseInt(document.getElementById('nota').value, 10),
-            descricao: document.getElementById('descricao').value.trim(),
-            anonimo: document.getElementById('isAnonymous').checked
+            conteudo: document.getElementById('descricao').value.trim(), // Chave alterada de descricao
+            isAnonymous: document.getElementById('isAnonymous').checked // Chave alterada de anonimo
         };
 
         console.log('Enviando dados do feedback:', feedbackData);
