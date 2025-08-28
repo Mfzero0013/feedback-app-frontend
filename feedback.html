@@ -78,12 +78,25 @@
                 </div>
 
                 <div>
-                    <label for="tipo" class="block mb-2 text-sm font-medium text-gray-700">Tipo de Feedback</label>
-                    <select id="tipo" name="tipo" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5">
-                        <option value="">Selecione o tipo...</option>
-                        <!-- Opções preenchidas dinamicamente via JavaScript -->
-                    </select>
-                    <p id="tipo-error" class="text-red-500 text-xs mt-1"></p>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Classificação</label>
+                    <div id="flag-container" class="flex items-center space-x-6 pt-1">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="classificacao" value="OTIMO" class="hidden peer">
+                            <span class="w-5 h-5 rounded-full bg-gray-300 peer-checked:bg-green-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-green-500 transition-all"></span>
+                            <span class="text-sm">Ótimo</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="classificacao" value="MEDIA" class="hidden peer">
+                            <span class="w-5 h-5 rounded-full bg-gray-300 peer-checked:bg-yellow-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-yellow-500 transition-all"></span>
+                            <span class="text-sm">Média</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="classificacao" value="RUIM" class="hidden peer">
+                            <span class="w-5 h-5 rounded-full bg-gray-300 peer-checked:bg-red-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-red-500 transition-all"></span>
+                            <span class="text-sm">Ruim</span>
+                        </label>
+                    </div>
+                    <p id="classificacao-error" class="text-red-500 text-xs mt-1"></p>
                 </div>
 
                 <div>

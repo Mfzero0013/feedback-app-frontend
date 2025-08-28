@@ -27,9 +27,10 @@ async function loadFeedbackHistory(userId) {
             historyBody.innerHTML = '';
             feedbacks.forEach(fb => {
                 const row = document.createElement('tr');
+                // TODO: Adicionar badge de cor para a classificação
                 row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap">${new Date(fb.createdAt).toLocaleDateString()}</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">${fb.tipo.nome}</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">${fb.classificacao || 'N/A'}</span></td>
                     <td class="px-6 py-4 whitespace-nowrap">${fb.nota || 'N/A'}</td>
                     <td class="px-6 py-4">${fb.descricao}</td>
                 `;
@@ -47,24 +48,7 @@ async function loadFeedbackHistory(userId) {
 function setupFeedbackForm() {
     const feedbackForm = document.getElementById('feedbackForm');
     const avaliadoIdSelect = document.getElementById('avaliadoId');
-    const tipoSelect = document.getElementById('tipo'); // Adicionado
     const currentUser = JSON.parse(localStorage.getItem('userData'));
-
-    const loadFeedbackTypes = async () => {
-        try {
-            const feedbackTypes = await api.getFeedbackTypes();
-            tipoSelect.innerHTML = '<option value="">Selecione o tipo...</option>';
-            feedbackTypes.forEach(type => {
-                const option = document.createElement('option');
-                option.value = type.id;
-                option.textContent = type.nome;
-                tipoSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Erro ao carregar tipos de feedback:', error);
-            showNotification('Falha ao carregar os tipos de feedback.', 'error');
-        }
-    };
 
     const loadUsers = async () => {
         try {
@@ -87,11 +71,25 @@ function setupFeedbackForm() {
     const validateField = (field, errorField, message) => {
         if (!field.value.trim()) {
             errorField.textContent = message;
-            field.classList.add('border-red-500');
+            if (field.nodeName !== 'INPUT' || field.type !== 'radio') {
+                field.classList.add('border-red-500');
+            }
             return false;
         }
         errorField.textContent = '';
-        field.classList.remove('border-red-500');
+        if (field.nodeName !== 'INPUT' || field.type !== 'radio') {
+            field.classList.remove('border-red-500');
+        }
+        return true;
+    };
+
+    const validateRadioGroup = (groupName, errorField, message) => {
+        const selected = document.querySelector(`input[name="${groupName}"]:checked`);
+        if (!selected) {
+            errorField.textContent = message;
+            return false;
+        }
+        errorField.textContent = '';
         return true;
     };
 
@@ -99,7 +97,7 @@ function setupFeedbackForm() {
         const validations = [
             validateField(document.getElementById('avaliadoId'), document.getElementById('avaliadoId-error'), 'Selecione um colaborador.'),
             validateField(document.getElementById('titulo'), document.getElementById('titulo-error'), 'O título é obrigatório.'),
-            validateField(document.getElementById('tipo'), document.getElementById('tipo-error'), 'Selecione um tipo de feedback.'),
+            validateRadioGroup('classificacao', document.getElementById('classificacao-error'), 'Selecione uma classificação.'),
             validateField(document.getElementById('nota'), document.getElementById('nota-error'), 'A nota é obrigatória.'),
             validateField(document.getElementById('descricao'), document.getElementById('descricao-error'), 'A descrição é obrigatória.')
         ];
@@ -117,7 +115,7 @@ function setupFeedbackForm() {
         const feedbackData = {
             titulo: document.getElementById('titulo').value.trim(),
             avaliadoId: document.getElementById('avaliadoId').value,
-            tipoId: document.getElementById('tipo').value,
+            classificacao: document.querySelector('input[name="classificacao"]:checked').value,
             nota: parseInt(document.getElementById('nota').value, 10),
             descricao: document.getElementById('descricao').value.trim(),
             isAnonymous: document.getElementById('isAnonymous').checked
@@ -138,6 +136,5 @@ function setupFeedbackForm() {
 
     if (feedbackForm) {
         loadUsers();
-        loadFeedbackTypes();
     }
 }
