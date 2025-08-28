@@ -31,7 +31,7 @@ async function loadFeedbackHistory(userId) {
                     <td class="px-6 py-4 whitespace-nowrap">${new Date(fb.createdAt).toLocaleDateString()}</td>
                     <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">${fb.tipo.nome}</span></td>
                     <td class="px-6 py-4 whitespace-nowrap">${fb.nota || 'N/A'}</td>
-                    <td class="px-6 py-4">${fb.conteudo}</td>
+                    <td class="px-6 py-4">${fb.descricao}</td>
                 `;
                 historyBody.appendChild(row);
             });
