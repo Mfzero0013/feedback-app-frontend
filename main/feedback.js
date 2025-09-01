@@ -127,7 +127,7 @@ function setupFeedbackForm() {
             titulo: document.getElementById('titulo').value.trim(),
             avaliadoId: document.getElementById('avaliadoId').value,
             classificacao: document.querySelector('input[name="classificacao"]:checked').value,
-            nota: parseInt(document.getElementById('nota').value, 10),
+            nota: document.getElementById('nota').value.trim(),
             descricao: document.getElementById('descricao').value.trim(),
             isAnonymous: document.getElementById('isAnonymous').checked
         };

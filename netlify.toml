@@ -1,9 +1,12 @@
 [build]
-  # Define o diretório base para o build (relativo ao diretório do `netlify.toml`).
-  base = "../data/"
+  # Diretório que será publicado (relativo à raiz do repositório)
+  publish = "."
 
-  # Diretório que será publicado (relativo à raiz do projeto).
-  publish = "html/"
+  # Comandos para construir o projeto
+  command = ""
 
-  # Comando para construir o projeto, executado a partir do diretório 'base'.
-  command = "npm install && npm run build:css && npm run build:icon"
+# Configurações de redirecionamento para SPA (Single Page Application)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
