@@ -63,8 +63,8 @@
             <!-- Formulário -->
             <form id="feedbackForm" class="bg-white p-8 rounded-xl shadow-lg space-y-6 max-w-4xl mx-auto">
                 <div>
-                    <label for="avaliadoId" class="block mb-2 text-sm font-medium text-gray-700">Para quem é o feedback?</label>
-                    <select id="avaliadoId" name="avaliadoId" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5">
+                    <label for="avaliadoId" class="block mb-2 text-sm font-medium text-gray-700">Para quem é o feedback? <span class="text-red-500">*</span></label>
+                    <select id="avaliadoId" name="avaliadoId" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" required>
                         <option value="">Selecione um colaborador...</option>
                         <!-- Opções preenchidas dinamicamente -->
                     </select>
@@ -72,13 +72,13 @@
                 </div>
 
                 <div>
-                    <label for="titulo" class="block mb-2 text-sm font-medium text-gray-700">Título</label>
-                    <input type="text" id="titulo" name="titulo" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="Ex: Ótima apresentação no projeto X">
+                    <label for="titulo" class="block mb-2 text-sm font-medium text-gray-700">Título <span class="text-red-500">*</span></label>
+                    <input type="text" id="titulo" name="titulo" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="Ex: Ótima apresentação no projeto X" required>
                     <p id="titulo-error" class="text-red-500 text-xs mt-1"></p>
                 </div>
 
                 <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-700">Classificação</label>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Classificação <span class="text-red-500">*</span></label>
                     <div id="flag-container" class="flex items-center space-x-6 pt-1">
                         <label class="flex items-center space-x-2 cursor-pointer">
                             <input type="radio" name="classificacao" value="OTIMO" class="hidden peer">
@@ -144,10 +144,30 @@
     </div>
 
     <script>
-        // Logic to handle feedback history display is now in feedback.js
+        // Verificação de carregamento dos scripts
+        console.log('Verificando carregamento dos scripts...');
+        
+        // Verifica se a API está disponível
+        function checkAPILoaded() {
+            if (typeof api === 'undefined') {
+                console.error('Erro: O objeto api não foi carregado corretamente!');
+                alert('Erro ao carregar as dependências da aplicação. Por favor, recarregue a página.');
+                return false;
+            }
+            console.log('API carregada com sucesso:', api);
+            return true;
+        }
+        
+        // Adiciona um event listener para quando todos os scripts forem carregados
+        window.addEventListener('load', function() {
+            console.log('Todos os recursos terminaram o carregamento!');
+            if (!checkAPILoaded()) {
+                console.error('A API não foi carregada corretamente!');
+            }
+        });
     </script>
-    <script src="main/main.js"></script>
-    <script src="main/api.js"></script>
-    <script src="main/feedback.js"></script>
+    <script src="main/main.js" onerror="console.error('Erro ao carregar main.js')"></script>
+    <script src="main/api.js" onerror="console.error('Erro ao carregar api.js')"></script>
+    <script src="main/feedback.js" onerror="console.error('Erro ao carregar feedback.js')"></script>
 </body>
 </html>

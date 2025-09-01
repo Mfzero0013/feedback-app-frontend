@@ -97,7 +97,17 @@ const api = {
 
     // --- Users (Admin) ---
     getManagers: () => api.get('/admin/managers'), // Adicionada a nova rota
-    getUsers: () => api.get('/admin/manage-users'),
+    getUsers: async () => {
+        console.log('Iniciando busca de usuários...');
+        try {
+            const users = await api.get('/admin/manage-users');
+            console.log('Usuários recebidos da API:', users);
+            return users;
+        } catch (error) {
+            console.error('Erro ao buscar usuários:', error);
+            throw error; // Propaga o erro para quem chamou
+        }
+    },
     createUser: (userData) => api.post('/admin/users', userData),
     updateUser: (userId, userData) => api.put(`/admin/users/${userId}`, userData),
     deleteUser: (userId) => api.delete(`/admin/users/${userId}`),
