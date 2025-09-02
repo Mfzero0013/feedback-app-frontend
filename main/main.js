@@ -87,6 +87,106 @@ if (existingScript && existingScript.onload) {
 }
 
 /**
+ * Configura o formulário de login
+ */
+function setupLoginForm() {
+    const loginForm = document.getElementById('login-form');
+    if (!loginForm) return;
+
+    const loginButton = loginForm.querySelector('button[type="submit"]');
+    const originalButtonText = loginButton ? loginButton.innerHTML : '';
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('toggle-password');
+
+    // Toggle password visibility
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.classList.toggle('fa-eye');
+            togglePassword.classList.toggle('fa-eye-slash');
+        });
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Reset error messages
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        
+        // Get form data
+        const email = emailInput ? emailInput.value.trim() : '';
+        const password = passwordInput ? passwordInput.value : '';
+        
+        // Basic validation
+        let isValid = true;
+        
+        if (!email) {
+            document.getElementById('email-error').textContent = 'Por favor, insira seu e-mail';
+            isValid = false;
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            document.getElementById('email-error').textContent = 'Por favor, insira um e-mail válido';
+            isValid = false;
+        }
+        
+        if (!password) {
+            document.getElementById('password-error').textContent = 'Por favor, insira sua senha';
+            isValid = false;
+        }
+        
+        if (!isValid) return;
+        
+        // Disable button and show loading state
+        if (loginButton) {
+            loginButton.disabled = true;
+            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+        }
+        
+        try {
+            // Call login API
+            const response = await api.auth.login(email, password);
+            
+            // Store auth data
+            setAuthData(response.user, response.token);
+            
+            // Show success message
+            notificationService.success('Login realizado com sucesso!');
+            
+            // Redirect to dashboard or previous page
+            const redirectUrl = getAndClearRedirectUrl() || 'dashboard.html';
+            setTimeout(() => {
+                window.location.href = redirectUrl;
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Login error:', error);
+            
+            // Show appropriate error message
+            let errorMessage = 'Erro ao fazer login. Verifique suas credenciais.';
+            if (error.response) {
+                if (error.response.status === 401) {
+                    errorMessage = 'E-mail ou senha incorretos.';
+                } else if (error.response.status >= 500) {
+                    errorMessage = 'Erro no servidor. Tente novamente mais tarde.';
+                } else if (error.response.data && error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                }
+            }
+            
+            notificationService.error(errorMessage);
+            
+        } finally {
+            // Re-enable button
+            if (loginButton) {
+                loginButton.disabled = false;
+                loginButton.innerHTML = originalButtonText;
+            }
+        }
+    });
+}
+
+/**
  * Atualiza a interface do usurio com os dados do perfil
  * @param {Object} userData - Dados do usurio
  */
@@ -201,53 +301,8 @@ function setupRegistrationForm() {
 
 /**
  * Configura o formulrio de login
- */
-function setupLoginForm() {
-    const loginForm = document.getElementById('login-form');
-    if (!loginForm) return;
-
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const fields = {
-            email: { required: true, message: 'O e-mail  obrigatrio.' },
-            senha: { required: true, message: 'A senha  obrigatria.' },
-        };
-
-        const { isValid, data: formData } = validateForm(loginForm, fields);
-        if (!isValid) {
-            notificationService.warning('Por favor, preencha todos os campos obrigatrios.');
-            return;
-        }
-
-        try {
-            const loginButton = loginForm.querySelector('button[type="submit"]');
-            const originalText = loginButton.innerHTML;
-            loginButton.disabled = true;
-            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
-
-            // Realiza o login
-            const response = await api.auth.login(formData.email, formData.senha);
-            
-            // Armazena os dados de autenticao
-            setAuthData(response.user, response.token);
-            
-            // Redireciona para a pgina inicial ou para a URL salva
-            const redirectUrl = getAndClearRedirectUrl();
-            notificationService.success('Login realizado com sucesso!');
-            setTimeout(() => {
-                window.location.href = redirectUrl;
-            }, 1000);
-            
-        } catch (error) {
-            console.error('Erro no login:', error);
-            notificationService.error(error.message || 'No foi possvel fazer login. Verifique suas credenciais.');
-            
-                // Reativa o boto de login
-            const loginButton = loginForm.querySelector('button[type="submit"]');
-            if (loginButton) {
-                loginButton.disabled = false;
-                loginButton.innerHTML = originalText;
+// Configura a página de perfil se estiver na página correta
+function setupProfilePage() {
     try {
         // Configura a pgina de perfil se estiver na pgina correta
         if (window.location.pathname.endsWith('profile.html')) {
@@ -297,13 +352,11 @@ function setupLoginForm() {
         }
 
     } catch (error) {
-        console.error('Erro ao carregar a pgina:', error);
+        console.error('Erro ao carregar a página:', error);
+        notificationService.error('Ocorreu um erro ao carregar a página.');
         notificationService.error('Ocorreu um erro ao carregar a pgina. Tente novamente.');
     }
 }
-
-// Funes de pgina
-function setupProfilePage() {
     // Configura a pgina de perfil
 }
 
