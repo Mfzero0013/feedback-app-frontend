@@ -31,6 +31,15 @@
                         <input type="password" id="password" name="senha" class="w-full p-2 pl-10 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
                         <i class="fa fa-eye absolute text-gray-400 top-10 right-3 cursor-pointer" id="toggle-password"></i>
                         <div id="password-error" class="text-red-500 text-sm h-4 mt-1"></div>
+                        <div id="password-strength" class="mt-2 hidden">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs text-gray-500">Força da senha:</span>
+                                <span id="strength-label" class="text-xs font-medium"></span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                <div id="strength-meter" class="h-1.5 rounded-full transition-all duration-300" style="width: 0%;"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <button type="submit" class="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition-colors font-bold">Entrar</button>

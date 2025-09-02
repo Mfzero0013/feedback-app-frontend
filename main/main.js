@@ -1,6 +1,6 @@
-// Importa os servios necessrios
-import { api } from './services/api.service';
-import notificationService from './services/notification.service';
+// Importa os serviços necessários
+import { api } from './services/api.service.js';
+import notificationService from './services/notification.service.js';
 import { 
     getAuthData, 
     redirectToLogin, 
@@ -8,8 +8,8 @@ import {
     isAuthenticated, 
     setAuthData, 
     clearAuthData 
-} from './services/auth.service';
-import { ERROR_MESSAGES } from './constants';
+} from './services/auth.service.js';
+import { ERROR_MESSAGES } from './constants/index.js';
 
 /**
  * Valida os campos de um formulário
@@ -74,8 +74,8 @@ function validateForm(form, fields) {
  * @returns {string} String segura para HTML
  */
 function escapeHtml(unsafe) {
+    if (typeof unsafe !== 'string') return '';
     return unsafe
-        .toString()
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
@@ -162,6 +162,26 @@ if (existingScript && existingScript.onload) {
  * Configura o formulário de login
  */
 function setupLoginForm() {
+    // Constantes para mensagens
+    const MESSAGES = {
+        EMAIL_REQUIRED: 'Por favor, insira seu e-mail',
+        EMAIL_INVALID: 'E-mail inválido. Exemplo: nome@exemplo.com',
+        PASSWORD_REQUIRED: 'Por favor, insira sua senha',
+        PASSWORD_TOO_SHORT: 'A senha deve ter no mínimo 8 caracteres',
+        LOGIN_SUCCESS: 'Login realizado com sucesso!',
+        LOGIN_ERROR: 'E-mail ou senha incorretos',
+        SERVER_ERROR: 'Erro no servidor. Tente novamente mais tarde.',
+        NETWORK_ERROR: 'Erro de conexão. Verifique sua internet.'
+    };
+    
+    // Constantes para classes CSS
+    const CLASSES = {
+        ERROR: 'error',
+        SUCCESS: 'success',
+        LOADING: 'loading',
+        HIDDEN: 'hidden'
+    };
+    // Elementos do DOM
     const loginForm = document.getElementById('login-form');
     if (!loginForm) return;
 
@@ -170,44 +190,173 @@ function setupLoginForm() {
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const togglePassword = document.getElementById('toggle-password');
+    const emailError = document.getElementById('email-error');
+    const passwordError = document.getElementById('password-error');
+    const formFeedback = document.getElementById('form-feedback');
+
+    // Função para verificar força da senha
+    const getPasswordStrength = (password) => {
+        if (!password) return { score: 0, label: 'Fraca', color: 'red-500' };
+        
+        let score = 0;
+        const hasMinLength = password.length >= 8;
+        const hasNumber = /\d/.test(password);
+        const hasLetter = /[a-zA-Z]/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        const hasUpper = /[A-Z]/.test(password);
+        const hasLower = /[a-z]/.test(password);
+        
+        if (hasMinLength) score++;
+        if (hasNumber) score++;
+        if (hasLetter) score++;
+        if (hasSpecialChar) score++;
+        if (hasUpper && hasLower) score++;
+        
+        if (score <= 2) return { score, label: 'Fraca', color: 'red-500' };
+        if (score <= 3) return { score, label: 'Média', color: 'yellow-500' };
+        if (score <= 4) return { score, label: 'Forte', color: 'green-500' };
+        return { score, label: 'Muito Forte', color: 'green-700' };
+    };
+    
+    // Funções de validação
+    const validateEmail = (email) => {
+        if (!email) return { isValid: false, message: MESSAGES.EMAIL_REQUIRED };
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return { isValid: false, message: MESSAGES.EMAIL_INVALID };
+        }
+        return { isValid: true };
+    };
+
+    const validatePassword = (password) => {
+        if (!password) return { isValid: false, message: MESSAGES.PASSWORD_REQUIRED };
+        if (password.length < 8) return { isValid: false, message: MESSAGES.PASSWORD_TOO_SHORT };
+        return { isValid: true };
+    };
+
+    // Funções de feedback
+    const showError = (element, message) => {
+        if (!element) return;
+        element.textContent = message;
+        element.classList.remove(CLASSES.HIDDEN);
+        element.setAttribute('role', 'alert');
+        element.setAttribute('aria-live', 'assertive');
+    };
+
+    const clearError = (element) => {
+        if (!element) return;
+        element.textContent = '';
+        element.classList.add(CLASSES.HIDDEN);
+        element.removeAttribute('role');
+        element.removeAttribute('aria-live');
+    };
+
+    const setLoading = (isLoading) => {
+        if (!loginButton) return;
+        
+        if (isLoading) {
+            loginButton.disabled = true;
+            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+            loginButton.setAttribute('aria-busy', 'true');
+        } else {
+            loginButton.disabled = false;
+            loginButton.innerHTML = originalButtonText;
+            loginButton.setAttribute('aria-busy', 'false');
+        }
+    };
+
+    // Validação em tempo real
+    if (emailInput) {
+        emailInput.addEventListener('input', () => {
+            const { isValid, message } = validateEmail(emailInput.value);
+            if (!isValid && emailInput.value) {
+                showError(emailError, message);
+            } else {
+                clearError(emailError);
+            }
+        });
+    }
+
+    if (passwordInput) {
+        const passwordStrength = document.getElementById('password-strength');
+        const strengthMeter = document.getElementById('strength-meter');
+        const strengthLabel = document.getElementById('strength-label');
+        
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            const { isValid, message } = validatePassword(password);
+            
+            // Atualizar mensagem de erro
+            if (!isValid && password) {
+                showError(passwordError, message);
+            } else {
+                clearError(passwordError);
+            }
+            
+            // Atualizar indicador de força
+            if (password) {
+                const { score, label, color } = getPasswordStrength(password);
+                const width = (score / 4) * 100;
+                
+                passwordStrength.classList.remove('hidden');
+                strengthMeter.style.width = `${width}%`;
+                strengthMeter.className = `h-1.5 rounded-full transition-all duration-300 bg-${color}`;
+                strengthLabel.textContent = label;
+                strengthLabel.className = `text-xs font-medium text-${color}`;
+            } else {
+                passwordStrength.classList.add('hidden');
+            }
+        });
+    }
 
     // Toggle password visibility
     if (togglePassword && passwordInput) {
+        togglePassword.setAttribute('aria-label', 'Mostrar senha');
         togglePassword.addEventListener('click', () => {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
             togglePassword.classList.toggle('fa-eye');
             togglePassword.classList.toggle('fa-eye-slash');
+            togglePassword.setAttribute('aria-label', isPassword ? 'Ocultar senha' : 'Mostrar senha');
         });
     }
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        // Reset error messages
-        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        // Limpar erros anteriores
+        clearError(emailError);
+        clearError(passwordError);
         
-        // Get form data
+        // Obter valores dos campos
         const email = emailInput ? emailInput.value.trim() : '';
         const password = passwordInput ? passwordInput.value : '';
         
-        // Basic validation
-        let isValid = true;
+        // Validar campos
+        const emailValidation = validateEmail(email);
+        const passwordValidation = validatePassword(password);
         
-        if (!email) {
-            document.getElementById('email-error').textContent = 'Por favor, insira seu e-mail';
-            isValid = false;
-        } else if (!/\S+@\S+\.\S+/.test(email)) {
-            document.getElementById('email-error').textContent = 'Por favor, insira um e-mail válido';
-            isValid = false;
+        let isValid = emailValidation.isValid && passwordValidation.isValid;
+        
+        // Mostrar erros de validação
+        if (!emailValidation.isValid) {
+            showError(emailError, emailValidation.message);
+            emailInput?.focus();
         }
         
-        if (!password) {
-            document.getElementById('password-error').textContent = 'Por favor, insira sua senha';
-            isValid = false;
+        if (!passwordValidation.isValid) {
+            showError(passwordError, passwordValidation.message);
+            if (isValid) passwordInput?.focus();
         }
         
-        if (!isValid) return;
+        if (!isValid) {
+            // Animar o formulário para indicar erro
+            loginForm.classList.add('shake');
+            setTimeout(() => loginForm.classList.remove('shake'), 500);
+            return;
+        }
+        
+        // Iniciar estado de carregamento
+        setLoading(true);
         
         // Disable button and show loading state
         if (loginButton) {
@@ -216,44 +365,40 @@ function setupLoginForm() {
         }
         
         try {
-            // Call login API
             const response = await api.auth.login(email, password);
             
-            // Store auth data
+            if (!response?.user || !response?.token) {
+                throw new Error('Resposta de login inválida');
+            }
+            
             setAuthData(response.user, response.token);
+            notificationService.success(MESSAGES.LOGIN_SUCCESS);
             
-            // Show success message
-            notificationService.success('Login realizado com sucesso!');
-            
-            // Redirect to dashboard or previous page
+            // Redirecionar após pequeno atraso
             const redirectUrl = getAndClearRedirectUrl() || 'dashboard.html';
-            setTimeout(() => {
-                window.location.href = redirectUrl;
-            }, 1000);
+            setTimeout(() => window.location.href = redirectUrl, 800);
             
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('Erro no login:', error);
             
-            // Show appropriate error message
-            let errorMessage = 'Erro ao fazer login. Verifique suas credenciais.';
+            let errorMessage = MESSAGES.LOGIN_ERROR;
+            
             if (error.response) {
                 if (error.response.status === 401) {
-                    errorMessage = 'E-mail ou senha incorretos.';
+                    errorMessage = MESSAGES.LOGIN_ERROR;
                 } else if (error.response.status >= 500) {
-                    errorMessage = 'Erro no servidor. Tente novamente mais tarde.';
-                } else if (error.response.data && error.response.data.message) {
+                    errorMessage = MESSAGES.SERVER_ERROR;
+                } else if (error.response.data?.message) {
                     errorMessage = error.response.data.message;
                 }
+            } else if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
+                errorMessage = MESSAGES.NETWORK_ERROR;
             }
             
             notificationService.error(errorMessage);
             
         } finally {
-            // Re-enable button
-            if (loginButton) {
-                loginButton.disabled = false;
-                loginButton.innerHTML = originalButtonText;
-            }
+            setLoading(false);
         }
     });
 }
@@ -366,201 +511,8 @@ function setupRegistrationForm() {
             setTimeout(() => { window.location.href = 'index.html'; }, 2000);
         } catch (error) {
             console.error('Erro no cadastro:', error);
-            notificationService.error(error.message || 'No foi possvel realizar o cadastro.');
+            notificationService.error(error.message || 'Não foi possível realizar o cadastro.');
         }
-    });
-}
-
-/**
- * Configura o formulrio de login
-// Configura a página de perfil se estiver na página correta
-function setupProfilePage() {
-    try {
-        // Configura a pgina de perfil se estiver na pgina correta
-        if (window.location.pathname.endsWith('profile.html')) {
-            setupProfilePage();
-        }
-
-        // Configura a pgina de relatrios se estiver na pgina correta
-        if (window.location.pathname.endsWith('reports.html')) {
-            setupReportsPage();
-        }
-
-        // Configura a pgina de feedback se estiver na pgina correta
-        if (window.location.pathname.endsWith('feedback.html')) {
-            setupFeedbackPage();
-        }
-
-        // Configura a pgina de administrao se estiver na pgina correta
-        if (window.location.pathname.endsWith('admin.html')) {
-            setupAdminPage();
-        }
-
-        // Configura a pgina de dashboard se estiver na pgina correta
-        if (window.location.pathname.endsWith('dashboard.html')) {
-            loadDashboardData();
-            loadDashboardStatsAndCharts();
-        }
-
-        // Configura botes de colaborador se estiverem presentes na pgina
-        const saveButton = document.getElementById('save-collaborator-button');
-        if (saveButton) {
-            saveButton.addEventListener('click', () => {
-                const addCollaboratorForm = document.getElementById('add-collaborator-form');
-                if (addCollaboratorForm) {
-                    addCollaboratorForm.dispatchEvent(new Event('submit'));
-                }
-            });
-        }
-
-        const updateButton = document.getElementById('update-collaborator-button');
-        if (updateButton) {
-            updateButton.addEventListener('click', updateCollaborator);
-        }
-
-        const cancelDeleteButton = document.getElementById('cancel-delete-button');
-        if(cancelDeleteButton) {
-            cancelDeleteButton.addEventListener('click', closeDeleteConfirmModal);
-        }
-
-    } catch (error) {
-        console.error('Erro ao carregar a página:', error);
-        notificationService.error('Ocorreu um erro ao carregar a página.');
-        notificationService.error('Ocorreu um erro ao carregar a pgina. Tente novamente.');
-    }
-}
-    // Configura a pgina de perfil
-}
-
-function setupReportsPage() {
-    // Configura a pgina de relatrios
-}
-
-function setupFeedbackPage() {
-    // Configura a pgina de feedback
-}
-
-function setupAdminPage() {
-    // Configura a pgina de administrao
-}
-
-function loadDashboardData() {
-    // Carrega os dados de feedbacks recebidos e enviados e os renderiza no dashboard.
-}
-
-function loadDashboardStatsAndCharts() {
-    // Carrega as estatsticas e grficos do dashboard.
-}
-
-// Funes auxiliares
-function applyPermissions() {
-    const authData = getAuthData();
-    if (!authData?.user) return;
-
-    const adminElements = document.querySelectorAll('[data-role="admin"]');
-    const managerElements = document.querySelectorAll('[data-role="manager"]');
-    
-    adminElements.forEach((el) => {
-        el.style.display = authData.user.role === 'admin' ? 'block' : 'none';
-    });
-    
-    managerElements.forEach((el) => {
-        el.style.display = ['admin', 'manager'].includes(authData.user.role) ? 'block' : 'none';
-    });
-}
-
-// Navegao
-function novoFeedback() {
-    window.location.href = "feedback.html";
-}
-
-function verDetalhes(id) {
-    window.location.href = `feedback.html?id=${id}`;
-}
-
-function logout() {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
-    localStorage.removeItem('redirectAfterLogin');
-    showNotification('Voc foi desconectado com sucesso!', 'info');
-    setTimeout(() => {
-        window.location.href = 'index.html';
-    }, 1500);
-}
-
-function clearFilters() {
-    document.getElementById('filterRole').value = '';
-    document.getElementById('filterDepartment').value = '';
-    document.getElementById('searchUser').value = '';
-    // ... outras regras de limpeza de filtros ...
-
-    // Mostrar todas as linhas
-    const rows = document.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-      row.style.display = '';
-    });
-    
-    updateUserCount();
-}
-
-  function updateUserCount() {
-    const visibleRows = document.querySelectorAll('tbody tr:not([style*="display: none"])');
-    const totalUsers = document.querySelector('.bg-blue-500 h3');
-    
-    if (totalUsers) {
-      totalUsers.textContent = visibleRows.length;
-    }
-  }
-
-  // Funo para exportar dados dos usurios
-  function exportUsers() {
-    if (!checkPermission('all')) {
-      showNotification('Acesso negado. Apenas administradores podem exportar dados.', 'error');
-      return;
-    }
-    
-    const visibleRows = document.querySelectorAll('tbody tr:not([style*="display: none"])');
-    let csvContent = 'Nome,Email,Perfil,Departamento,Status,ltimo Acesso\n';
-    
-    visibleRows.forEach(row => {
-      const name = row.querySelector('td:nth-child(1) .font-medium').textContent;
-      const email = row.querySelector('td:nth-child(1) .text-gray-500').textContent;
-      const role = row.querySelector('td:nth-child(2) span').textContent;
-      const department = row.querySelector('td:nth-child(3)').textContent;
-      const status = row.querySelector('td:nth-child(4) span').textContent;
-      const lastAccess = row.querySelector('td:nth-child(5)').textContent;
-      
-      csvContent += `"${name}","${email}","${role}","${department}","${status}","${lastAccess}"\n`;
-    });
-    
-    // Criar e baixar arquivo CSV
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'usuarios_feedbackhub.csv');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showNotification('Exportao realizada com sucesso!', 'success');
-  }
-
-  /**
- * Escapa caracteres especiais para prevenir XSS
- * @param {string} unsafe - String não segura
- * @returns {string} String segura para HTML
- */
-function escapeHtml(unsafe) {
-    if (typeof unsafe !== 'string') return '';
-    return unsafe
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-}
 
 // Função para exibir notificações
 function showNotification(message, type = 'info') {
@@ -860,6 +812,12 @@ async function openTeamModal(teamId = null) {
     const managerSelect = document.getElementById('team-manager');
     const errorElement = document.getElementById('name-error');
     
+    if (!form || !modal || !modalTitle || !nameField || !descriptionField || !managerSelect || !errorElement) {
+        console.error('Elementos do formulário não encontrados');
+        showNotification(ERROR_MESSAGES.SERVER_ERROR, 'error');
+        return;
+    }
+    
     // Resetar formulário e mensagens de erro
     form.reset();
     document.getElementById('teamId').value = '';
@@ -869,21 +827,23 @@ async function openTeamModal(teamId = null) {
     try {
         // Carregar lista de gestores disponíveis
         const usersResponse = await api.users.getUsers();
-        if (!usersResponse?.success) {
-            throw new Error(usersResponse?.message || ERROR_MESSAGES.USERS_LOAD_ERROR);
+        if (!usersResponse || !Array.isArray(usersResponse.data)) {
+            throw new Error(ERROR_MESSAGES.USERS_LOAD_ERROR);
         }
         
         const managers = usersResponse.data.filter(user => 
-            user.role === 'admin' || user.role === 'manager'
+            user && (user.role === 'admin' || user.role === 'manager')
         );
         
         // Preencher select de gestores
         managerSelect.innerHTML = '<option value="">Selecione um gestor</option>';
         managers.forEach(user => {
-            const option = document.createElement('option');
-            option.value = user.id;
-            option.textContent = `${user.nome} (${user.email})`;
-            managerSelect.appendChild(option);
+            if (user && user.id && user.nome && user.email) {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = `${escapeHtml(user.nome)} (${escapeHtml(user.email)})`;
+                managerSelect.appendChild(option);
+            }
         });
 
         if (teamId) {
@@ -891,14 +851,14 @@ async function openTeamModal(teamId = null) {
             modalTitle.textContent = 'Editar Equipe';
             const teamResponse = await api.teams.getTeamById(teamId);
             
-            if (!teamResponse?.success || !teamResponse.data) {
-                throw new Error(teamResponse?.message || ERROR_MESSAGES.TEAM_NOT_FOUND);
+            if (!teamResponse || !teamResponse.data) {
+                throw new Error(ERROR_MESSAGES.TEAM_NOT_FOUND);
             }
             
             const team = teamResponse.data;
-            document.getElementById('teamId').value = team.id;
-            nameField.value = team.nome || '';
-            descriptionField.value = team.descricao || '';
+            if (team.id) document.getElementById('teamId').value = team.id;
+            if (team.nome) nameField.value = escapeHtml(team.nome);
+            if (team.descricao) descriptionField.value = escapeHtml(team.descricao);
             
             // Selecionar gestor atual se existir
             if (team.gestorId) {
@@ -915,11 +875,10 @@ async function openTeamModal(teamId = null) {
         
     } catch (error) {
         console.error('Erro ao abrir formulário de equipe:', error);
-        showNotification(
-            error.message || ERROR_MESSAGES.SERVER_ERROR, 
-            'error'
+        notificationService.error(
+            error.message || ERROR_MESSAGES.SERVER_ERROR
         );
-        modal.classList.add('hidden');
+        closeTeamModal();
     } finally {
         hideLoader();
     }
@@ -960,22 +919,30 @@ function validateTeamData(data) {
 async function saveTeam(event) {
     event.preventDefault();
     
+    // Obter referências dos elementos
     const form = event.target;
-    const teamId = document.getElementById('teamId').value;
+    const teamId = document.getElementById('teamId')?.value || '';
     const nameField = document.getElementById('team-name');
     const descriptionField = document.getElementById('team-description');
     const managerSelect = document.getElementById('team-manager');
     const nameError = document.getElementById('name-error');
     const descriptionError = document.getElementById('description-error');
     
+    // Validar elementos do DOM
+    if (!form || !nameField || !descriptionField || !managerSelect || !nameError) {
+        console.error('Elementos do formulário não encontrados');
+        notificationService.error(ERROR_MESSAGES.SERVER_ERROR);
+        return;
+    }
+    
     // Limpar mensagens de erro
     nameError.textContent = '';
     if (descriptionError) descriptionError.textContent = '';
     
-    // Preparar dados
+    // Preparar dados com validação
     const teamData = {
-        nome: nameField.value.trim(),
-        descricao: descriptionField.value.trim(),
+        nome: (nameField.value || '').trim(),
+        descricao: (descriptionField.value || '').trim(),
         gestorId: managerSelect.value || null
     };
     
@@ -989,28 +956,39 @@ async function saveTeam(event) {
         return;
     }
     
-    // Desabilitar botão de envio
+    // Configurar botão de envio
     const submitButton = form.querySelector('button[type="submit"]');
-    const originalButtonText = submitButton.innerHTML;
-    submitButton.disabled = true;
-    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+    const originalButtonText = submitButton?.innerHTML || 'Salvar';
+    
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+    }
+    
+    showLoader();
     
     try {
         let response;
-        if (teamId) {
+        const isEditMode = !!teamId;
+        
+        if (isEditMode) {
             // Atualizar equipe existente
             response = await api.teams.updateTeam(teamId, teamData);
-            if (!response.success) {
-                throw new Error(response.message || ERROR_MESSAGES.TEAM_UPDATE_ERROR);
+            
+            if (!response?.success) {
+                throw new Error(response?.message || ERROR_MESSAGES.TEAM_UPDATE_ERROR);
             }
-            showNotification('Equipe atualizada com sucesso!', 'success');
+            
+            notificationService.success('Equipe atualizada com sucesso!');
         } else {
             // Criar nova equipe
             response = await api.teams.createTeam(teamData);
-            if (!response.success) {
-                throw new Error(response.message || ERROR_MESSAGES.TEAM_CREATE_ERROR);
+            
+            if (!response?.success) {
+                throw new Error(response?.message || ERROR_MESSAGES.TEAM_CREATE_ERROR);
             }
-            showNotification('Equipe criada com sucesso!', 'success');
+            
+            notificationService.success('Equipe criada com sucesso!');
         }
         
         // Fechar modal e atualizar tabela
@@ -1018,31 +996,38 @@ async function saveTeam(event) {
         await renderTeamsTable();
         
         // Disparar evento personalizado para notificar sobre a atualização
-        document.dispatchEvent(new CustomEvent('teamUpdated', {
-            detail: { teamId: response.data?.id || teamId }
-        }));
+        const updatedTeamId = response?.data?.id || teamId;
+        if (updatedTeamId) {
+            document.dispatchEvent(new CustomEvent('teamUpdated', {
+                detail: { teamId: updatedTeamId }
+            }));
+        }
         
     } catch (error) {
         console.error('Erro ao salvar equipe:', error);
         
-        // Tratar erros específicos da API
+        // Tratar erros específicos
         if (error.response?.status === 409) {
-            showNotification('Já existe uma equipe com este nome.', 'error');
-            nameError.textContent = 'Já existe uma equipe com este nome';
-            nameField.focus();
+            notificationService.error('Já existe uma equipe com este nome.');
+            if (nameError) nameError.textContent = 'Já existe uma equipe com este nome';
+            if (nameField) nameField.focus();
+        } else if (error.response?.status === 401) {
+            notificationService.error(ERROR_MESSAGES.UNAUTHORIZED);
+            window.location.href = 'index.html';
+        } else if (error.response?.status === 403) {
+            notificationService.error(ERROR_MESSAGES.FORBIDDEN);
         } else {
-            showNotification(
-                error.message || 
-                (teamId ? ERROR_MESSAGES.TEAM_UPDATE_ERROR : ERROR_MESSAGES.TEAM_CREATE_ERROR), 
-                'error'
-            );
+            const errorMessage = error.message || 
+                (teamId ? ERROR_MESSAGES.TEAM_UPDATE_ERROR : ERROR_MESSAGES.TEAM_CREATE_ERROR);
+            notificationService.error(errorMessage);
         }
     } finally {
-        // Restaurar botão de envio
+        // Restaurar estado do botão e loader
         if (submitButton) {
             submitButton.disabled = false;
             submitButton.innerHTML = originalButtonText;
         }
+        hideLoader();
     }
 }
 
