@@ -24,6 +24,17 @@ export const ERROR_MESSAGES = {
     NOT_FOUND: 'Recurso não encontrado.',
     SERVER_ERROR: 'Erro no servidor. Tente novamente mais tarde.',
     VALIDATION_ERROR: 'Por favor, verifique os dados informados.',
+    
+    // Mensagens de erro para equipes
+    TEAM_NOT_FOUND: 'Equipe não encontrada.',
+    TEAM_CREATE_ERROR: 'Não foi possível criar a equipe. Verifique os dados e tente novamente.',
+    TEAM_UPDATE_ERROR: 'Não foi possível atualizar a equipe. Verifique os dados e tente novamente.',
+    TEAM_DELETE_ERROR: 'Não foi possível excluir a equipe. Tente novamente mais tarde.',
+    TEAM_MEMBER_ADD_ERROR: 'Não foi possível adicionar o membro à equipe.',
+    TEAM_MEMBER_REMOVE_ERROR: 'Não foi possível remover o membro da equipe.',
+    TEAM_MEMBERS_LOAD_ERROR: 'Não foi possível carregar os membros da equipe.',
+    TEAM_NAME_REQUIRED: 'O nome da equipe é obrigatório.',
+    TEAM_MEMBER_REQUIRED: 'Selecione um membro para adicionar à equipe.',
 };
 
 /**

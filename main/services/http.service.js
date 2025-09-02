@@ -104,6 +104,21 @@ class HttpService {
     /**
      * Realiza uma requisição DELETE
      * @param {string} url - Endpoint da API
+     * @param {Object} data - Dados opcionais para a requisição
+     */
+    async delete(url, data = {}) {
+        const response = await fetch(`${API_BASE_URL}${url}`, {
+            method: 'DELETE',
+            headers: this.getDefaultHeaders(),
+            body: Object.keys(data).length ? JSON.stringify(data) : undefined,
+        });
+
+        return this.handleResponse(response);
+    }
+
+    /**
+     * Realiza uma requisição DELETE
+     * @param {string} url - Endpoint da API
      */
     async delete(url) {
         const response = await fetch(`${API_BASE_URL}${url}`, {

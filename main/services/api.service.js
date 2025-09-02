@@ -51,6 +51,26 @@ const authService = {
             throw error;
         }
     },
+
+    /**
+     * Registra um novo usuário
+     * @param {Object} userData - Dados do usuário para registro
+     */
+    async register(userData) {
+        try {
+            const response = await httpService.post('/auth/register', userData);
+            
+            if (response.token && response.user) {
+                setAuthData(response.user, response.token);
+                return response.user;
+            }
+            
+            throw new Error('Resposta de registro inválida');
+        } catch (error) {
+            console.error('Erro no registro:', error);
+            throw new Error(error.message || 'Falha no registro. Por favor, tente novamente.');
+        }
+    },
 };
 
 /**
@@ -82,6 +102,117 @@ const feedbackService = {
             throw error;
         }
     },
+};
+
+/**
+ * Serviço de API para equipes
+ */
+const teamService = {
+    /**
+     * Obtém todas as equipes
+     */
+    async getAllTeams() {
+        try {
+            return await httpService.get('/teams');
+        } catch (error) {
+            console.error('Erro ao obter equipes:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Obtém uma equipe por ID
+     * @param {string} teamId - ID da equipe
+     */
+    async getTeamById(teamId) {
+        try {
+            return await httpService.get(`/teams/${teamId}`);
+        } catch (error) {
+            console.error('Erro ao obter equipe:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Cria uma nova equipe
+     * @param {Object} teamData - Dados da equipe
+     */
+    async createTeam(teamData) {
+        try {
+            return await httpService.post('/teams', teamData);
+        } catch (error) {
+            console.error('Erro ao criar equipe:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Atualiza uma equipe existente
+     * @param {string} teamId - ID da equipe
+     * @param {Object} teamData - Novos dados da equipe
+     */
+    async updateTeam(teamId, teamData) {
+        try {
+            return await httpService.put(`/teams/${teamId}`, teamData);
+        } catch (error) {
+            console.error('Erro ao atualizar equipe:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Remove uma equipe
+     * @param {string} teamId - ID da equipe
+     */
+    async deleteTeam(teamId) {
+        try {
+            return await httpService.delete(`/teams/${teamId}`);
+        } catch (error) {
+            console.error('Erro ao remover equipe:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Adiciona um membro a uma equipe
+     * @param {string} teamId - ID da equipe
+     * @param {string} userId - ID do usuário
+     */
+    async addTeamMember(teamId, userId) {
+        try {
+            return await httpService.post(`/teams/${teamId}/members`, { userId });
+        } catch (error) {
+            console.error('Erro ao adicionar membro à equipe:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Remove um membro de uma equipe
+     * @param {string} teamId - ID da equipe
+     * @param {string} userId - ID do usuário
+     */
+    async removeTeamMember(teamId, userId) {
+        try {
+            return await httpService.delete(`/teams/${teamId}/members/${userId}`);
+        } catch (error) {
+            console.error('Erro ao remover membro da equipe:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Obtém os membros de uma equipe
+     * @param {string} teamId - ID da equipe
+     */
+    async getTeamMembers(teamId) {
+        try {
+            return await httpService.get(`/teams/${teamId}/members`);
+        } catch (error) {
+            console.error('Erro ao obter membros da equipe:', error);
+            throw error;
+        }
+    }
 };
 
 /**
@@ -120,5 +251,5 @@ export const api = {
     auth: authService,
     feedbacks: feedbackService,
     users: userService,
-    // Adicione outros serviços conforme necessário
+    teams: teamService
 };

@@ -11,7 +11,79 @@ import {
 } from './services/auth.service';
 import { ERROR_MESSAGES } from './constants';
 
-// Inicializa os servios
+/**
+ * Valida os campos de um formulário
+ * @param {HTMLFormElement} form - Elemento do formulário
+ * @param {Object} fields - Objeto com configurações dos campos
+ * @returns {{isValid: boolean, data: Object}} Resultado da validação e dados do formulário
+ */
+function validateForm(form, fields) {
+    const formData = new FormData(form);
+    const data = {};
+    let isValid = true;
+
+    // Valida cada campo do formulário
+    for (const [fieldName, config] of Object.entries(fields)) {
+        const input = form.querySelector(`[name="${fieldName}"]`);
+        const errorElement = document.getElementById(`${fieldName}-error`);
+        
+        if (errorElement) {
+            errorElement.textContent = '';
+        }
+
+        const value = formData.get(fieldName)?.toString().trim() || '';
+        data[fieldName] = value;
+
+        // Validação de campo obrigatório
+        if (config.required && !value) {
+            if (errorElement) {
+                errorElement.textContent = config.message || 'Este campo é obrigatório.';
+            }
+            isValid = false;
+            continue;
+        }
+
+        // Validação de formato de e-mail
+        if (fieldName.toLowerCase() === 'email' && value) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) {
+                if (errorElement) {
+                    errorElement.textContent = 'Por favor, insira um e-mail válido.';
+                }
+                isValid = false;
+            }
+        }
+
+        // Validação de senha
+        if (fieldName.toLowerCase() === 'senha' && value) {
+            if (value.length < 6) {
+                if (errorElement) {
+                    errorElement.textContent = 'A senha deve ter pelo menos 6 caracteres.';
+                }
+                isValid = false;
+            }
+        }
+    }
+
+    return { isValid, data };
+}
+
+/**
+ * Escapa caracteres especiais para prevenir XSS
+ * @param {string} unsafe - String não segura
+ * @returns {string} String segura para HTML
+ */
+function escapeHtml(unsafe) {
+    return unsafe
+        .toString()
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+// Inicializa os serviços
 notificationService.show('Bem-vindo ao Feedback App!', 'info', 3000);
 
 /**
@@ -475,8 +547,23 @@ function clearFilters() {
     showNotification('Exportao realizada com sucesso!', 'success');
   }
 
-  // Sistema de notificaes
-  function showNotification(message, type = 'info') {
+  /**
+ * Escapa caracteres especiais para prevenir XSS
+ * @param {string} unsafe - String não segura
+ * @returns {string} String segura para HTML
+ */
+function escapeHtml(unsafe) {
+    if (typeof unsafe !== 'string') return '';
+    return unsafe
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+// Função para exibir notificações
+function showNotification(message, type = 'info') {
     // Remover notificaes existentes
     const existingNotifications = document.querySelectorAll('.notification');
     existingNotifications.forEach(notification => notification.remove());
@@ -610,9 +697,8 @@ function hideConfirmationModal() {
 
 // --- Funes da Pgina de Administrao ---
 
-// Variveis globais para armazenar dados da pgina de admin
+// Variáveis globais para armazenar dados da página de admin
 let adminUsers = [];
-let adminTeams = [];
 
 // Adiciona os event listeners para os elementos da pgina de admin
 function setupAdminEventListeners() {
@@ -666,99 +752,394 @@ async function renderUsersTable() {
     }
 }
 
+/**
+ * Renderiza a tabela de equipes
+ */
+/**
+ * Renderiza a tabela de equipes
+ */
 async function renderTeamsTable() {
     const tableBody = document.getElementById('teams-table-body');
     if (!tableBody) return;
 
     showLoader();
     try {
-        adminTeams = await api.get('/admin/teams');
+        // Usar o serviço de equipes para buscar os dados
+        const response = await api.teams.getAllTeams();
+        const teams = response?.data || [];
+        
         tableBody.innerHTML = '';
-        if (adminTeams.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Nenhuma equipe encontrada.</td></tr>';
+        
+        if (teams.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center py-4">
+                        Nenhuma equipe encontrada.
+                    </td>
+                </tr>`;
             return;
         }
-        adminTeams.forEach(team => {
+        
+        // Ordenar equipes por nome
+        const sortedTeams = [...teams].sort((a, b) => a.nome.localeCompare(b.nome));
+        
+        // Renderizar cada equipe na tabela
+        sortedTeams.forEach(team => {
             const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50';
             row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${team.nome}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.gestor?.nome || 'Sem gestor'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.membros?.length || 0}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        <div class="text-sm font-medium text-gray-900">
+                            ${escapeHtml(team.nome || 'Sem nome')}
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-500">
+                        ${team.gestor ? escapeHtml(team.gestor.nome) : 'Sem gestor'}
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        ${team.membros ? team.membros.length : 0} membros
+                    </span>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                    <button onclick="openTeamModal('${team.id}')" class="text-indigo-600 hover:text-indigo-900">Editar</button>
-                    <button onclick="deleteTeam('${team.id}')" class="text-red-600 hover:text-red-900">Remover</button>
+                    <button 
+                        onclick="openTeamModal('${escapeHtml(team.id)}')" 
+                        class="text-indigo-600 hover:text-indigo-900 hover:underline"
+                        title="Editar equipe"
+                    >
+                        Editar
+                    </button>
+                    <button 
+                        onclick="deleteTeam('${escapeHtml(team.id)}')" 
+                        class="text-red-600 hover:text-red-900 hover:underline"
+                        title="Remover equipe"
+                    >
+                        Remover
+                    </button>
                 </td>
             `;
             tableBody.appendChild(row);
         });
-        // Popula os selects que dependem das equipes
+        
+        // Atualizar selects que dependem das equipes
         populateTeamSelect();
+        
     } catch (error) {
-        showNotification('Falha ao carregar equipes.', 'error');
-        tableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-red-500">Erro ao carregar dados.</td></tr>';
+        console.error('Erro ao carregar equipes:', error);
+        showNotification(
+            error.message || 'Falha ao carregar a lista de equipes.', 
+            'error'
+        );
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center py-4 text-red-500">
+                    Erro ao carregar os dados. Tente novamente mais tarde.
+                </td>
+            </tr>`;
     } finally {
         hideLoader();
     }
 }
 
-// Funes de CRUD para Equipes
+// Funções de CRUD para Equipes
 
-function openTeamModal(teamId = null) {
+/**
+ * Abre o modal de equipe para criar ou editar
+ * @param {string|null} teamId - ID da equipe para edição ou null para criar nova
+ */
+async function openTeamModal(teamId = null) {
     const form = document.getElementById('team-form');
+    const modal = document.getElementById('team-modal');
     const modalTitle = document.getElementById('team-modal-title');
+    const nameField = document.getElementById('team-name');
+    const descriptionField = document.getElementById('team-description');
+    const managerSelect = document.getElementById('team-manager');
+    const errorElement = document.getElementById('name-error');
+    
+    // Resetar formulário e mensagens de erro
     form.reset();
     document.getElementById('teamId').value = '';
+    errorElement.textContent = '';
+    
+    showLoader();
+    try {
+        // Carregar lista de gestores disponíveis
+        const usersResponse = await api.users.getUsers();
+        if (!usersResponse?.success) {
+            throw new Error(usersResponse?.message || ERROR_MESSAGES.USERS_LOAD_ERROR);
+        }
+        
+        const managers = usersResponse.data.filter(user => 
+            user.role === 'admin' || user.role === 'manager'
+        );
+        
+        // Preencher select de gestores
+        managerSelect.innerHTML = '<option value="">Selecione um gestor</option>';
+        managers.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.id;
+            option.textContent = `${user.nome} (${user.email})`;
+            managerSelect.appendChild(option);
+        });
 
-    if (teamId) {
-        const team = adminTeams.find(t => t.id === teamId);
-        if (!team) return;
-        modalTitle.textContent = 'Editar Equipe';
-        document.getElementById('teamId').value = team.id;
-        document.getElementById('team-name').value = team.nome;
-        document.getElementById('team-description').value = team.descricao;
-        // TODO: Popular e selecionar gestor
-    } else {
-        modalTitle.textContent = 'Adicionar Nova Equipe';
+        if (teamId) {
+            // Modo edição - carregar dados da equipe
+            modalTitle.textContent = 'Editar Equipe';
+            const teamResponse = await api.teams.getTeamById(teamId);
+            
+            if (!teamResponse?.success || !teamResponse.data) {
+                throw new Error(teamResponse?.message || ERROR_MESSAGES.TEAM_NOT_FOUND);
+            }
+            
+            const team = teamResponse.data;
+            document.getElementById('teamId').value = team.id;
+            nameField.value = team.nome || '';
+            descriptionField.value = team.descricao || '';
+            
+            // Selecionar gestor atual se existir
+            if (team.gestorId) {
+                managerSelect.value = team.gestorId;
+            }
+        } else {
+            // Modo criação
+            modalTitle.textContent = 'Adicionar Nova Equipe';
+        }
+        
+        // Exibir modal
+        modal.classList.remove('hidden');
+        nameField.focus();
+        
+    } catch (error) {
+        console.error('Erro ao abrir formulário de equipe:', error);
+        showNotification(
+            error.message || ERROR_MESSAGES.SERVER_ERROR, 
+            'error'
+        );
+        modal.classList.add('hidden');
+    } finally {
+        hideLoader();
     }
-    document.getElementById('team-modal').classList.remove('hidden');
 }
 
 function closeTeamModal() {
     document.getElementById('team-modal').classList.add('hidden');
 }
 
+/**
+ * Valida os dados da equipe antes do envio
+ * @param {Object} data - Dados da equipe a serem validados
+ * @returns {{isValid: boolean, errors: Object}} Resultado da validação
+ */
+function validateTeamData(data) {
+    const errors = {};
+    
+    if (!data.nome || !data.nome.trim()) {
+        errors.name = ERROR_MESSAGES.TEAM_NAME_REQUIRED;
+    } else if (data.nome.length > 100) {
+        errors.name = 'O nome da equipe não pode ter mais de 100 caracteres';
+    }
+    
+    if (data.descricao && data.descricao.length > 500) {
+        errors.description = 'A descrição não pode ter mais de 500 caracteres';
+    }
+    
+    return {
+        isValid: Object.keys(errors).length === 0,
+        errors
+    };
+}
+
+/**
+ * Salva uma equipe (cria ou atualiza)
+ * @param {Event} event - Evento de submit do formulário
+ */
 async function saveTeam(event) {
     event.preventDefault();
+    
+    const form = event.target;
     const teamId = document.getElementById('teamId').value;
-    const data = {
-        nome: document.getElementById('team-name').value,
-        descricao: document.getElementById('team-description').value,
-        gestorId: null // TODO: Obter do select de gestor
+    const nameField = document.getElementById('team-name');
+    const descriptionField = document.getElementById('team-description');
+    const managerSelect = document.getElementById('team-manager');
+    const nameError = document.getElementById('name-error');
+    const descriptionError = document.getElementById('description-error');
+    
+    // Limpar mensagens de erro
+    nameError.textContent = '';
+    if (descriptionError) descriptionError.textContent = '';
+    
+    // Preparar dados
+    const teamData = {
+        nome: nameField.value.trim(),
+        descricao: descriptionField.value.trim(),
+        gestorId: managerSelect.value || null
     };
-
-    const url = teamId ? `/admin/teams/${teamId}` : '/admin/teams';
-    const method = teamId ? 'PUT' : 'POST';
-
+    
+    // Validar dados
+    const { isValid, errors } = validateTeamData(teamData);
+    if (!isValid) {
+        if (errors.name) nameError.textContent = errors.name;
+        if (errors.description && descriptionError) {
+            descriptionError.textContent = errors.description;
+        }
+        return;
+    }
+    
+    // Desabilitar botão de envio
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.innerHTML;
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+    
     try {
-        await api.request(url, { method, data });
-        showNotification(`Equipe ${teamId ? 'atualizada' : 'criada'} com sucesso!`, 'success');
+        let response;
+        if (teamId) {
+            // Atualizar equipe existente
+            response = await api.teams.updateTeam(teamId, teamData);
+            if (!response.success) {
+                throw new Error(response.message || ERROR_MESSAGES.TEAM_UPDATE_ERROR);
+            }
+            showNotification('Equipe atualizada com sucesso!', 'success');
+        } else {
+            // Criar nova equipe
+            response = await api.teams.createTeam(teamData);
+            if (!response.success) {
+                throw new Error(response.message || ERROR_MESSAGES.TEAM_CREATE_ERROR);
+            }
+            showNotification('Equipe criada com sucesso!', 'success');
+        }
+        
+        // Fechar modal e atualizar tabela
         closeTeamModal();
-        renderTeamsTable();
+        await renderTeamsTable();
+        
+        // Disparar evento personalizado para notificar sobre a atualização
+        document.dispatchEvent(new CustomEvent('teamUpdated', {
+            detail: { teamId: response.data?.id || teamId }
+        }));
+        
     } catch (error) {
-        showNotification(error.message, 'error');
+        console.error('Erro ao salvar equipe:', error);
+        
+        // Tratar erros específicos da API
+        if (error.response?.status === 409) {
+            showNotification('Já existe uma equipe com este nome.', 'error');
+            nameError.textContent = 'Já existe uma equipe com este nome';
+            nameField.focus();
+        } else {
+            showNotification(
+                error.message || 
+                (teamId ? ERROR_MESSAGES.TEAM_UPDATE_ERROR : ERROR_MESSAGES.TEAM_CREATE_ERROR), 
+                'error'
+            );
+        }
+    } finally {
+        // Restaurar botão de envio
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+        }
     }
 }
 
-function deleteTeam(teamId) {
-    showConfirmationModal('Confirmar Remoo', 'Tem certeza que deseja remover esta equipe?', async () => {
-        try {
-            await api.del(`/admin/teams/${teamId}`);
-            showNotification('Equipe removida com sucesso!', 'success');
-            renderTeamsTable();
-        } catch (error) {
-            showNotification(error.message, 'error');
+/**
+ * Remove uma equipe após confirmação do usuário
+ * @param {string} teamId - ID da equipe a ser removida
+ */
+async function deleteTeam(teamId) {
+    try {
+        // Buscar dados da equipe para mostrar no modal de confirmação
+        const response = await api.teams.getTeamById(teamId);
+        if (!response?.success || !response.data) {
+            throw new Error(response?.message || ERROR_MESSAGES.TEAM_NOT_FOUND);
         }
-    });
+        
+        const team = response.data;
+        const memberCount = team.membros?.length || 0;
+        
+        // Mensagem de confirmação personalizada
+        let message = `Tem certeza que deseja remover a equipe <strong>${escapeHtml(team.nome)}</strong>?`;
+        
+        if (memberCount > 0) {
+            message += `<br><br><span class="text-yellow-700">Atenção: Esta equipe possui ${memberCount} membro(s). 
+                      Todos os membros serão desvinculados da equipe.</span>`;
+        }
+        
+        message += "<br><br>Esta ação não pode ser desfeita.";
+        
+        showConfirmationModal(
+            'Confirmar Exclusão', 
+            message, 
+            async () => {
+                const modal = document.getElementById('confirmation-modal');
+                const confirmButton = modal?.querySelector('[data-confirm-button]');
+                const originalButtonText = confirmButton?.innerHTML;
+                
+                try {
+                    // Atualizar botão de confirmação
+                    if (confirmButton) {
+                        confirmButton.disabled = true;
+                        confirmButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
+                    }
+                    
+                    // Executar exclusão
+                    const deleteResponse = await api.teams.deleteTeam(teamId);
+                    
+                    if (!deleteResponse?.success) {
+                        throw new Error(deleteResponse?.message || ERROR_MESSAGES.TEAM_DELETE_ERROR);
+                    }
+                    
+                    showNotification('Equipe removida com sucesso!', 'success');
+                    
+                    // Fechar modal e atualizar a tabela
+                    hideConfirmationModal();
+                    await renderTeamsTable();
+                    
+                    // Disparar evento personalizado para notificar sobre a exclusão
+                    document.dispatchEvent(new CustomEvent('teamDeleted', {
+                        detail: { teamId }
+                    }));
+                    
+                } catch (error) {
+                    console.error('Erro ao remover equipe:', error);
+                    
+                    // Tratar erros específicos
+                    if (error.response?.status === 403) {
+                        showNotification('Você não tem permissão para remover esta equipe.', 'error');
+                    } else if (error.response?.status === 404) {
+                        showNotification('A equipe não foi encontrada ou já foi removida.', 'error');
+                        await renderTeamsTable(); // Atualizar tabela se a equipe não existir mais
+                    } else {
+                        showNotification(
+                            error.message || ERROR_MESSAGES.TEAM_DELETE_ERROR, 
+                            'error'
+                        );
+                    }
+                } finally {
+                    // Restaurar botão de confirmação
+                    if (confirmButton) {
+                        confirmButton.disabled = false;
+                        confirmButton.innerHTML = originalButtonText;
+                    }
+                }
+            },
+            'Excluir',
+            'Cancelar',
+            'bg-red-600 hover:bg-red-700',
+            'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300'
+        );
+        
+    } catch (error) {
+        console.error('Erro ao cargar dados da equipe para exclusão:', error);
+        showNotification(
+            error.message || 'Não foi possível carregar os dados da equipe para exclusão.',
+            'error'
+        );
+    }
 }
 
 // Funes de CRUD para Usurios
@@ -832,36 +1213,173 @@ function deleteUser(userId) {
     });
 }
 
-// Funes auxiliares
-function populateTeamSelect() {
+// Cache para armazenar a lista de equipes
+let teamsCache = {
+    data: [],
+    timestamp: 0,
+    CACHE_DURATION: 5 * 60 * 1000 // 5 minutos de cache
+};
+
+/**
+ * Limpa o cache de equipes
+ */
+function clearTeamsCache() {
+    teamsCache = {
+        data: [],
+        timestamp: 0,
+        CACHE_DURATION: 5 * 60 * 1000
+    };
+}
+
+/**
+ * Busca equipes do servidor ou do cache
+ * @param {boolean} forceRefresh - Força atualização do cache
+ * @returns {Promise<Array>} Lista de equipes
+ */
+async function fetchTeams(forceRefresh = false) {
+    const now = Date.now();
+    const isCacheValid = (now - teamsCache.timestamp) < teamsCache.CACHE_DURATION;
+    
+    if (!forceRefresh && teamsCache.data.length > 0 && isCacheValid) {
+        return [...teamsCache.data]; // Retorna cópia do cache
+    }
+    
     try {
-        const select = document.getElementById('user-team');
-        if (!select) {
-            console.warn('Elemento user-team no encontrado');
-            return;
+        const response = await api.teams.getAllTeams();
+        if (!response?.success) {
+            throw new Error(response?.message || 'Erro ao carregar equipes');
         }
         
-        select.innerHTML = '<option value="">Sem Equipe</option>'; // Opo padro
+        // Atualizar cache
+        teamsCache.data = response.data || [];
+        teamsCache.timestamp = now;
         
-        // Check if adminTeams is defined
-        if (!window.adminTeams || !Array.isArray(window.adminTeams)) {
-            console.warn('adminTeams no est definido ou no  um array');
-            return;
+        return [...teamsCache.data]; // Retorna cópia
+        
+    } catch (error) {
+        console.error('Erro ao buscar equipes:', error);
+        
+        // Se houver erro mas tivermos dados em cache, usamos os dados antigos
+        if (teamsCache.data.length > 0) {
+            console.warn('Usando dados em cache devido ao erro na requisição');
+            return [...teamsCache.data]; // Retorna cópia
         }
         
-        // Add team options
-        window.adminTeams.forEach(team => {
-            if (team && team.id && team.nome) {
+        throw error; // Propaga o erro se não houver cache
+    }
+}
+
+/**
+ * Popula os selects de equipe na aplicação
+ * @param {string} selectId - ID do elemento select a ser preenchido (opcional)
+ * @param {boolean} forceRefresh - Força atualização do cache
+ * @returns {Promise<Array>} Lista de equipes carregadas
+ */
+async function populateTeamSelect(selectId = null, forceRefresh = false) {
+    // Se não for especificado um select, atualiza todos os selects de equipe
+    const selectors = selectId 
+        ? [document.getElementById(selectId)]
+        : document.querySelectorAll('select[data-team-select]');
+
+    // Se não houver selects para preencher, retorna
+    if (!selectors.length || (selectId && !selectors[0])) {
+        console.warn('Nenhum seletor de equipe encontrado');
+        return [];
+    }
+    
+    const loadingIndicator = document.getElementById('teams-loading');
+    if (loadingIndicator) {
+        loadingIndicator.classList.remove('hidden');
+    }
+
+    try {
+        // Buscar equipes (do cache ou servidor)
+        const teams = await fetchTeams(forceRefresh);
+        
+        // Ordenar equipes por nome
+        const sortedTeams = [...teams].sort((a, b) => a.nome.localeCompare(b.nome));
+        
+        // Para cada select encontrado
+        const selects = Array.from(selectors).filter(Boolean);
+        for (const select of selects) {
+            // Salvar o valor atual para restaurar depois
+            const currentValue = select.value;
+            const isRequired = select.required;
+            const placeholder = select.dataset.placeholder || 'Selecione uma equipe';
+            
+            // Limpar opções atuais, mantendo a primeira opção se existir
+            const firstOption = select.querySelector('option:first-child');
+            select.innerHTML = firstOption ? firstOption.outerHTML : '';
+            
+            // Se não houver opção padrão, adiciona uma
+            if (select.querySelectorAll('option').length === 0) {
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = isRequired ? placeholder : 'Todas as equipes';
+                if (isRequired) defaultOption.disabled = true;
+                select.appendChild(defaultOption);
+            }
+            
+            // Adicionar equipes como opções
+            sortedTeams.forEach(team => {
                 const option = document.createElement('option');
                 option.value = team.id;
                 option.textContent = team.nome;
+                option.dataset.managerId = team.gestorId || '';
+                option.dataset.teamName = team.nome || '';
                 select.appendChild(option);
+            });
+            
+            // Restaurar o valor anterior se ainda for válido
+            const hasCurrentValue = sortedTeams.some(team => team.id === currentValue);
+            if (hasCurrentValue) {
+                select.value = currentValue;
+            } else if (isRequired) {
+                select.selectedIndex = 0;
             }
-        });
+            
+            // Disparar evento de mudança para atualizar dependências
+            select.dispatchEvent(new CustomEvent('teamSelectUpdated', {
+                detail: { 
+                    teamId: select.value,
+                    teamName: select.options[select.selectedIndex]?.dataset.teamName || ''
+                }
+            }));
+        }
+        
+        return sortedTeams;
+        
     } catch (error) {
-        console.error('Erro em populateTeamSelect:', error);
+        console.error('Erro ao carregar lista de equipes:', error);
+        
+        // Mostrar mensagem de erro apenas se não houver cache
+        if (teamsCache.data.length === 0) {
+            showNotification(
+                error.message || 'Não foi possível carregar a lista de equipes.', 
+                'error'
+            );
+        }
+        
+        return [];
+        
+    } finally {
+        if (loadingIndicator) {
+            loadingIndicator.classList.add('hidden');
+        }
     }
 }
+
+// Evento para limpar o cache quando uma equipe for atualizada
+document.addEventListener('teamUpdated', () => {
+    clearTeamsCache();
+    populateTeamSelect();
+});
+
+// Evento para limpar o cache quando uma equipe for excluída
+document.addEventListener('teamDeleted', () => {
+    clearTeamsCache();
+    populateTeamSelect();
+});
 
 // Make function available globally in browser environment
 if (typeof window !== 'undefined') {

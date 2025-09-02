@@ -17,9 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentMembersList = document.getElementById('current-members-list');
     const memberTeamIdInput = document.getElementById('member-team-id');
 
-    let localTeams = [];
-    let localUsers = [];
-
     // --- Funções de Modal ---
     const openTeamModal = () => teamModal.classList.remove('hidden');
     const closeTeamModal = () => teamModal.classList.add('hidden');
@@ -27,13 +24,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeMembersModal = () => membersModal.classList.add('hidden');
 
     // --- CRUD de Equipes ---
+    /**
+     * Carrega as equipes do servidor e renderiza na tabela
+     */
     async function loadTeams() {
+        showLoader();
         try {
-            localTeams = await api.getAllTeams();
-            renderTeams(localTeams);
+            const response = await api.teams.getAllTeams();
+            const teams = response?.data || [];
+            renderTeams(teams);
         } catch (error) {
             console.error('Erro ao carregar equipes:', error);
-            teamsListEl.innerHTML = '<p class="text-red-500">Falha ao carregar equipes.</p>';
+            showNotification(
+                error.message || 'Falha ao carregar a lista de equipes.',
+                'error'
+            );
+            teamsListEl.innerHTML = `
+                <div class="bg-red-50 border-l-4 border-red-400 p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-700">
+                                Não foi possível carregar as equipes. Tente novamente mais tarde.
+                            </p>
+                        </div>
+                    </div>
+                </div>`;
+        } finally {
+            hideLoader();
         }
     }
 
@@ -123,66 +145,111 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-        function handleEditClick(id) {
-        const team = localTeams.find(t => t.id == id);
-        if (!team) return;
-        teamForm.reset();
-        document.getElementById('nome-error').textContent = ''; // Limpa erro ao abrir
-        document.getElementById('team-id').value = team.id;
-        document.getElementById('modal-title').textContent = 'Editar Equipe';
-        document.getElementById('nome').value = team.nome;
-        document.getElementById('descricao').value = team.descricao;
-        loadPossibleManagers().then(() => {
-            document.getElementById('gestor').value = team.gestorId || '';
-        });
-        openTeamModal();
-    }
-
-    async function handleDeleteClick(id) {
-        const onConfirm = async () => {
-            try {
-                await api.deleteTeam(id);
-                showNotification('Equipe excluída com sucesso!', 'success');
-                loadTeams();
-            } catch (error) {
-                console.error('Erro ao excluir equipe:', error);
-                showNotification(error.message || 'Falha ao excluir equipe.', 'error');
-            }
-        };
-
-        showConfirmationModal(
-            'Excluir Equipe',
-            'Tem certeza que deseja excluir esta equipe? Esta ação não pode ser desfeita.',
-            onConfirm
-        );
-    }
-
-    // --- Gerenciamento de Membros ---
-    async function handleManageMembersClick(id) {
+        /**
+     * Abre o modal de edição de equipe
+     * @param {string} id - ID da equipe a ser editada
+     */
+    async function handleEditClick(id) {
+        showLoader();
         try {
-            const teamDetails = await api.getTeamById(id);
-            if (!teamDetails) return;
+            // Busca os dados atualizados da equipe
+            const response = await api.teams.getTeamById(id);
+            const team = response?.data;
+            
+            if (!team) {
+                throw new Error('Equipe não encontrada');
+            }
+            
+            // Preenche o formulário
+            teamForm.reset();
+            document.getElementById('nome-error').textContent = '';
+            document.getElementById('team-id').value = team.id;
+            document.getElementById('modal-title').textContent = 'Editar Equipe';
+            document.getElementById('nome').value = team.nome || '';
+            document.getElementById('descricao').value = team.descricao || '';
+            
+            // Carrega e seleciona o gestor se existir
+            await loadPossibleManagers();
+            if (team.gestorId) {
+                document.getElementById('gestor').value = team.gestorId;
+            }
+            
+            openTeamModal();
+        } catch (error) {
+            console.error('Erro ao cargar dados da equipe:', error);
+            showNotification(
+                error.message || 'Falha ao carregar os dados da equipe.',
+                'error'
+            );
+        } finally {
+            hideLoader();
+        }
+    }
 
-            memberTeamIdInput.value = id;
-            membersModalTitle.textContent = `Gerenciar Membros - ${teamDetails.nome}`;
+    /**
+     * Exclui uma equipe após confirmação do usuário
+     * @param {string} id - ID da equipe a ser excluída
+     */
+    async function handleDeleteClick(id) {
+        try {
+            // Primeiro, busca os dados da equipe para mostrar o nome na confirmação
+            const response = await api.teams.getTeamById(id);
+            const team = response?.data;
             
-            await loadAllUsersOnce();
-            renderCurrentMembers(teamDetails.users || []);
-            renderAvailableUsers(teamDetails.id);
+            if (!team) {
+                throw new Error('Equipe não encontrada');
+            }
             
-            openMembersModal();
+            const onConfirm = async () => {
+                showLoader();
+                try {
+                    await api.teams.deleteTeam(id);
+                    showNotification('Equipe excluída com sucesso!', 'success');
+                    loadTeams();
+                } catch (error) {
+                    console.error('Erro ao excluir equipe:', error);
+                    showNotification(
+                        error.message || 'Falha ao excluir a equipe. Tente novamente mais tarde.',
+                        'error'
+                    );
+                } finally {
+                    hideLoader();
+                }
+            };
+            
+            showConfirmationModal(
+                'Confirmar Exclusão',
+                `Tem certeza que deseja excluir a equipe "${escapeHtml(team.nome || '')}"? Esta ação não pode ser desfeita.`,
+                onConfirm,
+                'Excluir',
+                'Cancelar',
+                'bg-red-600 hover:bg-red-700 focus:ring-red-500',
+                'bg-white hover:bg-gray-50 focus:ring-gray-50 border border-gray-300 text-gray-700'
+            );
         } catch (error) {
             console.error('Erro ao buscar detalhes da equipe:', error);
             showNotification('Não foi possível carregar os membros da equipe.', 'error');
         }
     }
 
+    /**
+     * Carrega todos os usuários uma única vez e armazena em cache
+     */
     async function loadAllUsersOnce() {
         if (localUsers.length === 0) {
+            showLoader();
             try {
-                localUsers = await api.getAllUsers();
+                const response = await api.users.getUsers();
+                localUsers = response?.data || [];
             } catch (error) {
                 console.error('Erro ao carregar usuários:', error);
+                showNotification(
+                    'Falha ao carregar a lista de usuários. Tente novamente mais tarde.',
+                    'error'
+                );
+                localUsers = [];
+            } finally {
+                hideLoader();
             }
         }
     }
