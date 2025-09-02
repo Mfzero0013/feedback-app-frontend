@@ -4,9 +4,22 @@
   "description": "Aplicação de Feedback com classificação por cores",
   "scripts": {
     "start": "echo 'Servidor não é necessário para este projeto estático. Abra o index.html no navegador.'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix",
+    "lint:watch": "npx eslint . --ext .js --watch"
   },
-  "keywords": ["feedback", "frontend", "dashboard"],
+  "keywords": [
+    "feedback",
+    "frontend",
+    "dashboard"
+  ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.34.0",
+    "eslint": "^9.34.0",
+    "eslint-plugin-import": "^2.32.0",
+    "globals": "^16.3.0"
+  }
 }
