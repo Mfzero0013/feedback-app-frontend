@@ -1,4 +1,4 @@
-// Importa os serviços necessários
+﻿// Importa os servi�os necess�rios
 import { api } from './services/api.service.js';
 import notificationService from './services/notification.service.js';
 import { 
@@ -12,17 +12,17 @@ import {
 import { ERROR_MESSAGES } from './constants/index.js';
 
 /**
- * Valida os campos de um formulário
- * @param {HTMLFormElement} form - Elemento do formulário
- * @param {Object} fields - Objeto com configurações dos campos
- * @returns {{isValid: boolean, data: Object}} Resultado da validação e dados do formulário
+ * Valida os campos de um formul�rio
+ * @param {HTMLFormElement} form - Elemento do formul�rio
+ * @param {Object} fields - Objeto com configura��es dos campos
+ * @returns {{isValid: boolean, data: Object}} Resultado da valida��o e dados do formul�rio
  */
 function validateForm(form, fields) {
     const formData = new FormData(form);
     const data = {};
     let isValid = true;
 
-    // Valida cada campo do formulário
+    // Valida cada campo do formul�rio
     for (const [fieldName, config] of Object.entries(fields)) {
         const input = form.querySelector(`[name="${fieldName}"]`);
         const errorElement = document.getElementById(`${fieldName}-error`);
@@ -34,27 +34,27 @@ function validateForm(form, fields) {
         const value = formData.get(fieldName)?.toString().trim() || '';
         data[fieldName] = value;
 
-        // Validação de campo obrigatório
+        // Valida��o de campo obrigat�rio
         if (config.required && !value) {
             if (errorElement) {
-                errorElement.textContent = config.message || 'Este campo é obrigatório.';
+                errorElement.textContent = config.message || 'Este campo � obrigat�rio.';
             }
             isValid = false;
             continue;
         }
 
-        // Validação de formato de e-mail
+        // Valida��o de formato de e-mail
         if (fieldName.toLowerCase() === 'email' && value) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(value)) {
                 if (errorElement) {
-                    errorElement.textContent = 'Por favor, insira um e-mail válido.';
+                    errorElement.textContent = 'Por favor, insira um e-mail v�lido.';
                 }
                 isValid = false;
             }
         }
 
-        // Validação de senha
+        // Valida��o de senha
         if (fieldName.toLowerCase() === 'senha' && value) {
             if (value.length < 6) {
                 if (errorElement) {
@@ -70,7 +70,7 @@ function validateForm(form, fields) {
 
 /**
  * Escapa caracteres especiais para prevenir XSS
- * @param {string} unsafe - String não segura
+ * @param {string} unsafe - String n�o segura
  * @returns {string} String segura para HTML
  */
 function escapeHtml(unsafe) {
@@ -83,7 +83,7 @@ function escapeHtml(unsafe) {
         .replace(/'/g, '&#039;');
 }
 
-// Inicializa os serviços
+// Inicializa os servi�os
 notificationService.show('Bem-vindo ao Feedback App!', 'info', 3000);
 
 /**
@@ -159,19 +159,19 @@ if (existingScript && existingScript.onload) {
 }
 
 /**
- * Configura o formulário de login
+ * Configura o formul�rio de login
  */
 function setupLoginForm() {
     // Constantes para mensagens
     const MESSAGES = {
         EMAIL_REQUIRED: 'Por favor, insira seu e-mail',
-        EMAIL_INVALID: 'E-mail inválido. Exemplo: nome@exemplo.com',
+        EMAIL_INVALID: 'E-mail inv�lido. Exemplo: nome@exemplo.com',
         PASSWORD_REQUIRED: 'Por favor, insira sua senha',
-        PASSWORD_TOO_SHORT: 'A senha deve ter no mínimo 8 caracteres',
+        PASSWORD_TOO_SHORT: 'A senha deve ter no m�nimo 8 caracteres',
         LOGIN_SUCCESS: 'Login realizado com sucesso!',
         LOGIN_ERROR: 'E-mail ou senha incorretos',
         SERVER_ERROR: 'Erro no servidor. Tente novamente mais tarde.',
-        NETWORK_ERROR: 'Erro de conexão. Verifique sua internet.'
+        NETWORK_ERROR: 'Erro de conex�o. Verifique sua internet.'
     };
     
     // Constantes para classes CSS
@@ -194,7 +194,7 @@ function setupLoginForm() {
     const passwordError = document.getElementById('password-error');
     const formFeedback = document.getElementById('form-feedback');
 
-    // Função para verificar força da senha
+    // Fun��o para verificar for�a da senha
     const getPasswordStrength = (password) => {
         if (!password) return { score: 0, label: 'Fraca', color: 'red-500' };
         
@@ -213,12 +213,12 @@ function setupLoginForm() {
         if (hasUpper && hasLower) score++;
         
         if (score <= 2) return { score, label: 'Fraca', color: 'red-500' };
-        if (score <= 3) return { score, label: 'Média', color: 'yellow-500' };
+        if (score <= 3) return { score, label: 'M�dia', color: 'yellow-500' };
         if (score <= 4) return { score, label: 'Forte', color: 'green-500' };
         return { score, label: 'Muito Forte', color: 'green-700' };
     };
     
-    // Funções de validação
+    // Fun��es de valida��o
     const validateEmail = (email) => {
         if (!email) return { isValid: false, message: MESSAGES.EMAIL_REQUIRED };
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -233,7 +233,7 @@ function setupLoginForm() {
         return { isValid: true };
     };
 
-    // Funções de feedback
+    // Fun��es de feedback
     const showError = (element, message) => {
         if (!element) return;
         element.textContent = message;
@@ -264,7 +264,7 @@ function setupLoginForm() {
         }
     };
 
-    // Validação em tempo real
+    // Valida��o em tempo real
     if (emailInput) {
         emailInput.addEventListener('input', () => {
             const { isValid, message } = validateEmail(emailInput.value);
@@ -292,7 +292,7 @@ function setupLoginForm() {
                 clearError(passwordError);
             }
             
-            // Atualizar indicador de força
+            // Atualizar indicador de for�a
             if (password) {
                 const { score, label, color } = getPasswordStrength(password);
                 const width = (score / 4) * 100;
@@ -337,7 +337,7 @@ function setupLoginForm() {
         
         let isValid = emailValidation.isValid && passwordValidation.isValid;
         
-        // Mostrar erros de validação
+        // Mostrar erros de valida��o
         if (!emailValidation.isValid) {
             showError(emailError, emailValidation.message);
             emailInput?.focus();
@@ -349,7 +349,7 @@ function setupLoginForm() {
         }
         
         if (!isValid) {
-            // Animar o formulário para indicar erro
+            // Animar o formul�rio para indicar erro
             loginForm.classList.add('shake');
             setTimeout(() => loginForm.classList.remove('shake'), 500);
             return;
@@ -368,13 +368,13 @@ function setupLoginForm() {
             const response = await api.auth.login(email, password);
             
             if (!response?.user || !response?.token) {
-                throw new Error('Resposta de login inválida');
+                throw new Error('Resposta de login inv�lida');
             }
             
             setAuthData(response.user, response.token);
             notificationService.success(MESSAGES.LOGIN_SUCCESS);
             
-            // Redirecionar após pequeno atraso
+            // Redirecionar ap�s pequeno atraso
             const redirectUrl = getAndClearRedirectUrl() || 'dashboard.html';
             setTimeout(() => window.location.href = redirectUrl, 800);
             
@@ -511,10 +511,10 @@ function setupRegistrationForm() {
             setTimeout(() => { window.location.href = 'index.html'; }, 2000);
         } catch (error) {
             console.error('Erro no cadastro:', error);
-            notificationService.error(error.message || 'Não foi possível realizar o cadastro.');
+            notificationService.error(error.message || 'N�o foi poss�vel realizar o cadastro.');
         }
 
-// Função para exibir notificações
+// Fun��o para exibir notifica��es
 function showNotification(message, type = 'info') {
     // Remover notificaes existentes
     const existingNotifications = document.querySelectorAll('.notification');
@@ -649,7 +649,7 @@ function hideConfirmationModal() {
 
 // --- Funes da Pgina de Administrao ---
 
-// Variáveis globais para armazenar dados da página de admin
+// Vari�veis globais para armazenar dados da p�gina de admin
 let adminUsers = [];
 
 // Adiciona os event listeners para os elementos da pgina de admin
@@ -659,49 +659,510 @@ function setupAdminEventListeners() {
     document.getElementById('team-form')?.addEventListener('submit', saveTeam);
     document.getElementById('cancel-team-modal')?.addEventListener('click', () => closeTeamModal());
 
-    // Botes e formulrios de Usurios
+    // Bot�es e formul�rios de Usu�rios
     document.getElementById('add-user-button')?.addEventListener('click', () => openUserModal());
     document.getElementById('user-form')?.addEventListener('submit', saveUser);
     document.getElementById('cancel-user-modal')?.addEventListener('click', () => closeUserModal());
+    
+    // Adicionar manipuladores de eventos para busca e filtros
+    const searchInput = document.getElementById('users-search');
+    const statusFilter = document.getElementById('users-status-filter');
+    const teamFilter = document.getElementById('users-team-filter');
+    
+    // Debounce para evitar m�ltiplas requisi��es durante a digita��o
+    let searchTimeout;
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentPage = 1; // Resetar para a primeira p�gina ao buscar
+                renderUsersTable();
+            }, 300);
+        });
+    }
+    
+    // Atualizar tabela quando os filtros forem alterados
+    if (statusFilter) {
+        statusFilter.addEventListener('change', () => {
+            currentPage = 1; // Resetar para a primeira p�gina ao filtrar
+            renderUsersTable();
+        });
+    }
+    
+    if (teamFilter) {
+        teamFilter.addEventListener('change', () => {
+            currentPage = 1; // Resetar para a primeira p�gina ao filtrar
+            renderUsersTable();
+        });
+    }
 }
 
-// Funes de renderizao
+// Fun��es auxiliares
 
-async function renderUsersTable() {
+/**
+ * Escapa caracteres HTML para prevenir XSS
+ * @param {string} unsafe - String n�o segura
+ * @returns {string} String segura para HTML
+ */
+function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe
+        .toString()
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+// Fun��es de renderiza��o
+
+// Vari�veis para controle de pagina��o e ordena��o
+let currentPage = 1;
+const itemsPerPage = 10;
+let sortConfig = { key: 'nome', direction: 'asc' };
+
+/**
+ * Renderiza a tabela de usu�rios com pagina��o e ordena��o
+ * @param {Array} users - Lista de usu�rios a serem exibidos (opcional, busca do servidor se n�o fornecido)
+ */
+async function renderUsersTable(users = null) {
     const tableBody = document.getElementById('users-table-body');
+    const paginationContainer = document.getElementById('users-pagination');
+    const searchInput = document.getElementById('users-search');
+    const statusFilter = document.getElementById('users-status-filter');
+    const teamFilter = document.getElementById('users-team-filter');
+    
     if (!tableBody) return;
 
-    showLoader();
-    try {
-        adminUsers = await api.get('/admin/users');
-        tableBody.innerHTML = '';
-        if (adminUsers.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Nenhum usurio encontrado.</td></tr>';
-            return;
+    // Fun��o para mostrar estado de carregamento
+    const showLoadingState = () => {
+        // Adicionar classe de transi��o suave
+        tableBody.style.transition = 'opacity 200ms ease-in-out';
+        tableBody.style.opacity = '0.7';
+        
+        // Criar elemento de carregamento
+        const loadingHtml = `
+            <tr class="table-loader">
+                <td colspan="5" class="text-center py-12">
+                    <div class="flex flex-col items-center justify-center space-y-3">
+                        <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-200 border-t-indigo-600"></div>
+                        <p class="text-gray-600 font-medium">Carregando usu�rios...</p>
+                        <p class="text-sm text-gray-400">Isso pode levar alguns instantes</p>
+                    </div>
+                </td>
+            </tr>`;
+        
+        // Manter o conte�do existente, mas adicionar o loader por cima
+        const existingContent = tableBody.innerHTML;
+        tableBody.innerHTML = loadingHtml + existingContent;
+        
+        // Mostrar loader global se existir
+        const globalLoader = document.getElementById('loader');
+        if (globalLoader) {
+            globalLoader.classList.remove('hidden');
+            globalLoader.classList.add('flex');
         }
-        adminUsers.forEach(user => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900">${user.nome}</div>
-                    <div class="text-sm text-gray-500">${user.email}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.jobTitle || 'N/A'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.equipe?.nome || 'Sem equipe'}</td>
-                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.status === 'ATIVO' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} ">${user.status}</span></td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                    <button onclick="openUserModal('${user.id}')" class="text-indigo-600 hover:text-indigo-900">Editar</button>
-                    <button onclick="deleteUser('${user.id}')" class="text-red-600 hover:text-red-900">Remover</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
+    };
+    
+    // Mostrar estado de carregamento inicial
+    showLoadingState();
+    
+    // Adicionar classe de transi��o para a tabela
+    if (tableBody) {
+        tableBody.style.transition = 'opacity 200ms ease-in-out';
+    }
+    
+    try {
+        // Buscar usu�rios se n�o foram fornecidos
+        if (!users) {
+            const response = await api.get('/admin/users');
+            adminUsers = response?.data || [];
+        } else {
+            adminUsers = users;
+        }
+        
+        // Aplicar filtros
+        let filteredUsers = [...adminUsers];
+        
+        // Filtro de busca
+        const searchTerm = searchInput?.value?.toLowerCase() || '';
+        if (searchTerm) {
+            filteredUsers = filteredUsers.filter(user => 
+                user.nome.toLowerCase().includes(searchTerm) || 
+                user.email.toLowerCase().includes(searchTerm) ||
+                (user.jobTitle && user.jobTitle.toLowerCase().includes(searchTerm))
+            );
+        }
+        
+        // Filtro por status
+        const statusFilterValue = statusFilter?.value;
+        if (statusFilterValue && statusFilterValue !== 'TODOS') {
+            filteredUsers = filteredUsers.filter(user => user.status === statusFilterValue);
+        }
+        
+        // Filtro por equipe
+        const teamFilterValue = teamFilter?.value;
+        if (teamFilterValue && teamFilterValue !== 'TODAS') {
+            filteredUsers = filteredUsers.filter(user => user.equipeId === teamFilterValue);
+        }
+        
+        // Ordena��o
+        filteredUsers.sort((a, b) => {
+            let aValue = a[sortConfig.key];
+            let bValue = b[sortConfig.key];
+            
+            // Tratamento para ordena��o de valores aninhados
+            if (sortConfig.key === 'equipe') {
+                aValue = a.equipe?.nome || '';
+                bValue = b.equipe?.nome || '';
+            }
+            
+            // Converter para string para garantir compara��o
+            aValue = String(aValue || '').toLowerCase();
+            bValue = String(bValue || '').toLowerCase();
+            
+            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
         });
+        
+        // Pagina��o
+        const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+        currentPage = Math.min(Math.max(1, currentPage), totalPages || 1);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const paginatedUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage);
+        
+        // Renderizar tabela
+        tableBody.innerHTML = '';
+        
+        if (paginatedUsers.length === 0) {
+            const noResultsMessage = filteredUsers.length === 0 && adminUsers.length > 0 
+                ? 'Nenhum usu�rio encontrado com os filtros atuais.' 
+                : 'Nenhum usu�rio cadastrado.';
+                
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center py-8 text-gray-500">
+                        <div class="flex flex-col items-center">
+                            <i class="fas fa-users-slash text-4xl text-gray-300 mb-2"></i>
+                            <p>${noResultsMessage}</p>
+                            ${filteredUsers.length === 0 && adminUsers.length > 0 ? 
+                                '<button onclick="resetFilters()" class="mt-2 text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                                    Limpar filtros
+                                </button>' : ''
+                            }
+                        </div>
+                    </td>
+                </tr>`;
+        } else {
+            paginatedUsers.forEach((user, index) => {
+                const row = document.createElement('tr');
+                row.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-medium">
+                                ${user.nome.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${escapeHtml(user.nome)}</div>
+                                <div class="text-sm text-gray-500">${escapeHtml(user.email)}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.jobTitle ? escapeHtml(user.jobTitle) : '<span class="text-gray-400">N/A</span>'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.equipe?.nome ? 
+                            `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                ${escapeHtml(user.equipe.nome)}
+                            </span>` : 
+                            '<span class="text-gray-400">Sem equipe</span>'
+                        }
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            ${user.status === 'ATIVO' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${user.status === 'ATIVO' ? 'Ativo' : 'Inativo'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                        <button onclick="openUserModal('${user.id}')" 
+                                class="text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 px-2 py-1 rounded"
+                                title="Editar usu�rio">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteUser('${user.id}', this)" 
+                                class="text-red-600 hover:text-red-900 hover:bg-red-50 px-2 py-1 rounded"
+                                title="Remover usu�rio">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // Atualizar controles de pagina��o
+        updatePaginationControls(filteredUsers.length);
+        
+        // Atualizar contador de resultados
+        updateResultsCounter(filteredUsers.length, adminUsers.length);
+        
     } catch (error) {
-        showNotification('Falha ao carregar usurios.', 'error');
-        tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-red-500">Erro ao carregar dados.</td></tr>';
+        console.error('Erro ao carregar usu�rios:', error);
+        let errorMessage = 'Falha ao carregar usu�rios.';
+        let showRetry = true;
+        let redirectToLogin = false;
+        
+        if (error.response) {
+            if (error.response.status === 401) {
+                errorMessage = 'Sess�o expirada. Redirecionando para login...';
+                showRetry = false;
+                redirectToLogin = true;
+            } else if (error.response.status === 403) {
+                errorMessage = 'Voc� n�o tem permiss�o para visualizar usu�rios.';
+            } else if (error.response.status === 404) {
+                errorMessage = 'Recurso n�o encontrado. Por favor, recarregue a p�gina.';
+            } else if (error.response.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.response.status >= 500) {
+                errorMessage = 'Erro no servidor. Por favor, tente novamente mais tarde.';
+            }
+        } else if (error.request) {
+            errorMessage = 'N�o foi poss�vel conectar ao servidor. Verifique sua conex�o com a internet.';
+        }
+        
+        // Usar a fun��o de notifica��o global se dispon�vel
+        if (window.showNotification) {
+            showNotification(errorMessage, 'error');
+        }
+        
+        // Exibir mensagem de erro na tabela
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center py-12">
+                    <div class="max-w-md mx-auto">
+                        <div class="text-red-500">
+                            <div class="flex justify-center mb-3">
+                                <i class="fas fa-exclamation-triangle text-4xl"></i>
+                            </div>
+                            <p class="text-lg font-medium mb-2">Ocorreu um erro</p>
+                            <p class="text-gray-600 mb-4">${errorMessage}</p>
+                            ${showRetry ? `
+                            <button onclick="renderUsersTable()" 
+                                    class="mt-2 px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 
+                                           text-sm font-medium transition-colors focus:outline-none focus:ring-2 
+                                           focus:ring-offset-2 focus:ring-indigo-500">
+                                <i class="fas fa-sync-alt mr-2"></i>Tentar novamente
+                            </button>` : ''}
+                        </div>
+                    </div>
+                </td>
+            </tr>`;
+            
+        // Redirecionar para login se necess�rio
+        if (redirectToLogin) {
+            setTimeout(() => {
+                window.location.href = '/login.html';
+            }, 2000);
+        }
     } finally {
         hideLoader();
     }
+}
+
+/**
+ * Atualiza os controles de pagina��o
+ * @param {number} totalItems - N�mero total de itens
+ */
+function updatePaginationControls(totalItems) {
+    const paginationContainer = document.getElementById('users-pagination');
+    if (!paginationContainer) return;
+    
+    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+    currentPage = Math.min(Math.max(1, currentPage), totalPages);
+    
+    // Bot�es de navega��o
+    const prevDisabled = currentPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50';
+    const nextDisabled = currentPage >= totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50';
+    
+    // Gerar bot�es de p�gina
+    let pageButtons = '';
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+    
+    // Bot�o primeira p�gina
+    if (startPage > 1) {
+        pageButtons += `
+            <button onclick="changePage(1)" class="px-3 py-1 border rounded-l-md bg-white text-gray-700 hover:bg-gray-50">
+                1
+            </button>
+            ${startPage > 2 ? '<span class="px-2 py-1">...</span>' : ''}
+        `;
+    }
+    
+    // Bot�es de p�gina
+    for (let i = startPage; i <= endPage; i++) {
+        const isActive = i === currentPage ? 'bg-indigo-50 border-indigo-500 text-indigo-600' : 'bg-white text-gray-700 hover:bg-gray-50';
+        pageButtons += `
+            <button onclick="changePage(${i})" 
+                    class="px-3 py-1 border-t border-b ${isActive}">
+                ${i}
+            </button>
+        `;
+    }
+    
+    // Bot�o �ltima p�gina
+    if (endPage < totalPages) {
+        pageButtons += `
+            ${endPage < totalPages - 1 ? '<span class="px-2 py-1">...</span>' : ''}
+            <button onclick="changePage(${totalPages})" 
+                    class="px-3 py-1 border rounded-r-md bg-white text-gray-700 hover:bg-gray-50">
+                ${totalPages}
+            </button>
+        `;
+    }
+    
+    // Atualizar HTML
+    paginationContainer.innerHTML = `
+        <div class="flex items-center justify-between px-4 py-3 border-t border-gray-200 sm:px-6">
+            <div class="flex-1 flex justify-between sm:hidden">
+                <button onclick="changePage(${currentPage - 1})" 
+                        ${currentPage <= 1 ? 'disabled' : ''}
+                        class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md ${prevDisabled} bg-white text-gray-700">
+                    Anterior
+                </button>
+                <button onclick="changePage(${currentPage + 1})" 
+                        ${currentPage >= totalPages ? 'disabled' : ''}
+                        class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md ${nextDisabled} bg-white text-gray-700">
+                    Pr�xima
+                </button>
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700">
+                        Mostrando <span class="font-medium">${Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}</span> 
+                        a <span class="font-medium">${Math.min(currentPage * itemsPerPage, totalItems)}</span> 
+                        de <span class="font-medium">${totalItems}</span> resultados
+                    </p>
+                </div>
+                <div>
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        <button onclick="changePage(${currentPage - 1})" 
+                                ${currentPage <= 1 ? 'disabled' : ''}
+                                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${prevDisabled}">
+                            <span class="sr-only">Anterior</span>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        
+                        ${pageButtons}
+                        
+                        <button onclick="changePage(${currentPage + 1})" 
+                                ${currentPage >= totalPages ? 'disabled' : ''}
+                                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${nextDisabled}">
+                            <span class="sr-only">Pr�xima</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Atualiza o contador de resultados
+ * @param {number} filteredCount - N�mero de itens filtrados
+ * @param {number} totalCount - N�mero total de itens
+ */
+function updateResultsCounter(filteredCount, totalCount) {
+    const counterElement = document.getElementById('users-results-count');
+    if (!counterElement) return;
+    
+    if (filteredCount === totalCount) {
+        counterElement.textContent = `${totalCount} usu�rio${totalCount !== 1 ? 's' : ''} no total`;
+    } else {
+        counterElement.textContent = `Mostrando ${filteredCount} de ${totalCount} usu�rio${totalCount !== 1 ? 's' : ''}`;
+    }
+}
+
+/**
+ * Muda para uma p�gina espec�fica
+ * @param {number} page - N�mero da p�gina
+ */
+function changePage(page) {
+    const tableContainer = document.querySelector('[data-table-container]');
+    if (tableContainer) {
+        tableContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    currentPage = page;
+    renderUsersTable();
+}
+
+/**
+ * Aplica os filtros e renderiza a tabela
+ */
+function applyFilters() {
+    currentPage = 1; // Resetar para a primeira p�gina
+    renderUsersTable();
+}
+
+/**
+ * Limpa todos os filtros
+ */
+function resetFilters() {
+    const searchInput = document.getElementById('users-search');
+    const statusFilter = document.getElementById('users-status-filter');
+    const teamFilter = document.getElementById('users-team-filter');
+    
+    if (searchInput) searchInput.value = '';
+    if (statusFilter) statusFilter.value = 'TODOS';
+    if (teamFilter) teamFilter.value = 'TODAS';
+    
+    currentPage = 1;
+    renderUsersTable();
+}
+
+/**
+ * Ordena a tabela por uma coluna
+ * @param {string} key - Chave para ordena��o
+ */
+function sortTable(key) {
+    if (sortConfig.key === key) {
+        sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortConfig = { key, direction: 'asc' };
+    }
+    
+    // Atualizar indicadores de ordena��o
+    document.querySelectorAll('[data-sortable]').forEach(header => {
+        header.classList.remove('text-indigo-600');
+        const icon = header.querySelector('i');
+        if (icon) {
+            icon.className = 'fas fa-sort ml-1 text-gray-400';
+        }
+    });
+    
+    const activeHeader = document.querySelector(`[data-sortable="${key}"]`);
+    if (activeHeader) {
+        activeHeader.classList.add('text-indigo-600');
+        const icon = activeHeader.querySelector('i');
+        if (icon) {
+            icon.className = `fas fa-sort-${sortConfig.direction === 'asc' ? 'up' : 'down'} ml-1`;
+        }
+    }
+    
+    // Reordenar e renderizar
+    renderUsersTable(adminUsers);
 }
 
 /**
@@ -716,7 +1177,7 @@ async function renderTeamsTable() {
 
     showLoader();
     try {
-        // Usar o serviço de equipes para buscar os dados
+        // Usar o servi�o de equipes para buscar os dados
         const response = await api.teams.getAllTeams();
         const teams = response?.data || [];
         
@@ -797,11 +1258,11 @@ async function renderTeamsTable() {
     }
 }
 
-// Funções de CRUD para Equipes
+// Fun��es de CRUD para Equipes
 
 /**
  * Abre o modal de equipe para criar ou editar
- * @param {string|null} teamId - ID da equipe para edição ou null para criar nova
+ * @param {string|null} teamId - ID da equipe para edi��o ou null para criar nova
  */
 async function openTeamModal(teamId = null) {
     const form = document.getElementById('team-form');
@@ -813,19 +1274,19 @@ async function openTeamModal(teamId = null) {
     const errorElement = document.getElementById('name-error');
     
     if (!form || !modal || !modalTitle || !nameField || !descriptionField || !managerSelect || !errorElement) {
-        console.error('Elementos do formulário não encontrados');
+        console.error('Elementos do formul�rio n�o encontrados');
         showNotification(ERROR_MESSAGES.SERVER_ERROR, 'error');
         return;
     }
     
-    // Resetar formulário e mensagens de erro
+    // Resetar formul�rio e mensagens de erro
     form.reset();
     document.getElementById('teamId').value = '';
     errorElement.textContent = '';
     
     showLoader();
     try {
-        // Carregar lista de gestores disponíveis
+        // Carregar lista de gestores dispon�veis
         const usersResponse = await api.users.getUsers();
         if (!usersResponse || !Array.isArray(usersResponse.data)) {
             throw new Error(ERROR_MESSAGES.USERS_LOAD_ERROR);
@@ -847,7 +1308,7 @@ async function openTeamModal(teamId = null) {
         });
 
         if (teamId) {
-            // Modo edição - carregar dados da equipe
+            // Modo edi��o - carregar dados da equipe
             modalTitle.textContent = 'Editar Equipe';
             const teamResponse = await api.teams.getTeamById(teamId);
             
@@ -865,7 +1326,7 @@ async function openTeamModal(teamId = null) {
                 managerSelect.value = team.gestorId;
             }
         } else {
-            // Modo criação
+            // Modo cria��o
             modalTitle.textContent = 'Adicionar Nova Equipe';
         }
         
@@ -874,7 +1335,7 @@ async function openTeamModal(teamId = null) {
         nameField.focus();
         
     } catch (error) {
-        console.error('Erro ao abrir formulário de equipe:', error);
+        console.error('Erro ao abrir formul�rio de equipe:', error);
         notificationService.error(
             error.message || ERROR_MESSAGES.SERVER_ERROR
         );
@@ -891,19 +1352,32 @@ function closeTeamModal() {
 /**
  * Valida os dados da equipe antes do envio
  * @param {Object} data - Dados da equipe a serem validados
- * @returns {{isValid: boolean, errors: Object}} Resultado da validação
+ * @returns {{isValid: boolean, errors: Object}} Resultado da valida��o
  */
 function validateTeamData(data) {
     const errors = {};
     
+    // Validar nome
     if (!data.nome || !data.nome.trim()) {
         errors.name = ERROR_MESSAGES.TEAM_NAME_REQUIRED;
+    } else if (data.nome.length < 3) {
+        errors.name = 'O nome da equipe deve ter pelo menos 3 caracteres';
     } else if (data.nome.length > 100) {
-        errors.name = 'O nome da equipe não pode ter mais de 100 caracteres';
+        errors.name = 'O nome da equipe n�o pode ter mais de 100 caracteres';
     }
     
-    if (data.descricao && data.descricao.length > 500) {
-        errors.description = 'A descrição não pode ter mais de 500 caracteres';
+    // Validar descri��o
+    if (data.descricao) {
+        if (data.descricao.length > 500) {
+            errors.description = 'A descri��o n�o pode ter mais de 500 caracteres';
+        } else if (data.descricao.trim().length === 0) {
+            errors.description = 'A descri��o n�o pode conter apenas espa�os em branco';
+        }
+    }
+    
+    // Validar gestor (opcional, mas se fornecido, deve ser um ID v�lido)
+    if (data.gestorId && !/^\d+$/.test(data.gestorId)) {
+        errors.managerId = 'ID do gestor inv�lido';
     }
     
     return {
@@ -914,12 +1388,12 @@ function validateTeamData(data) {
 
 /**
  * Salva uma equipe (cria ou atualiza)
- * @param {Event} event - Evento de submit do formulário
+ * @param {Event} event - Evento de submit do formul�rio
  */
 async function saveTeam(event) {
     event.preventDefault();
     
-    // Obter referências dos elementos
+    // Obter refer�ncias dos elementos
     const form = event.target;
     const teamId = document.getElementById('teamId')?.value || '';
     const nameField = document.getElementById('team-name');
@@ -930,8 +1404,15 @@ async function saveTeam(event) {
     
     // Validar elementos do DOM
     if (!form || !nameField || !descriptionField || !managerSelect || !nameError) {
-        console.error('Elementos do formulário não encontrados');
+        console.error('Elementos do formul�rio n�o encontrados');
         notificationService.error(ERROR_MESSAGES.SERVER_ERROR);
+        return;
+    }
+    
+    // Verificar se o formul�rio est� em um modal
+    const modal = form.closest('.modal');
+    if (modal && modal.style.display === 'none') {
+        console.error('Tentativa de envio de formul�rio em modal fechado');
         return;
     }
     
@@ -939,7 +1420,7 @@ async function saveTeam(event) {
     nameError.textContent = '';
     if (descriptionError) descriptionError.textContent = '';
     
-    // Preparar dados com validação
+    // Preparar dados com valida��o
     const teamData = {
         nome: (nameField.value || '').trim(),
         descricao: (descriptionField.value || '').trim(),
@@ -949,14 +1430,68 @@ async function saveTeam(event) {
     // Validar dados
     const { isValid, errors } = validateTeamData(teamData);
     if (!isValid) {
-        if (errors.name) nameError.textContent = errors.name;
+        if (errors.name) {
+            nameError.textContent = errors.name;
+            nameField.focus();
+        }
         if (errors.description && descriptionError) {
             descriptionError.textContent = errors.description;
+            if (!errors.name) descriptionField.focus();
         }
+        if (errors.managerId && managerSelect) {
+            managerSelect.focus();
+        }
+        
+        // Adicionar classe de erro aos campos inv�lidos
+        if (errors.name) nameField.classList.add('border-red-500');
+        if (errors.description) descriptionField?.classList.add('border-red-500');
+        if (errors.managerId) managerSelect.classList.add('border-red-500');
+        
+        // Rolagem suave para o primeiro erro
+        const firstErrorElement = nameError.textContent ? nameField : 
+                               (descriptionError?.textContent ? descriptionField : 
+                               (errors.managerId ? managerSelect : null));
+        firstErrorElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
         return;
     }
     
-    // Configurar botão de envio
+    // Configurar manipuladores de eventos para limpar erros ao digitar
+    const clearErrorOnInput = (element, errorElement) => {
+        if (!element || !errorElement) return;
+        
+        const handler = () => {
+            errorElement.textContent = '';
+            element.classList.remove('border-red-500');
+            element.removeEventListener('input', handler);
+        };
+        
+        element.addEventListener('input', handler, { once: true });
+    };
+    
+    // Configurar limpeza de erros para cada campo
+    if (nameError.textContent) {
+        clearErrorOnInput(nameField, nameError);
+    }
+    if (descriptionError?.textContent) {
+        clearErrorOnInput(descriptionField, descriptionError);
+    }
+    
+    // Adicionar timeout para evitar m�ltiplos envios
+    const now = Date.now();
+    const lastSubmitTime = form.dataset.lastSubmitTime || 0;
+    const timeSinceLastSubmit = now - lastSubmitTime;
+    
+    // Se j� houve um envio nos �ltimos 2 segundos, ignorar
+    if (timeSinceLastSubmit < 2000) {
+        console.log('Tentativa de envio muito r�pida, ignorando...');
+        return;
+    }
+    
+    // Registrar o hor�rio do envio atual
+    form.dataset.lastSubmitTime = now;
+    
+    // Configurar bot�o de envio
     const submitButton = form.querySelector('button[type="submit"]');
     const originalButtonText = submitButton?.innerHTML || 'Salvar';
     
@@ -991,38 +1526,99 @@ async function saveTeam(event) {
             notificationService.success('Equipe criada com sucesso!');
         }
         
-        // Fechar modal e atualizar tabela
+        // Fechar modal e limpar formul�rio
         closeTeamModal();
-        await renderTeamsTable();
         
-        // Disparar evento personalizado para notificar sobre a atualização
+        // Limpar campos do formul�rio
+        if (form) {
+            form.reset();
+            // Remover classes de erro
+            const errorElements = form.querySelectorAll('.border-red-500');
+            errorElements.forEach(el => el.classList.remove('border-red-500'));
+        }
+        
+        // Atualizar tabela de equipes
+        try {
+            await renderTeamsTable();
+        } catch (error) {
+            console.error('Erro ao atualizar a tabela de equipes:', error);
+            notificationService.error('Equipe salva, mas houve um erro ao atualizar a lista.');
+        }
+        
+        // Disparar evento personalizado para notificar sobre a atualiza��o
         const updatedTeamId = response?.data?.id || teamId;
         if (updatedTeamId) {
             document.dispatchEvent(new CustomEvent('teamUpdated', {
-                detail: { teamId: updatedTeamId }
+                detail: { 
+                    teamId: updatedTeamId,
+                    action: isEditMode ? 'updated' : 'created'
+                }
             }));
         }
         
     } catch (error) {
         console.error('Erro ao salvar equipe:', error);
         
-        // Tratar erros específicos
+        // Tratar erros espec�ficos
         if (error.response?.status === 409) {
-            notificationService.error('Já existe uma equipe com este nome.');
-            if (nameError) nameError.textContent = 'Já existe uma equipe com este nome';
-            if (nameField) nameField.focus();
+            const errorMsg = 'J� existe uma equipe com este nome. Por favor, escolha outro nome.';
+            notificationService.error(errorMsg);
+            if (nameError) {
+                nameError.textContent = errorMsg;
+                nameError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            if (nameField) {
+                nameField.focus();
+                nameField.select();
+            }
         } else if (error.response?.status === 401) {
             notificationService.error(ERROR_MESSAGES.UNAUTHORIZED);
-            window.location.href = 'index.html';
+            // Redirecionar ap�s um curto atraso para permitir que o usu�rio veja a mensagem
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
         } else if (error.response?.status === 403) {
             notificationService.error(ERROR_MESSAGES.FORBIDDEN);
+            // Fechar o modal se o usu�rio n�o tiver permiss�o
+            closeTeamModal();
+        } else if (error.response?.status === 400) {
+            // Erro de valida��o do servidor
+            const serverErrors = error.response.data?.errors || {};
+            
+            // Mapear erros do servidor para os campos do formul�rio
+            if (serverErrors.nome) {
+                nameError.textContent = serverErrors.nome[0];
+                nameField.classList.add('border-red-500');
+            }
+            if (serverErrors.descricao && descriptionError) {
+                descriptionError.textContent = serverErrors.descricao[0];
+                descriptionField.classList.add('border-red-500');
+            }
+            if (serverErrors.gestorId) {
+                const managerError = document.getElementById('manager-error');
+                if (managerError) {
+                    managerError.textContent = serverErrors.gestorId[0];
+                }
+                managerSelect.classList.add('border-red-500');
+            }
+            
+            // Rolar para o primeiro erro
+            const firstError = Object.keys(serverErrors)[0];
+            if (firstError) {
+                const element = firstError === 'nome' ? nameField : 
+                              (firstError === 'descricao' ? descriptionField : 
+                              (firstError === 'gestorId' ? managerSelect : null));
+                element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                element?.focus();
+            }
         } else {
+            // Erro gen�rico
             const errorMessage = error.message || 
                 (teamId ? ERROR_MESSAGES.TEAM_UPDATE_ERROR : ERROR_MESSAGES.TEAM_CREATE_ERROR);
             notificationService.error(errorMessage);
         }
     } finally {
-        // Restaurar estado do botão e loader
+        // Restaurar estado do bot�o e loader
         if (submitButton) {
             submitButton.disabled = false;
             submitButton.innerHTML = originalButtonText;
@@ -1032,12 +1628,38 @@ async function saveTeam(event) {
 }
 
 /**
- * Remove uma equipe após confirmação do usuário
+ * Remove uma equipe ap�s confirma��o do usu�rio
  * @param {string} teamId - ID da equipe a ser removida
  */
-async function deleteTeam(teamId) {
+// Cache para controlar o tempo entre exclus�es
+const lastDeleteTime = new WeakMap();
+
+/**
+ * Remove uma equipe ap�s confirma��o do usu�rio
+ * @param {string} teamId - ID da equipe a ser removida
+ * @param {HTMLElement} [triggerElement=null] - Elemento que acionou a exclus�o (opcional)
+ */
+async function deleteTeam(teamId, triggerElement = null) {
+    // Verificar se h� uma exclus�o recente
+    const now = Date.now();
+    const lastTime = lastDeleteTime.get(deleteTeam) || 0;
+    const timeSinceLastDelete = now - lastTime;
+    
+    if (timeSinceLastDelete < 2000) {
+        console.log('Tentativa de exclus�o muito r�pida, ignorando...');
+        return;
+    }
+    lastDeleteTime.set(deleteTeam, now);
+    
+    // Mostrar feedback visual no elemento que acionou a exclus�o, se fornecido
+    const originalButtonContent = triggerElement?.innerHTML;
+    if (triggerElement) {
+        triggerElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        triggerElement.disabled = true;
+    }
+    
     try {
-        // Buscar dados da equipe para mostrar no modal de confirmação
+        // Buscar dados da equipe para mostrar no modal de confirma��o
         const response = await api.teams.getTeamById(teamId);
         if (!response?.success || !response.data) {
             throw new Error(response?.message || ERROR_MESSAGES.TEAM_NOT_FOUND);
@@ -1046,18 +1668,18 @@ async function deleteTeam(teamId) {
         const team = response.data;
         const memberCount = team.membros?.length || 0;
         
-        // Mensagem de confirmação personalizada
+        // Mensagem de confirma��o personalizada
         let message = `Tem certeza que deseja remover a equipe <strong>${escapeHtml(team.nome)}</strong>?`;
         
         if (memberCount > 0) {
-            message += `<br><br><span class="text-yellow-700">Atenção: Esta equipe possui ${memberCount} membro(s). 
-                      Todos os membros serão desvinculados da equipe.</span>`;
+            message += `<br><br><span class="text-yellow-700">Aten��o: Esta equipe possui ${memberCount} membro(s). 
+                      Todos os membros ser�o desvinculados da equipe.</span>`;
         }
         
-        message += "<br><br>Esta ação não pode ser desfeita.";
+        message += "<br><br>Esta a��o n�o pode ser desfeita.";
         
         showConfirmationModal(
-            'Confirmar Exclusão', 
+            'Confirmar Exclus�o', 
             message, 
             async () => {
                 const modal = document.getElementById('confirmation-modal');
@@ -1065,13 +1687,13 @@ async function deleteTeam(teamId) {
                 const originalButtonText = confirmButton?.innerHTML;
                 
                 try {
-                    // Atualizar botão de confirmação
+                    // Atualizar bot�o de confirma��o
                     if (confirmButton) {
                         confirmButton.disabled = true;
                         confirmButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
                     }
                     
-                    // Executar exclusão
+                    // Executar exclus�o
                     const deleteResponse = await api.teams.deleteTeam(teamId);
                     
                     if (!deleteResponse?.success) {
@@ -1084,7 +1706,7 @@ async function deleteTeam(teamId) {
                     hideConfirmationModal();
                     await renderTeamsTable();
                     
-                    // Disparar evento personalizado para notificar sobre a exclusão
+                    // Disparar evento personalizado para notificar sobre a exclus�o
                     document.dispatchEvent(new CustomEvent('teamDeleted', {
                         detail: { teamId }
                     }));
@@ -1092,12 +1714,12 @@ async function deleteTeam(teamId) {
                 } catch (error) {
                     console.error('Erro ao remover equipe:', error);
                     
-                    // Tratar erros específicos
+                    // Tratar erros espec�ficos
                     if (error.response?.status === 403) {
-                        showNotification('Você não tem permissão para remover esta equipe.', 'error');
+                        showNotification('Voc� n�o tem permiss�o para remover esta equipe.', 'error');
                     } else if (error.response?.status === 404) {
-                        showNotification('A equipe não foi encontrada ou já foi removida.', 'error');
-                        await renderTeamsTable(); // Atualizar tabela se a equipe não existir mais
+                        showNotification('A equipe n�o foi encontrada ou j� foi removida.', 'error');
+                        await renderTeamsTable(); // Atualizar tabela se a equipe n�o existir mais
                     } else {
                         showNotification(
                             error.message || ERROR_MESSAGES.TEAM_DELETE_ERROR, 
@@ -1105,10 +1727,16 @@ async function deleteTeam(teamId) {
                         );
                     }
                 } finally {
-                    // Restaurar botão de confirmação
+                    // Restaurar bot�o de confirma��o
                     if (confirmButton) {
                         confirmButton.disabled = false;
                         confirmButton.innerHTML = originalButtonText;
+                    }
+                    
+                    // Restaurar o bot�o que acionou a exclus�o, se fornecido
+                    if (triggerElement) {
+                        triggerElement.innerHTML = originalButtonContent;
+                        triggerElement.disabled = false;
                     }
                 }
             },
@@ -1119,11 +1747,36 @@ async function deleteTeam(teamId) {
         );
         
     } catch (error) {
-        console.error('Erro ao cargar dados da equipe para exclusão:', error);
-        showNotification(
-            error.message || 'Não foi possível carregar os dados da equipe para exclusão.',
-            'error'
-        );
+        console.error('Erro ao carregar dados da equipe para exclus�o:', error);
+        
+        // Tratar erros espec�ficos
+        let errorMessage = 'N�o foi poss�vel carregar os dados da equipe para exclus�o.';
+        
+        if (error.response) {
+            if (error.response.status === 403) {
+                errorMessage = 'Voc� n�o tem permiss�o para acessar esta equipe.';
+            } else if (error.response.status === 404) {
+                errorMessage = 'A equipe n�o foi encontrada ou j� foi removida.';
+                // Atualizar a tabela para refletir que a equipe n�o existe mais
+                try {
+                    await renderTeamsTable();
+                } catch (e) {
+                    console.error('Erro ao atualizar a tabela de equipes:', e);
+                }
+            } else if (error.response.data?.message) {
+                errorMessage = error.response.data.message;
+            }
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        showNotification(errorMessage, 'error');
+    } finally {
+        // Garantir que o bot�o seja restaurado em caso de erro
+        if (triggerElement) {
+            triggerElement.innerHTML = originalButtonContent;
+            triggerElement.disabled = false;
+        }
     }
 }
 
@@ -1158,44 +1811,325 @@ function closeUserModal() {
     document.getElementById('user-modal').classList.add('hidden');
 }
 
+// Cache para controlar o tempo entre envios
+const lastSaveTime = new WeakMap();
+
 async function saveUser(event) {
     event.preventDefault();
-    const userId = document.getElementById('userId').value;
-    const data = {
-        nome: document.getElementById('user-name').value,
-        email: document.getElementById('user-email').value,
-        senha: document.getElementById('user-password').value,
-        jobTitle: document.getElementById('user-jobtitle').value,
-        cargo: document.getElementById('user-role').value,
-        equipeId: document.getElementById('user-team').value || null,
-        status: document.getElementById('user-status').value,
-    };
-
-    if (userId) delete data.senha; // No enviar senha em branco na atualizao
-
-    const url = userId ? `/admin/users/${userId}` : '/admin/users';
-    const method = userId ? 'PUT' : 'POST';
-
+    
+    // Elementos do formul�rio
+    const form = event.target.closest('form');
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton?.innerHTML || 'Salvar';
+    
     try {
-        await api.request(url, { method, data });
-        showNotification(`Usurio ${userId ? 'atualizado' : 'criado'} com sucesso!`, 'success');
+        // Validar tempo entre envios
+        const now = Date.now();
+        const lastTime = lastSaveTime.get(saveUser) || 0;
+        if (now - lastTime < 2000) {
+            console.log('Tentativa de salvamento muito r�pida, ignorando...');
+            return;
+        }
+        lastSaveTime.set(saveUser, now);
+        
+        // Atualizar UI durante o processamento
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+        }
+        
+        // Obter dados do formul�rio
+        const userId = document.getElementById('userId').value;
+        const passwordField = document.getElementById('user-password');
+        const data = {
+            nome: document.getElementById('user-name').value.trim(),
+            email: document.getElementById('user-email').value.trim().toLowerCase(),
+            senha: passwordField.value,
+            jobTitle: document.getElementById('user-jobtitle').value.trim(),
+            cargo: document.getElementById('user-role').value,
+            equipeId: document.getElementById('user-team').value || null,
+            status: document.getElementById('user-status').value,
+        };
+        
+        // Valida��o dos campos
+        const errors = {};
+        
+        // Validar nome
+        if (!data.nome) {
+            errors.name = 'O nome � obrigat�rio';
+        } else if (data.nome.length < 3) {
+            errors.name = 'O nome deve ter pelo menos 3 caracteres';
+        } else if (data.nome.length > 100) {
+            errors.name = 'O nome n�o pode ter mais de 100 caracteres';
+        }
+        
+        // Validar email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!data.email) {
+            errors.email = 'O email � obrigat�rio';
+        } else if (!emailRegex.test(data.email)) {
+            errors.email = 'Por favor, insira um email v�lido';
+        }
+        
+        // Validar senha apenas para novos usu�rios
+        if (!userId && !data.senha) {
+            errors.password = 'A senha � obrigat�ria';
+        } else if (data.senha && data.senha.length < 6) {
+            errors.password = 'A senha deve ter pelo menos 6 caracteres';
+        }
+        
+        // Exibir erros de valida��o, se houver
+        const nameError = document.getElementById('user-name-error');
+        const emailError = document.getElementById('user-email-error');
+        const passwordError = document.getElementById('user-password-error');
+        
+        // Limpar erros anteriores
+        [nameError, emailError, passwordError].forEach(el => {
+            if (el) el.textContent = '';
+        });
+        
+        if (Object.keys(errors).length > 0) {
+            // Exibir erros
+            if (errors.name && nameError) nameError.textContent = errors.name;
+            if (errors.email && emailError) emailError.textContent = errors.email;
+            if (errors.password && passwordError) passwordError.textContent = errors.password;
+            
+            // Rolar at� o primeiro erro
+            const firstErrorField = errors.name ? 'user-name' : 
+                                  errors.email ? 'user-email' : 
+                                  'user-password';
+            const firstErrorElement = document.getElementById(firstErrorField);
+            firstErrorElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstErrorElement?.focus();
+            
+            return;
+        }
+        
+        // Remover senha se for atualiza��o e n�o foi alterada
+        if (userId) delete data.senha;
+        
+        // Preparar requisi��o
+        const url = userId ? `/admin/users/${userId}` : '/admin/users';
+        const method = userId ? 'PUT' : 'POST';
+        
+        // Enviar dados
+        const response = await api.request(url, { method, data });
+        
+        if (!response?.success) {
+            throw new Error(response?.message || ERROR_MESSAGES.VALIDATION_ERROR);
+        }
+        
+        // Feedback de sucesso
+        showNotification(
+            `Usu�rio ${userId ? 'atualizado' : 'criado'} com sucesso!`,
+            'success'
+        );
+        
+        // Fechar modal e atualizar tabela
         closeUserModal();
-        renderUsersTable();
+        await renderUsersTable();
+        
+        // Disparar evento personalizado
+        document.dispatchEvent(new CustomEvent('userUpdated', {
+            detail: { userId: response.data?.id || userId }
+        }));
+        
     } catch (error) {
-        showNotification(error.message, 'error');
+        console.error('Erro ao salvar usu�rio:', error);
+        
+        // Tratar erros espec�ficos
+        let errorMessage = error.message || 'Ocorreu um erro ao salvar o usu�rio.';
+        
+        if (error.response) {
+            // Erros de valida��o do servidor (status 400)
+            if (error.response.status === 400 && error.response.data?.errors) {
+                const serverErrors = error.response.data.errors;
+                errorMessage = Object.values(serverErrors)
+                    .flat()
+                    .join('\n');
+            }
+            // Conflito de email (status 409)
+            else if (error.response.status === 409) {
+                errorMessage = 'Este email j� est� em uso. Por favor, utilize outro.';
+                const emailField = document.getElementById('user-email');
+                const emailError = document.getElementById('user-email-error');
+                if (emailField && emailError) {
+                    emailError.textContent = errorMessage;
+                    emailField.focus();
+                }
+            }
+            // N�o autorizado (status 401)
+            else if (error.response.status === 401) {
+                errorMessage = 'Sess�o expirada. Por favor, fa�a login novamente.';
+                redirectToLogin();
+            }
+            // Acesso negado (status 403)
+            else if (error.response.status === 403) {
+                errorMessage = 'Voc� n�o tem permiss�o para realizar esta a��o.';
+            }
+        }
+        
+        showNotification(errorMessage, 'error');
+        
+    } finally {
+        // Restaurar estado do bot�o
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+        }
     }
 }
 
-function deleteUser(userId) {
-    showConfirmationModal('Confirmar Remoo', 'Tem certeza que deseja remover este usurio?', async () => {
-        try {
-            await api.del(`/admin/users/${userId}`);
-            showNotification('Usurio removido com sucesso!', 'success');
-            renderUsersTable();
-        } catch (error) {
-            showNotification(error.message, 'error');
+// Cache para controlar o tempo entre exclus�es de usu�rio
+const lastUserDeleteTime = new WeakMap();
+
+/**
+ * Remove um usu�rio ap�s confirma��o
+ * @param {string} userId - ID do usu�rio a ser removido
+ * @param {HTMLElement} [triggerElement=null] - Elemento que acionou a exclus�o (opcional)
+ */
+async function deleteUser(userId, triggerElement = null) {
+    try {
+        // Verificar se h� uma exclus�o recente
+        const now = Date.now();
+        const lastTime = lastUserDeleteTime.get(deleteUser) || 0;
+        const timeSinceLastDelete = now - lastTime;
+        
+        if (timeSinceLastDelete < 2000) {
+            console.log('Tentativa de exclus�o muito r�pida, ignorando...');
+            return;
         }
-    });
+        lastUserDeleteTime.set(deleteUser, now);
+        
+        // Mostrar feedback visual no elemento que acionou a exclus�o, se fornecido
+        const originalButtonContent = triggerElement?.innerHTML;
+        if (triggerElement) {
+            triggerElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            triggerElement.disabled = true;
+        }
+        
+        // Buscar dados do usu�rio para mostrar no modal de confirma��o
+        let userName = 'este usu�rio';
+        try {
+            const userResponse = await api.get(`/admin/users/${userId}`);
+            if (userResponse?.success && userResponse.data) {
+                userName = userResponse.data.nome || 'este usu�rio';
+            }
+        } catch (error) {
+            console.error('Erro ao buscar dados do usu�rio:', error);
+            // Continuar mesmo se n�o conseguir buscar o nome
+        }
+        
+        // Verificar se o usu�rio est� tentando se auto-excluir
+        const currentUser = getAuthData();
+        const isSelfDelete = currentUser?.id === userId;
+        
+        // Mensagem de confirma��o personalizada
+        let message = `Tem certeza que deseja remover <strong>${escapeHtml(userName)}</strong>?`;
+        
+        if (isSelfDelete) {
+            message += '<br><br><span class="text-red-600 font-semibold">Aten��o: Esta � a sua pr�pria conta! Voc� ser� desconectado imediatamente ap�s a exclus�o.</span>';
+        }
+        
+        message += '<br><br>Esta a��o n�o pode ser desfeita.';
+        
+        showConfirmationModal(
+            'Confirmar Exclus�o',
+            message,
+            async () => {
+                const modal = document.getElementById('confirmation-modal');
+                const confirmButton = modal?.querySelector('[data-confirm-button]');
+                const originalConfirmButtonText = confirmButton?.innerHTML;
+                
+                try {
+                    // Atualizar bot�o de confirma��o
+                    if (confirmButton) {
+                        confirmButton.disabled = true;
+                        confirmButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
+                    }
+                    
+                    // Executar exclus�o
+                    const response = await api.del(`/admin/users/${userId}`);
+                    
+                    if (!response?.success) {
+                        throw new Error(response?.message || 'Falha ao excluir o usu�rio');
+                    }
+                    
+                    // Feedback de sucesso
+                    showNotification('Usu�rio removido com sucesso!', 'success');
+                    
+                    // Se o usu�rio estiver se auto-excluindo, redirecionar para login
+                    if (isSelfDelete) {
+                        // Limpar dados de autentica��o
+                        clearAuthData();
+                        // Redirecionar para a p�gina de login ap�s um curto atraso
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 1500);
+                        return;
+                    }
+                    
+                    // Atualizar a tabela de usu�rios
+                    await renderUsersTable();
+                    
+                    // Disparar evento personalizado
+                    document.dispatchEvent(new CustomEvent('userDeleted', {
+                        detail: { userId }
+                    }));
+                    
+                } catch (error) {
+                    console.error('Erro ao remover usu�rio:', error);
+                    
+                    // Tratar erros espec�ficos
+                    let errorMessage = 'Ocorreu um erro ao remover o usu�rio.';
+                    
+                    if (error.response) {
+                        if (error.response.status === 403) {
+                            errorMessage = 'Voc� n�o tem permiss�o para remover este usu�rio.';
+                        } else if (error.response.status === 404) {
+                            errorMessage = 'O usu�rio n�o foi encontrado ou j� foi removido.';
+                            // Atualizar a tabela para refletir que o usu�rio n�o existe mais
+                            try {
+                                await renderUsersTable();
+                            } catch (e) {
+                                console.error('Erro ao atualizar a tabela de usu�rios:', e);
+                            }
+                        } else if (error.response.data?.message) {
+                            errorMessage = error.response.data.message;
+                        }
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    
+                    showNotification(errorMessage, 'error');
+                    
+                } finally {
+                    // Restaurar bot�o de confirma��o
+                    if (confirmButton) {
+                        confirmButton.disabled = false;
+                        confirmButton.innerHTML = originalConfirmButtonText;
+                    }
+                }
+            },
+            'Excluir',
+            'Cancelar',
+            'bg-red-600 hover:bg-red-700',
+            'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300'
+        );
+        
+    } catch (error) {
+        console.error('Erro ao preparar a exclus�o do usu�rio:', error);
+        showNotification(
+            'Ocorreu um erro ao preparar a exclus�o do usu�rio. Por favor, tente novamente.',
+            'error'
+        );
+    } finally {
+        // Restaurar o bot�o que acionou a exclus�o, se fornecido
+        if (triggerElement) {
+            triggerElement.innerHTML = originalButtonContent;
+            triggerElement.disabled = false;
+        }
+    }
 }
 
 // Cache para armazenar a lista de equipes
@@ -1218,7 +2152,7 @@ function clearTeamsCache() {
 
 /**
  * Busca equipes do servidor ou do cache
- * @param {boolean} forceRefresh - Força atualização do cache
+ * @param {boolean} forceRefresh - For�a atualiza��o do cache
  * @returns {Promise<Array>} Lista de equipes
  */
 async function fetchTeams(forceRefresh = false) {
@@ -1226,7 +2160,7 @@ async function fetchTeams(forceRefresh = false) {
     const isCacheValid = (now - teamsCache.timestamp) < teamsCache.CACHE_DURATION;
     
     if (!forceRefresh && teamsCache.data.length > 0 && isCacheValid) {
-        return [...teamsCache.data]; // Retorna cópia do cache
+        return [...teamsCache.data]; // Retorna c�pia do cache
     }
     
     try {
@@ -1239,34 +2173,34 @@ async function fetchTeams(forceRefresh = false) {
         teamsCache.data = response.data || [];
         teamsCache.timestamp = now;
         
-        return [...teamsCache.data]; // Retorna cópia
+        return [...teamsCache.data]; // Retorna c�pia
         
     } catch (error) {
         console.error('Erro ao buscar equipes:', error);
         
         // Se houver erro mas tivermos dados em cache, usamos os dados antigos
         if (teamsCache.data.length > 0) {
-            console.warn('Usando dados em cache devido ao erro na requisição');
-            return [...teamsCache.data]; // Retorna cópia
+            console.warn('Usando dados em cache devido ao erro na requisi��o');
+            return [...teamsCache.data]; // Retorna c�pia
         }
         
-        throw error; // Propaga o erro se não houver cache
+        throw error; // Propaga o erro se n�o houver cache
     }
 }
 
 /**
- * Popula os selects de equipe na aplicação
+ * Popula os selects de equipe na aplica��o
  * @param {string} selectId - ID do elemento select a ser preenchido (opcional)
- * @param {boolean} forceRefresh - Força atualização do cache
+ * @param {boolean} forceRefresh - For�a atualiza��o do cache
  * @returns {Promise<Array>} Lista de equipes carregadas
  */
 async function populateTeamSelect(selectId = null, forceRefresh = false) {
-    // Se não for especificado um select, atualiza todos os selects de equipe
+    // Se n�o for especificado um select, atualiza todos os selects de equipe
     const selectors = selectId 
         ? [document.getElementById(selectId)]
         : document.querySelectorAll('select[data-team-select]');
 
-    // Se não houver selects para preencher, retorna
+    // Se n�o houver selects para preencher, retorna
     if (!selectors.length || (selectId && !selectors[0])) {
         console.warn('Nenhum seletor de equipe encontrado');
         return [];
@@ -1292,11 +2226,11 @@ async function populateTeamSelect(selectId = null, forceRefresh = false) {
             const isRequired = select.required;
             const placeholder = select.dataset.placeholder || 'Selecione uma equipe';
             
-            // Limpar opções atuais, mantendo a primeira opção se existir
+            // Limpar op��es atuais, mantendo a primeira op��o se existir
             const firstOption = select.querySelector('option:first-child');
             select.innerHTML = firstOption ? firstOption.outerHTML : '';
             
-            // Se não houver opção padrão, adiciona uma
+            // Se n�o houver op��o padr�o, adiciona uma
             if (select.querySelectorAll('option').length === 0) {
                 const defaultOption = document.createElement('option');
                 defaultOption.value = '';
@@ -1305,7 +2239,7 @@ async function populateTeamSelect(selectId = null, forceRefresh = false) {
                 select.appendChild(defaultOption);
             }
             
-            // Adicionar equipes como opções
+            // Adicionar equipes como op��es
             sortedTeams.forEach(team => {
                 const option = document.createElement('option');
                 option.value = team.id;
@@ -1315,7 +2249,7 @@ async function populateTeamSelect(selectId = null, forceRefresh = false) {
                 select.appendChild(option);
             });
             
-            // Restaurar o valor anterior se ainda for válido
+            // Restaurar o valor anterior se ainda for v�lido
             const hasCurrentValue = sortedTeams.some(team => team.id === currentValue);
             if (hasCurrentValue) {
                 select.value = currentValue;
@@ -1323,7 +2257,7 @@ async function populateTeamSelect(selectId = null, forceRefresh = false) {
                 select.selectedIndex = 0;
             }
             
-            // Disparar evento de mudança para atualizar dependências
+            // Disparar evento de mudan�a para atualizar depend�ncias
             select.dispatchEvent(new CustomEvent('teamSelectUpdated', {
                 detail: { 
                     teamId: select.value,
@@ -1337,10 +2271,10 @@ async function populateTeamSelect(selectId = null, forceRefresh = false) {
     } catch (error) {
         console.error('Erro ao carregar lista de equipes:', error);
         
-        // Mostrar mensagem de erro apenas se não houver cache
+        // Mostrar mensagem de erro apenas se n�o houver cache
         if (teamsCache.data.length === 0) {
             showNotification(
-                error.message || 'Não foi possível carregar a lista de equipes.', 
+                error.message || 'N�o foi poss�vel carregar a lista de equipes.', 
                 'error'
             );
         }
@@ -1360,7 +2294,7 @@ document.addEventListener('teamUpdated', () => {
     populateTeamSelect();
 });
 
-// Evento para limpar o cache quando uma equipe for excluída
+// Evento para limpar o cache quando uma equipe for exclu�da
 document.addEventListener('teamDeleted', () => {
     clearTeamsCache();
     populateTeamSelect();
