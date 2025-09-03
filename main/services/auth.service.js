@@ -12,11 +12,24 @@ const REDIRECT_KEY = 'redirectAfterLogin';
  * @param {string} token - Token de autenticação
  */
 export function setAuthData(userData, token) {
-    if (token) {
-        localStorage.setItem(TOKEN_KEY, token);
+    if (!token) {
+        console.error('Nenhum token fornecido para setAuthData');
+        return;
     }
-    if (userData) {
-        localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+    
+    try {
+        // Remove o prefixo 'Bearer ' se existir para armazenar apenas o token
+        const cleanToken = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
+        localStorage.setItem(TOKEN_KEY, cleanToken);
+        
+        if (userData) {
+            localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+        }
+        
+        console.log('Token armazenado com sucesso');
+    } catch (error) {
+        console.error('Erro ao armazenar dados de autenticação:', error);
+        throw new Error('Falha ao armazenar os dados de autenticação');
     }
 }
 
@@ -25,20 +38,42 @@ export function setAuthData(userData, token) {
  * @returns {Object|null} Dados do usuário ou null se não autenticado
  */
 export function getAuthData() {
-    const token = localStorage.getItem(TOKEN_KEY);
-    const userData = localStorage.getItem(USER_DATA_KEY);
-    
-    if (!token || !userData) {
-        return null;
-    }
-    
     try {
-        return {
-            token,
-            user: JSON.parse(userData)
-        };
-    } catch (e) {
-        console.error('Erro ao analisar dados do usuário:', e);
+        const token = localStorage.getItem(TOKEN_KEY);
+        const userData = localStorage.getItem(USER_DATA_KEY);
+        
+        if (!token) {
+            console.log('Nenhum token encontrado no localStorage');
+            return null;
+        }
+        
+        // Verifica se o token é válido (formato básico)
+        if (typeof token !== 'string' || token.trim() === '') {
+            console.error('Token inválido encontrado no localStorage');
+            clearAuthData();
+            return null;
+        }
+        
+        // Se não houver dados do usuário, mas houver token, tenta obter o perfil
+        if (!userData) {
+            console.log('Token encontrado, mas sem dados do usuário');
+            return { token };
+        }
+        
+        // Tenta fazer parse dos dados do usuário
+        try {
+            const parsedUserData = JSON.parse(userData);
+            return {
+                token,
+                user: parsedUserData
+            };
+        } catch (e) {
+            console.error('Erro ao analisar dados do usuário:', e);
+            // Mantém o token mesmo se os dados do usuário estiverem corrompidos
+            return { token };
+        }
+    } catch (error) {
+        console.error('Erro ao obter dados de autenticação:', error);
         return null;
     }
 }

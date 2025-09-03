@@ -13,6 +13,7 @@ class HttpService {
     getDefaultHeaders() {
         const headers = {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
         };
 
         const authData = getAuthData();
@@ -31,27 +32,39 @@ class HttpService {
         const contentType = response.headers.get('content-type');
         const isJson = contentType?.includes('application/json');
         
-        // Tratamento de erros de autenticação
-        if (response.status === 401) {
-            clearAuthData();
-            window.location.href = 'index.html';
-            throw new Error('Sessão expirada. Por favor, faça login novamente.');
-        }
-
         let data;
         try {
             data = isJson ? await response.json() : await response.text();
         } catch (error) {
             console.error('Erro ao processar resposta:', error);
-            throw new Error('Erro ao processar a resposta do servidor.');
+            // Se não for possível processar a resposta como JSON, retornar um objeto de erro consistente
+            data = { message: 'Erro ao processar a resposta do servidor.' };
+        }
+
+        // Tratamento de erros de autenticação
+        if (response.status === 401) {
+            clearAuthData();
+            // Só redireciona se não estiver na página de login
+            if (!window.location.pathname.includes('index.html') && 
+                !window.location.pathname.includes('login.html')) {
+                window.location.href = 'index.html?sessionExpired=true';
+            }
+            throw new Error(data?.message || 'Sessão expirada. Por favor, faça login novamente.');
         }
 
         if (!response.ok) {
-            const errorMessage = data?.message || `Erro ${response.status}: ${response.statusText}`;
+            const errorMessage = data?.message || 
+                              data?.error || 
+                              `Erro ${response.status}: ${response.statusText}`;
             throw new Error(errorMessage);
         }
 
-        return data.data || data;
+        // Retorna os dados da resposta, tratando diferentes formatos de resposta
+        if (data === undefined || data === null) {
+            return null;
+        }
+        
+        return data.data !== undefined ? data.data : data;
     }
 
     /**
