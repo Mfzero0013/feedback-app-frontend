@@ -1,4 +1,4 @@
-﻿// Importa os servi�os necess�rios
+// Importa os serviços necessários
 import { api } from './services/api.service.js';
 import notificationService from './services/notification.service.js';
 import { 
@@ -12,17 +12,17 @@ import {
 import { ERROR_MESSAGES } from './constants/index.js';
 
 /**
- * Valida os campos de um formul�rio
- * @param {HTMLFormElement} form - Elemento do formul�rio
- * @param {Object} fields - Objeto com configura��es dos campos
- * @returns {{isValid: boolean, data: Object}} Resultado da valida��o e dados do formul�rio
+ * Valida os campos de um formulário
+ * @param {HTMLFormElement} form - Elemento do formulário
+ * @param {Object} fields - Objeto com configurações dos campos
+ * @returns {{isValid: boolean, data: Object}} Resultado da validação e dados do formulário
  */
 function validateForm(form, fields) {
     const formData = new FormData(form);
     const data = {};
     let isValid = true;
 
-    // Valida cada campo do formul�rio
+    // Valida cada campo do formulário
     for (const [fieldName, config] of Object.entries(fields)) {
         const input = form.querySelector(`[name="${fieldName}"]`);
         const errorElement = document.getElementById(`${fieldName}-error`);
@@ -34,27 +34,27 @@ function validateForm(form, fields) {
         const value = formData.get(fieldName)?.toString().trim() || '';
         data[fieldName] = value;
 
-        // Valida��o de campo obrigat�rio
+        // Validação de campo obrigatório
         if (config.required && !value) {
             if (errorElement) {
-                errorElement.textContent = config.message || 'Este campo � obrigat�rio.';
+                errorElement.textContent = config.message || 'Este campo é obrigatório.';
             }
             isValid = false;
             continue;
         }
 
-        // Valida��o de formato de e-mail
+        // Validação de formato de e-mail
         if (fieldName.toLowerCase() === 'email' && value) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(value)) {
                 if (errorElement) {
-                    errorElement.textContent = 'Por favor, insira um e-mail v�lido.';
+                    errorElement.textContent = 'Por favor, insira um e-mail válido.';
                 }
                 isValid = false;
             }
         }
 
-        // Valida��o de senha
+        // Validação de senha
         if (fieldName.toLowerCase() === 'senha' && value) {
             if (value.length < 6) {
                 if (errorElement) {
@@ -70,7 +70,7 @@ function validateForm(form, fields) {
 
 /**
  * Escapa caracteres especiais para prevenir XSS
- * @param {string} unsafe - String n�o segura
+ * @param {string} unsafe - String não segura
  * @returns {string} String segura para HTML
  */
 function escapeHtml(unsafe) {
@@ -83,7 +83,7 @@ function escapeHtml(unsafe) {
         .replace(/'/g, '&#039;');
 }
 
-// Inicializa os servi�os
+// Inicializa os serviços
 notificationService.show('Bem-vindo ao Feedback App!', 'info', 3000);
 
 /**
@@ -159,19 +159,19 @@ if (existingScript && existingScript.onload) {
 }
 
 /**
- * Configura o formul�rio de login
+ * Configura o formulário de login
  */
 function setupLoginForm() {
     // Constantes para mensagens
     const MESSAGES = {
         EMAIL_REQUIRED: 'Por favor, insira seu e-mail',
-        EMAIL_INVALID: 'E-mail inv�lido. Exemplo: nome@exemplo.com',
+        EMAIL_INVALID: 'E-mail inválido. Exemplo: nome@exemplo.com',
         PASSWORD_REQUIRED: 'Por favor, insira sua senha',
-        PASSWORD_TOO_SHORT: 'A senha deve ter no m�nimo 8 caracteres',
+        PASSWORD_TOO_SHORT: 'A senha deve ter no mínimo 8 caracteres',
         LOGIN_SUCCESS: 'Login realizado com sucesso!',
         LOGIN_ERROR: 'E-mail ou senha incorretos',
         SERVER_ERROR: 'Erro no servidor. Tente novamente mais tarde.',
-        NETWORK_ERROR: 'Erro de conex�o. Verifique sua internet.'
+        NETWORK_ERROR: 'Erro de conexão. Verifique sua internet.'
     };
     
     // Constantes para classes CSS
@@ -194,7 +194,7 @@ function setupLoginForm() {
     const passwordError = document.getElementById('password-error');
     const formFeedback = document.getElementById('form-feedback');
 
-    // Fun��o para verificar for�a da senha
+    // Função para verificar força da senha
     const getPasswordStrength = (password) => {
         if (!password) return { score: 0, label: 'Fraca', color: 'red-500' };
         
@@ -213,12 +213,12 @@ function setupLoginForm() {
         if (hasUpper && hasLower) score++;
         
         if (score <= 2) return { score, label: 'Fraca', color: 'red-500' };
-        if (score <= 3) return { score, label: 'M�dia', color: 'yellow-500' };
+        if (score <= 3) return { score, label: 'Média', color: 'yellow-500' };
         if (score <= 4) return { score, label: 'Forte', color: 'green-500' };
         return { score, label: 'Muito Forte', color: 'green-700' };
     };
     
-    // Fun��es de valida��o
+    // Funções de validação
     const validateEmail = (email) => {
         if (!email) return { isValid: false, message: MESSAGES.EMAIL_REQUIRED };
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -233,7 +233,7 @@ function setupLoginForm() {
         return { isValid: true };
     };
 
-    // Fun��es de feedback
+    // Funções de feedback
     const showError = (element, message) => {
         if (!element) return;
         element.textContent = message;
@@ -264,7 +264,7 @@ function setupLoginForm() {
         }
     };
 
-    // Valida��o em tempo real
+    // Validação em tempo real
     if (emailInput) {
         emailInput.addEventListener('input', () => {
             const { isValid, message } = validateEmail(emailInput.value);
@@ -292,7 +292,7 @@ function setupLoginForm() {
                 clearError(passwordError);
             }
             
-            // Atualizar indicador de for�a
+            // Atualizar indicador de força
             if (password) {
                 const { score, label, color } = getPasswordStrength(password);
                 const width = (score / 4) * 100;
@@ -337,7 +337,7 @@ function setupLoginForm() {
         
         let isValid = emailValidation.isValid && passwordValidation.isValid;
         
-        // Mostrar erros de valida��o
+        // Mostrar erros de validação
         if (!emailValidation.isValid) {
             showError(emailError, emailValidation.message);
             emailInput?.focus();
@@ -349,7 +349,7 @@ function setupLoginForm() {
         }
         
         if (!isValid) {
-            // Animar o formul�rio para indicar erro
+            // Animar o formulário para indicar erro
             loginForm.classList.add('shake');
             setTimeout(() => loginForm.classList.remove('shake'), 500);
             return;
@@ -368,13 +368,13 @@ function setupLoginForm() {
             const response = await api.auth.login(email, password);
             
             if (!response?.user || !response?.token) {
-                throw new Error('Resposta de login inv�lida');
+                throw new Error('Resposta de login inválida');
             }
             
             setAuthData(response.user, response.token);
             notificationService.success(MESSAGES.LOGIN_SUCCESS);
             
-            // Redirecionar ap�s pequeno atraso
+            // Redirecionar após pequeno atraso
             const redirectUrl = getAndClearRedirectUrl() || 'dashboard.html';
             setTimeout(() => window.location.href = redirectUrl, 800);
             
@@ -511,12 +511,12 @@ function setupRegistrationForm() {
             setTimeout(() => { window.location.href = 'index.html'; }, 2000);
         } catch (error) {
             console.error('Erro no cadastro:', error);
-            notificationService.error(error.message || 'N�o foi poss�vel realizar o cadastro.');
+            notificationService.error(error.message || 'Não foi possível realizar o cadastro.');
         }
 
-// Fun��o para exibir notifica��es
+// Função para exibir notificações
 function showNotification(message, type = 'info') {
-    // Remover notificaes existentes
+    // Remover notificações existentes
     const existingNotifications = document.querySelectorAll('.notification');
     existingNotifications.forEach(notification => notification.remove());
     
@@ -647,9 +647,9 @@ function hideConfirmationModal() {
 }
 
 
-// --- Funes da Pgina de Administrao ---
+// --- Funções da Página de Administração ---
 
-// Vari�veis globais para armazenar dados da p�gina de admin
+// Variáveis globais para armazenar dados da página de admin
 let adminUsers = [];
 
 // Adiciona os event listeners para os elementos da pgina de admin
@@ -659,7 +659,7 @@ function setupAdminEventListeners() {
     document.getElementById('team-form')?.addEventListener('submit', saveTeam);
     document.getElementById('cancel-team-modal')?.addEventListener('click', () => closeTeamModal());
 
-    // Bot�es e formul�rios de Usu�rios
+    // Botões e formulários de Usuários
     document.getElementById('add-user-button')?.addEventListener('click', () => openUserModal());
     document.getElementById('user-form')?.addEventListener('submit', saveUser);
     document.getElementById('cancel-user-modal')?.addEventListener('click', () => closeUserModal());
@@ -669,13 +669,13 @@ function setupAdminEventListeners() {
     const statusFilter = document.getElementById('users-status-filter');
     const teamFilter = document.getElementById('users-team-filter');
     
-    // Debounce para evitar m�ltiplas requisi��es durante a digita��o
+    // Debounce para evitar múltiplas requisições durante a digitação
     let searchTimeout;
     if (searchInput) {
         searchInput.addEventListener('input', () => {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
-                currentPage = 1; // Resetar para a primeira p�gina ao buscar
+                currentPage = 1; // Resetar para a primeira página ao buscar
                 renderUsersTable();
             }, 300);
         });
@@ -684,24 +684,24 @@ function setupAdminEventListeners() {
     // Atualizar tabela quando os filtros forem alterados
     if (statusFilter) {
         statusFilter.addEventListener('change', () => {
-            currentPage = 1; // Resetar para a primeira p�gina ao filtrar
+            currentPage = 1; // Resetar para a primeira página ao filtrar
             renderUsersTable();
         });
     }
     
     if (teamFilter) {
         teamFilter.addEventListener('change', () => {
-            currentPage = 1; // Resetar para a primeira p�gina ao filtrar
+            currentPage = 1; // Resetar para a primeira página ao filtrar
             renderUsersTable();
         });
     }
 }
 
-// Fun��es auxiliares
+// Funções auxiliares
 
 /**
  * Escapa caracteres HTML para prevenir XSS
- * @param {string} unsafe - String n�o segura
+ * @param {string} unsafe - String não segura
  * @returns {string} String segura para HTML
  */
 function escapeHtml(unsafe) {
@@ -715,16 +715,16 @@ function escapeHtml(unsafe) {
         .replace(/'/g, '&#039;');
 }
 
-// Fun��es de renderiza��o
+// Funções de renderização
 
-// Vari�veis para controle de pagina��o e ordena��o
+// Variáveis para controle de paginação e ordenação
 let currentPage = 1;
 const itemsPerPage = 10;
 let sortConfig = { key: 'nome', direction: 'asc' };
 
 /**
- * Renderiza a tabela de usu�rios com pagina��o e ordena��o
- * @param {Array} users - Lista de usu�rios a serem exibidos (opcional, busca do servidor se n�o fornecido)
+ * Renderiza a tabela de usuários com paginação e ordenação
+ * @param {Array} users - Lista de usuários a serem exibidos (opcional, busca do servidor se não fornecido)
  */
 async function renderUsersTable(users = null) {
     const tableBody = document.getElementById('users-table-body');
@@ -735,9 +735,9 @@ async function renderUsersTable(users = null) {
     
     if (!tableBody) return;
 
-    // Fun��o para mostrar estado de carregamento
+    // Função para mostrar estado de carregamento
     const showLoadingState = () => {
-        // Adicionar classe de transi��o suave
+        // Adicionar classe de transição suave
         tableBody.style.transition = 'opacity 200ms ease-in-out';
         tableBody.style.opacity = '0.7';
         
@@ -747,13 +747,13 @@ async function renderUsersTable(users = null) {
                 <td colspan="5" class="text-center py-12">
                     <div class="flex flex-col items-center justify-center space-y-3">
                         <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-200 border-t-indigo-600"></div>
-                        <p class="text-gray-600 font-medium">Carregando usu�rios...</p>
+                        <p class="text-gray-600 font-medium">Carregando usuários...</p>
                         <p class="text-sm text-gray-400">Isso pode levar alguns instantes</p>
                     </div>
                 </td>
             </tr>`;
         
-        // Manter o conte�do existente, mas adicionar o loader por cima
+        // Manter o conteúdo existente, mas adicionar o loader por cima
         const existingContent = tableBody.innerHTML;
         tableBody.innerHTML = loadingHtml + existingContent;
         
@@ -768,13 +768,13 @@ async function renderUsersTable(users = null) {
     // Mostrar estado de carregamento inicial
     showLoadingState();
     
-    // Adicionar classe de transi��o para a tabela
+    // Adicionar classe de transição para a tabela
     if (tableBody) {
         tableBody.style.transition = 'opacity 200ms ease-in-out';
     }
     
     try {
-        // Buscar usu�rios se n�o foram fornecidos
+        // Buscar usuários se não foram fornecidos
         if (!users) {
             const response = await api.get('/admin/users');
             adminUsers = response?.data || [];
@@ -807,18 +807,18 @@ async function renderUsersTable(users = null) {
             filteredUsers = filteredUsers.filter(user => user.equipeId === teamFilterValue);
         }
         
-        // Ordena��o
+        // Ordenação
         filteredUsers.sort((a, b) => {
             let aValue = a[sortConfig.key];
             let bValue = b[sortConfig.key];
             
-            // Tratamento para ordena��o de valores aninhados
+            // Tratamento para ordenação de valores aninhados
             if (sortConfig.key === 'equipe') {
                 aValue = a.equipe?.nome || '';
                 bValue = b.equipe?.nome || '';
             }
             
-            // Converter para string para garantir compara��o
+            // Converter para string para garantir comparação
             aValue = String(aValue || '').toLowerCase();
             bValue = String(bValue || '').toLowerCase();
             
@@ -827,7 +827,7 @@ async function renderUsersTable(users = null) {
             return 0;
         });
         
-        // Pagina��o
+        // Paginação
         const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
         currentPage = Math.min(Math.max(1, currentPage), totalPages || 1);
         const startIndex = (currentPage - 1) * itemsPerPage;
@@ -838,8 +838,8 @@ async function renderUsersTable(users = null) {
         
         if (paginatedUsers.length === 0) {
             const noResultsMessage = filteredUsers.length === 0 && adminUsers.length > 0 
-                ? 'Nenhum usu�rio encontrado com os filtros atuais.' 
-                : 'Nenhum usu�rio cadastrado.';
+                ? 'Nenhum usuário encontrado com os filtros atuais.' 
+                : 'Nenhum usuário cadastrado.';
                 
             tableBody.innerHTML = `
                 <tr>
@@ -848,9 +848,7 @@ async function renderUsersTable(users = null) {
                             <i class="fas fa-users-slash text-4xl text-gray-300 mb-2"></i>
                             <p>${noResultsMessage}</p>
                             ${filteredUsers.length === 0 && adminUsers.length > 0 ? 
-                                '<button onclick="resetFilters()" class="mt-2 text-indigo-600 hover:text-indigo-800 text-sm font-medium">
-                                    Limpar filtros
-                                </button>' : ''
+                                '<button onclick="resetFilters()" class="mt-2 text-indigo-600 hover:text-indigo-800 text-sm font-medium">Limpar filtros</button>' : ''
                             }
                         </div>
                     </td>
@@ -891,12 +889,12 @@ async function renderUsersTable(users = null) {
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                         <button onclick="openUserModal('${user.id}')" 
                                 class="text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 px-2 py-1 rounded"
-                                title="Editar usu�rio">
+                                title="Editar usuário">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button onclick="deleteUser('${user.id}', this)" 
                                 class="text-red-600 hover:text-red-900 hover:bg-red-50 px-2 py-1 rounded"
-                                title="Remover usu�rio">
+                                title="Remover usuário">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </td>
@@ -905,37 +903,37 @@ async function renderUsersTable(users = null) {
             });
         }
         
-        // Atualizar controles de pagina��o
+        // Atualizar controles de paginação
         updatePaginationControls(filteredUsers.length);
         
         // Atualizar contador de resultados
         updateResultsCounter(filteredUsers.length, adminUsers.length);
         
     } catch (error) {
-        console.error('Erro ao carregar usu�rios:', error);
-        let errorMessage = 'Falha ao carregar usu�rios.';
+        console.error('Erro ao carregar usuários:', error);
+        let errorMessage = 'Falha ao carregar usuários.';
         let showRetry = true;
         let redirectToLogin = false;
         
         if (error.response) {
             if (error.response.status === 401) {
-                errorMessage = 'Sess�o expirada. Redirecionando para login...';
+                errorMessage = 'Sessão expirada. Redirecionando para login...';
                 showRetry = false;
                 redirectToLogin = true;
             } else if (error.response.status === 403) {
-                errorMessage = 'Voc� n�o tem permiss�o para visualizar usu�rios.';
+                errorMessage = 'Você não tem permissão para visualizar usuários.';
             } else if (error.response.status === 404) {
-                errorMessage = 'Recurso n�o encontrado. Por favor, recarregue a p�gina.';
+                errorMessage = 'Recurso não encontrado. Por favor, recarregue a página.';
             } else if (error.response.data?.message) {
                 errorMessage = error.response.data.message;
             } else if (error.response.status >= 500) {
                 errorMessage = 'Erro no servidor. Por favor, tente novamente mais tarde.';
             }
         } else if (error.request) {
-            errorMessage = 'N�o foi poss�vel conectar ao servidor. Verifique sua conex�o com a internet.';
+            errorMessage = 'Não foi possível conectar ao servidor. Verifique sua conexão com a internet.';
         }
         
-        // Usar a fun��o de notifica��o global se dispon�vel
+        // Usar a função de notificação global se disponível
         if (window.showNotification) {
             showNotification(errorMessage, 'error');
         }
@@ -963,7 +961,7 @@ async function renderUsersTable(users = null) {
                 </td>
             </tr>`;
             
-        // Redirecionar para login se necess�rio
+        // Redirecionar para login se necessário
         if (redirectToLogin) {
             setTimeout(() => {
                 window.location.href = '/login.html';
@@ -975,8 +973,8 @@ async function renderUsersTable(users = null) {
 }
 
 /**
- * Atualiza os controles de pagina��o
- * @param {number} totalItems - N�mero total de itens
+ * Atualiza os controles de paginação
+ * @param {number} totalItems - Número total de itens
  */
 function updatePaginationControls(totalItems) {
     const paginationContainer = document.getElementById('users-pagination');
@@ -985,11 +983,11 @@ function updatePaginationControls(totalItems) {
     const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
     currentPage = Math.min(Math.max(1, currentPage), totalPages);
     
-    // Bot�es de navega��o
+    // Botões de navegação
     const prevDisabled = currentPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50';
     const nextDisabled = currentPage >= totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50';
     
-    // Gerar bot�es de p�gina
+    // Gerar botões de página
     let pageButtons = '';
     const maxVisiblePages = 5;
     let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
@@ -999,7 +997,7 @@ function updatePaginationControls(totalItems) {
         startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
     
-    // Bot�o primeira p�gina
+    // Botão primeira página
     if (startPage > 1) {
         pageButtons += `
             <button onclick="changePage(1)" class="px-3 py-1 border rounded-l-md bg-white text-gray-700 hover:bg-gray-50">
@@ -1009,7 +1007,7 @@ function updatePaginationControls(totalItems) {
         `;
     }
     
-    // Bot�es de p�gina
+    // Botões de página
     for (let i = startPage; i <= endPage; i++) {
         const isActive = i === currentPage ? 'bg-indigo-50 border-indigo-500 text-indigo-600' : 'bg-white text-gray-700 hover:bg-gray-50';
         pageButtons += `
@@ -1020,7 +1018,7 @@ function updatePaginationControls(totalItems) {
         `;
     }
     
-    // Bot�o �ltima p�gina
+    // Botão última página
     if (endPage < totalPages) {
         pageButtons += `
             ${endPage < totalPages - 1 ? '<span class="px-2 py-1">...</span>' : ''}
@@ -1043,7 +1041,7 @@ function updatePaginationControls(totalItems) {
                 <button onclick="changePage(${currentPage + 1})" 
                         ${currentPage >= totalPages ? 'disabled' : ''}
                         class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md ${nextDisabled} bg-white text-gray-700">
-                    Pr�xima
+                    Próxima
                 </button>
             </div>
             <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
@@ -1068,7 +1066,7 @@ function updatePaginationControls(totalItems) {
                         <button onclick="changePage(${currentPage + 1})" 
                                 ${currentPage >= totalPages ? 'disabled' : ''}
                                 class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${nextDisabled}">
-                            <span class="sr-only">Pr�xima</span>
+                            <span class="sr-only">Próxima</span>
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </nav>
@@ -1080,23 +1078,23 @@ function updatePaginationControls(totalItems) {
 
 /**
  * Atualiza o contador de resultados
- * @param {number} filteredCount - N�mero de itens filtrados
- * @param {number} totalCount - N�mero total de itens
+ * @param {number} filteredCount - Número de itens filtrados
+ * @param {number} totalCount - Número total de itens
  */
 function updateResultsCounter(filteredCount, totalCount) {
     const counterElement = document.getElementById('users-results-count');
     if (!counterElement) return;
     
     if (filteredCount === totalCount) {
-        counterElement.textContent = `${totalCount} usu�rio${totalCount !== 1 ? 's' : ''} no total`;
+        counterElement.textContent = `${totalCount} usuário${totalCount !== 1 ? 's' : ''} no total`;
     } else {
-        counterElement.textContent = `Mostrando ${filteredCount} de ${totalCount} usu�rio${totalCount !== 1 ? 's' : ''}`;
+        counterElement.textContent = `Mostrando ${filteredCount} de ${totalCount} usuário${totalCount !== 1 ? 's' : ''}`;
     }
 }
 
 /**
- * Muda para uma p�gina espec�fica
- * @param {number} page - N�mero da p�gina
+ * Muda para uma página específica
+ * @param {number} page - Número da página
  */
 function changePage(page) {
     const tableContainer = document.querySelector('[data-table-container]');
@@ -1112,7 +1110,7 @@ function changePage(page) {
  * Aplica os filtros e renderiza a tabela
  */
 function applyFilters() {
-    currentPage = 1; // Resetar para a primeira p�gina
+    currentPage = 1; // Resetar para a primeira página
     renderUsersTable();
 }
 
@@ -1134,7 +1132,7 @@ function resetFilters() {
 
 /**
  * Ordena a tabela por uma coluna
- * @param {string} key - Chave para ordena��o
+ * @param {string} key - Chave para ordenação
  */
 function sortTable(key) {
     if (sortConfig.key === key) {
@@ -1143,7 +1141,7 @@ function sortTable(key) {
         sortConfig = { key, direction: 'asc' };
     }
     
-    // Atualizar indicadores de ordena��o
+    // Atualizar indicadores de ordenação
     document.querySelectorAll('[data-sortable]').forEach(header => {
         header.classList.remove('text-indigo-600');
         const icon = header.querySelector('i');
@@ -1177,7 +1175,7 @@ async function renderTeamsTable() {
 
     showLoader();
     try {
-        // Usar o servi�o de equipes para buscar os dados
+        // Usar o serviço de equipes para buscar os dados
         const response = await api.teams.getAllTeams();
         const teams = response?.data || [];
         
@@ -1258,11 +1256,11 @@ async function renderTeamsTable() {
     }
 }
 
-// Fun��es de CRUD para Equipes
+// Funções de CRUD para Equipes
 
 /**
  * Abre o modal de equipe para criar ou editar
- * @param {string|null} teamId - ID da equipe para edi��o ou null para criar nova
+ * @param {string|null} teamId - ID da equipe para edição ou null para criar nova
  */
 async function openTeamModal(teamId = null) {
     const form = document.getElementById('team-form');
@@ -1274,19 +1272,19 @@ async function openTeamModal(teamId = null) {
     const errorElement = document.getElementById('name-error');
     
     if (!form || !modal || !modalTitle || !nameField || !descriptionField || !managerSelect || !errorElement) {
-        console.error('Elementos do formul�rio n�o encontrados');
+        console.error('Elementos do formulário não encontrados');
         showNotification(ERROR_MESSAGES.SERVER_ERROR, 'error');
         return;
     }
     
-    // Resetar formul�rio e mensagens de erro
+    // Resetar formulário e mensagens de erro
     form.reset();
     document.getElementById('teamId').value = '';
     errorElement.textContent = '';
     
     showLoader();
     try {
-        // Carregar lista de gestores dispon�veis
+        // Carregar lista de gestores disponíveis
         const usersResponse = await api.users.getUsers();
         if (!usersResponse || !Array.isArray(usersResponse.data)) {
             throw new Error(ERROR_MESSAGES.USERS_LOAD_ERROR);
@@ -1308,7 +1306,7 @@ async function openTeamModal(teamId = null) {
         });
 
         if (teamId) {
-            // Modo edi��o - carregar dados da equipe
+            // Modo edição - carregar dados da equipe
             modalTitle.textContent = 'Editar Equipe';
             const teamResponse = await api.teams.getTeamById(teamId);
             
@@ -1326,7 +1324,7 @@ async function openTeamModal(teamId = null) {
                 managerSelect.value = team.gestorId;
             }
         } else {
-            // Modo cria��o
+            // Modo criação
             modalTitle.textContent = 'Adicionar Nova Equipe';
         }
         
@@ -1335,7 +1333,7 @@ async function openTeamModal(teamId = null) {
         nameField.focus();
         
     } catch (error) {
-        console.error('Erro ao abrir formul�rio de equipe:', error);
+        console.error('Erro ao abrir formulário de equipe:', error);
         notificationService.error(
             error.message || ERROR_MESSAGES.SERVER_ERROR
         );
@@ -1352,7 +1350,7 @@ function closeTeamModal() {
 /**
  * Valida os dados da equipe antes do envio
  * @param {Object} data - Dados da equipe a serem validados
- * @returns {{isValid: boolean, errors: Object}} Resultado da valida��o
+ * @returns {{isValid: boolean, errors: Object}} Resultado da validação
  */
 function validateTeamData(data) {
     const errors = {};
@@ -1363,21 +1361,21 @@ function validateTeamData(data) {
     } else if (data.nome.length < 3) {
         errors.name = 'O nome da equipe deve ter pelo menos 3 caracteres';
     } else if (data.nome.length > 100) {
-        errors.name = 'O nome da equipe n�o pode ter mais de 100 caracteres';
+        errors.name = 'O nome da equipe não pode ter mais de 100 caracteres';
     }
     
-    // Validar descri��o
+    // Validar descrição
     if (data.descricao) {
         if (data.descricao.length > 500) {
-            errors.description = 'A descri��o n�o pode ter mais de 500 caracteres';
+            errors.description = 'A descrição não pode ter mais de 500 caracteres';
         } else if (data.descricao.trim().length === 0) {
-            errors.description = 'A descri��o n�o pode conter apenas espa�os em branco';
+            errors.description = 'A descrição não pode conter apenas espaços em branco';
         }
     }
     
-    // Validar gestor (opcional, mas se fornecido, deve ser um ID v�lido)
+    // Validar gestor (opcional, mas se fornecido, deve ser um ID válido)
     if (data.gestorId && !/^\d+$/.test(data.gestorId)) {
-        errors.managerId = 'ID do gestor inv�lido';
+        errors.managerId = 'ID do gestor inválido';
     }
     
     return {
@@ -1388,12 +1386,12 @@ function validateTeamData(data) {
 
 /**
  * Salva uma equipe (cria ou atualiza)
- * @param {Event} event - Evento de submit do formul�rio
+ * @param {Event} event - Evento de submit do formulário
  */
 async function saveTeam(event) {
     event.preventDefault();
     
-    // Obter refer�ncias dos elementos
+    // Obter referências dos elementos
     const form = event.target;
     const teamId = document.getElementById('teamId')?.value || '';
     const nameField = document.getElementById('team-name');
@@ -1404,15 +1402,15 @@ async function saveTeam(event) {
     
     // Validar elementos do DOM
     if (!form || !nameField || !descriptionField || !managerSelect || !nameError) {
-        console.error('Elementos do formul�rio n�o encontrados');
+        console.error('Elementos do formulário não encontrados');
         notificationService.error(ERROR_MESSAGES.SERVER_ERROR);
         return;
     }
     
-    // Verificar se o formul�rio est� em um modal
+    // Verificar se o formulário está em um modal
     const modal = form.closest('.modal');
     if (modal && modal.style.display === 'none') {
-        console.error('Tentativa de envio de formul�rio em modal fechado');
+        console.error('Tentativa de envio de formulário em modal fechado');
         return;
     }
     
@@ -1420,7 +1418,7 @@ async function saveTeam(event) {
     nameError.textContent = '';
     if (descriptionError) descriptionError.textContent = '';
     
-    // Preparar dados com valida��o
+    // Preparar dados com validação
     const teamData = {
         nome: (nameField.value || '').trim(),
         descricao: (descriptionField.value || '').trim(),
@@ -1442,7 +1440,7 @@ async function saveTeam(event) {
             managerSelect.focus();
         }
         
-        // Adicionar classe de erro aos campos inv�lidos
+        // Adicionar classe de erro aos campos inválidos
         if (errors.name) nameField.classList.add('border-red-500');
         if (errors.description) descriptionField?.classList.add('border-red-500');
         if (errors.managerId) managerSelect.classList.add('border-red-500');
@@ -1477,21 +1475,21 @@ async function saveTeam(event) {
         clearErrorOnInput(descriptionField, descriptionError);
     }
     
-    // Adicionar timeout para evitar m�ltiplos envios
+    // Adicionar timeout para evitar múltiplos envios
     const now = Date.now();
     const lastSubmitTime = form.dataset.lastSubmitTime || 0;
     const timeSinceLastSubmit = now - lastSubmitTime;
     
-    // Se j� houve um envio nos �ltimos 2 segundos, ignorar
+    // Se já houve um envio nos últimos 2 segundos, ignorar
     if (timeSinceLastSubmit < 2000) {
-        console.log('Tentativa de envio muito r�pida, ignorando...');
+        console.log('Tentativa de envio muito rápida, ignorando...');
         return;
     }
     
-    // Registrar o hor�rio do envio atual
+    // Registrar o horário do envio atual
     form.dataset.lastSubmitTime = now;
     
-    // Configurar bot�o de envio
+    // Configurar botão de envio
     const submitButton = form.querySelector('button[type="submit"]');
     const originalButtonText = submitButton?.innerHTML || 'Salvar';
     
@@ -1526,10 +1524,10 @@ async function saveTeam(event) {
             notificationService.success('Equipe criada com sucesso!');
         }
         
-        // Fechar modal e limpar formul�rio
+        // Fechar modal e limpar formulário
         closeTeamModal();
         
-        // Limpar campos do formul�rio
+        // Limpar campos do formulário
         if (form) {
             form.reset();
             // Remover classes de erro
@@ -1545,7 +1543,7 @@ async function saveTeam(event) {
             notificationService.error('Equipe salva, mas houve um erro ao atualizar a lista.');
         }
         
-        // Disparar evento personalizado para notificar sobre a atualiza��o
+        // Disparar evento personalizado para notificar sobre a atualização
         const updatedTeamId = response?.data?.id || teamId;
         if (updatedTeamId) {
             document.dispatchEvent(new CustomEvent('teamUpdated', {
@@ -1559,9 +1557,9 @@ async function saveTeam(event) {
     } catch (error) {
         console.error('Erro ao salvar equipe:', error);
         
-        // Tratar erros espec�ficos
+        // Tratar erros específicos
         if (error.response?.status === 409) {
-            const errorMsg = 'J� existe uma equipe com este nome. Por favor, escolha outro nome.';
+            const errorMsg = 'Já existe uma equipe com este nome. Por favor, escolha outro nome.';
             notificationService.error(errorMsg);
             if (nameError) {
                 nameError.textContent = errorMsg;
@@ -1573,19 +1571,19 @@ async function saveTeam(event) {
             }
         } else if (error.response?.status === 401) {
             notificationService.error(ERROR_MESSAGES.UNAUTHORIZED);
-            // Redirecionar ap�s um curto atraso para permitir que o usu�rio veja a mensagem
+            // Redirecionar após um curto atraso para permitir que o usuário veja a mensagem
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 1500);
         } else if (error.response?.status === 403) {
             notificationService.error(ERROR_MESSAGES.FORBIDDEN);
-            // Fechar o modal se o usu�rio n�o tiver permiss�o
+            // Fechar o modal se o usuário não tiver permissão
             closeTeamModal();
         } else if (error.response?.status === 400) {
-            // Erro de valida��o do servidor
+            // Erro de validação do servidor
             const serverErrors = error.response.data?.errors || {};
             
-            // Mapear erros do servidor para os campos do formul�rio
+            // Mapear erros do servidor para os campos do formulário
             if (serverErrors.nome) {
                 nameError.textContent = serverErrors.nome[0];
                 nameField.classList.add('border-red-500');
@@ -1612,13 +1610,13 @@ async function saveTeam(event) {
                 element?.focus();
             }
         } else {
-            // Erro gen�rico
+            // Erro genérico
             const errorMessage = error.message || 
                 (teamId ? ERROR_MESSAGES.TEAM_UPDATE_ERROR : ERROR_MESSAGES.TEAM_CREATE_ERROR);
             notificationService.error(errorMessage);
         }
     } finally {
-        // Restaurar estado do bot�o e loader
+        // Restaurar estado do botão e loader
         if (submitButton) {
             submitButton.disabled = false;
             submitButton.innerHTML = originalButtonText;
@@ -1628,30 +1626,30 @@ async function saveTeam(event) {
 }
 
 /**
- * Remove uma equipe ap�s confirma��o do usu�rio
+ * Remove uma equipe após confirmação do usuário
  * @param {string} teamId - ID da equipe a ser removida
  */
-// Cache para controlar o tempo entre exclus�es
+// Cache para controlar o tempo entre exclusões
 const lastDeleteTime = new WeakMap();
 
 /**
- * Remove uma equipe ap�s confirma��o do usu�rio
+ * Remove uma equipe após confirmação do usuário
  * @param {string} teamId - ID da equipe a ser removida
- * @param {HTMLElement} [triggerElement=null] - Elemento que acionou a exclus�o (opcional)
+ * @param {HTMLElement} [triggerElement=null] - Elemento que acionou a exclusão (opcional)
  */
 async function deleteTeam(teamId, triggerElement = null) {
-    // Verificar se h� uma exclus�o recente
+    // Verificar se há uma exclusão recente
     const now = Date.now();
     const lastTime = lastDeleteTime.get(deleteTeam) || 0;
     const timeSinceLastDelete = now - lastTime;
     
     if (timeSinceLastDelete < 2000) {
-        console.log('Tentativa de exclus�o muito r�pida, ignorando...');
+        console.log('Tentativa de exclusão muito rápida, ignorando...');
         return;
     }
     lastDeleteTime.set(deleteTeam, now);
     
-    // Mostrar feedback visual no elemento que acionou a exclus�o, se fornecido
+    // Mostrar feedback visual no elemento que acionou a exclusão, se fornecido
     const originalButtonContent = triggerElement?.innerHTML;
     if (triggerElement) {
         triggerElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -1659,7 +1657,7 @@ async function deleteTeam(teamId, triggerElement = null) {
     }
     
     try {
-        // Buscar dados da equipe para mostrar no modal de confirma��o
+        // Buscar dados da equipe para mostrar no modal de confirmação
         const response = await api.teams.getTeamById(teamId);
         if (!response?.success || !response.data) {
             throw new Error(response?.message || ERROR_MESSAGES.TEAM_NOT_FOUND);
@@ -1668,18 +1666,18 @@ async function deleteTeam(teamId, triggerElement = null) {
         const team = response.data;
         const memberCount = team.membros?.length || 0;
         
-        // Mensagem de confirma��o personalizada
+        // Mensagem de confirmação personalizada
         let message = `Tem certeza que deseja remover a equipe <strong>${escapeHtml(team.nome)}</strong>?`;
         
         if (memberCount > 0) {
-            message += `<br><br><span class="text-yellow-700">Aten��o: Esta equipe possui ${memberCount} membro(s). 
-                      Todos os membros ser�o desvinculados da equipe.</span>`;
+            message += `<br><br><span class="text-yellow-700">Atenção: Esta equipe possui ${memberCount} membro(s). 
+                      Todos os membros serão desvinculados da equipe.</span>`;
         }
         
-        message += "<br><br>Esta a��o n�o pode ser desfeita.";
+        message += "<br><br>Esta ação não pode ser desfeita.";
         
         showConfirmationModal(
-            'Confirmar Exclus�o', 
+            'Confirmar Exclusão', 
             message, 
             async () => {
                 const modal = document.getElementById('confirmation-modal');
@@ -1687,13 +1685,13 @@ async function deleteTeam(teamId, triggerElement = null) {
                 const originalButtonText = confirmButton?.innerHTML;
                 
                 try {
-                    // Atualizar bot�o de confirma��o
+                    // Atualizar botão de confirmação
                     if (confirmButton) {
                         confirmButton.disabled = true;
                         confirmButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
                     }
                     
-                    // Executar exclus�o
+                    // Executar exclusão
                     const deleteResponse = await api.teams.deleteTeam(teamId);
                     
                     if (!deleteResponse?.success) {
@@ -1706,7 +1704,7 @@ async function deleteTeam(teamId, triggerElement = null) {
                     hideConfirmationModal();
                     await renderTeamsTable();
                     
-                    // Disparar evento personalizado para notificar sobre a exclus�o
+                    // Disparar evento personalizado para notificar sobre a exclusão
                     document.dispatchEvent(new CustomEvent('teamDeleted', {
                         detail: { teamId }
                     }));
@@ -1714,12 +1712,12 @@ async function deleteTeam(teamId, triggerElement = null) {
                 } catch (error) {
                     console.error('Erro ao remover equipe:', error);
                     
-                    // Tratar erros espec�ficos
+                    // Tratar erros específicos
                     if (error.response?.status === 403) {
-                        showNotification('Voc� n�o tem permiss�o para remover esta equipe.', 'error');
+                        showNotification('Você não tem permissão para remover esta equipe.', 'error');
                     } else if (error.response?.status === 404) {
-                        showNotification('A equipe n�o foi encontrada ou j� foi removida.', 'error');
-                        await renderTeamsTable(); // Atualizar tabela se a equipe n�o existir mais
+                        showNotification('A equipe não foi encontrada ou já foi removida.', 'error');
+                        await renderTeamsTable(); // Atualizar tabela se a equipe não existir mais
                     } else {
                         showNotification(
                             error.message || ERROR_MESSAGES.TEAM_DELETE_ERROR, 
@@ -1727,13 +1725,13 @@ async function deleteTeam(teamId, triggerElement = null) {
                         );
                     }
                 } finally {
-                    // Restaurar bot�o de confirma��o
+                    // Restaurar botão de confirmação
                     if (confirmButton) {
                         confirmButton.disabled = false;
                         confirmButton.innerHTML = originalButtonText;
                     }
                     
-                    // Restaurar o bot�o que acionou a exclus�o, se fornecido
+                    // Restaurar o botão que acionou a exclusão, se fornecido
                     if (triggerElement) {
                         triggerElement.innerHTML = originalButtonContent;
                         triggerElement.disabled = false;
@@ -1747,17 +1745,17 @@ async function deleteTeam(teamId, triggerElement = null) {
         );
         
     } catch (error) {
-        console.error('Erro ao carregar dados da equipe para exclus�o:', error);
+        console.error('Erro ao carregar dados da equipe para exclusão:', error);
         
-        // Tratar erros espec�ficos
-        let errorMessage = 'N�o foi poss�vel carregar os dados da equipe para exclus�o.';
+        // Tratar erros específicos
+        let errorMessage = 'Não foi possível carregar os dados da equipe para exclusão.';
         
         if (error.response) {
             if (error.response.status === 403) {
-                errorMessage = 'Voc� n�o tem permiss�o para acessar esta equipe.';
+                errorMessage = 'Você não tem permissão para acessar esta equipe.';
             } else if (error.response.status === 404) {
-                errorMessage = 'A equipe n�o foi encontrada ou j� foi removida.';
-                // Atualizar a tabela para refletir que a equipe n�o existe mais
+                errorMessage = 'A equipe não foi encontrada ou já foi removida.';
+                // Atualizar a tabela para refletir que a equipe não existe mais
                 try {
                     await renderTeamsTable();
                 } catch (e) {
@@ -1772,7 +1770,7 @@ async function deleteTeam(teamId, triggerElement = null) {
         
         showNotification(errorMessage, 'error');
     } finally {
-        // Garantir que o bot�o seja restaurado em caso de erro
+        // Garantir que o botão seja restaurado em caso de erro
         if (triggerElement) {
             triggerElement.innerHTML = originalButtonContent;
             triggerElement.disabled = false;
@@ -1817,7 +1815,7 @@ const lastSaveTime = new WeakMap();
 async function saveUser(event) {
     event.preventDefault();
     
-    // Elementos do formul�rio
+    // Elementos do formulário
     const form = event.target.closest('form');
     const submitButton = form.querySelector('button[type="submit"]');
     const originalButtonText = submitButton?.innerHTML || 'Salvar';
@@ -1827,7 +1825,7 @@ async function saveUser(event) {
         const now = Date.now();
         const lastTime = lastSaveTime.get(saveUser) || 0;
         if (now - lastTime < 2000) {
-            console.log('Tentativa de salvamento muito r�pida, ignorando...');
+            console.log('Tentativa de salvamento muito rápida, ignorando...');
             return;
         }
         lastSaveTime.set(saveUser, now);
@@ -1838,7 +1836,7 @@ async function saveUser(event) {
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
         }
         
-        // Obter dados do formul�rio
+        // Obter dados do formulário
         const userId = document.getElementById('userId').value;
         const passwordField = document.getElementById('user-password');
         const data = {
@@ -1851,34 +1849,34 @@ async function saveUser(event) {
             status: document.getElementById('user-status').value,
         };
         
-        // Valida��o dos campos
+        // Validação dos campos
         const errors = {};
         
         // Validar nome
         if (!data.nome) {
-            errors.name = 'O nome � obrigat�rio';
+            errors.name = 'O nome é obrigatório';
         } else if (data.nome.length < 3) {
             errors.name = 'O nome deve ter pelo menos 3 caracteres';
         } else if (data.nome.length > 100) {
-            errors.name = 'O nome n�o pode ter mais de 100 caracteres';
+            errors.name = 'O nome não pode ter mais de 100 caracteres';
         }
         
         // Validar email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!data.email) {
-            errors.email = 'O email � obrigat�rio';
+            errors.email = 'O email é obrigatório';
         } else if (!emailRegex.test(data.email)) {
-            errors.email = 'Por favor, insira um email v�lido';
+            errors.email = 'Por favor, insira um email válido';
         }
         
-        // Validar senha apenas para novos usu�rios
+        // Validar senha apenas para novos usuários
         if (!userId && !data.senha) {
-            errors.password = 'A senha � obrigat�ria';
+            errors.password = 'A senha é obrigatória';
         } else if (data.senha && data.senha.length < 6) {
             errors.password = 'A senha deve ter pelo menos 6 caracteres';
         }
         
-        // Exibir erros de valida��o, se houver
+        // Exibir erros de validação, se houver
         const nameError = document.getElementById('user-name-error');
         const emailError = document.getElementById('user-email-error');
         const passwordError = document.getElementById('user-password-error');
@@ -1894,7 +1892,7 @@ async function saveUser(event) {
             if (errors.email && emailError) emailError.textContent = errors.email;
             if (errors.password && passwordError) passwordError.textContent = errors.password;
             
-            // Rolar at� o primeiro erro
+            // Rolar até o primeiro erro
             const firstErrorField = errors.name ? 'user-name' : 
                                   errors.email ? 'user-email' : 
                                   'user-password';
@@ -1905,10 +1903,10 @@ async function saveUser(event) {
             return;
         }
         
-        // Remover senha se for atualiza��o e n�o foi alterada
+        // Remover senha se for atualização e não foi alterada
         if (userId) delete data.senha;
         
-        // Preparar requisi��o
+        // Preparar requisição
         const url = userId ? `/admin/users/${userId}` : '/admin/users';
         const method = userId ? 'PUT' : 'POST';
         
@@ -1921,7 +1919,7 @@ async function saveUser(event) {
         
         // Feedback de sucesso
         showNotification(
-            `Usu�rio ${userId ? 'atualizado' : 'criado'} com sucesso!`,
+            `Usuário ${userId ? 'atualizado' : 'criado'} com sucesso!`,
             'success'
         );
         
@@ -1935,13 +1933,13 @@ async function saveUser(event) {
         }));
         
     } catch (error) {
-        console.error('Erro ao salvar usu�rio:', error);
+        console.error('Erro ao salvar usuário:', error);
         
-        // Tratar erros espec�ficos
-        let errorMessage = error.message || 'Ocorreu um erro ao salvar o usu�rio.';
+        // Tratar erros específicos
+        let errorMessage = error.message || 'Ocorreu um erro ao salvar o usuário.';
         
         if (error.response) {
-            // Erros de valida��o do servidor (status 400)
+            // Erros de validação do servidor (status 400)
             if (error.response.status === 400 && error.response.data?.errors) {
                 const serverErrors = error.response.data.errors;
                 errorMessage = Object.values(serverErrors)
@@ -1950,7 +1948,7 @@ async function saveUser(event) {
             }
             // Conflito de email (status 409)
             else if (error.response.status === 409) {
-                errorMessage = 'Este email j� est� em uso. Por favor, utilize outro.';
+                errorMessage = 'Este email já está em uso. Por favor, utilize outro.';
                 const emailField = document.getElementById('user-email');
                 const emailError = document.getElementById('user-email-error');
                 if (emailField && emailError) {
@@ -1958,21 +1956,21 @@ async function saveUser(event) {
                     emailField.focus();
                 }
             }
-            // N�o autorizado (status 401)
+            // Não autorizado (status 401)
             else if (error.response.status === 401) {
-                errorMessage = 'Sess�o expirada. Por favor, fa�a login novamente.';
+                errorMessage = 'Sessão expirada. Por favor, faça login novamente.';
                 redirectToLogin();
             }
             // Acesso negado (status 403)
             else if (error.response.status === 403) {
-                errorMessage = 'Voc� n�o tem permiss�o para realizar esta a��o.';
+                errorMessage = 'Você não tem permissão para realizar esta ação.';
             }
         }
         
         showNotification(errorMessage, 'error');
         
     } finally {
-        // Restaurar estado do bot�o
+        // Restaurar estado do botão
         if (submitButton) {
             submitButton.disabled = false;
             submitButton.innerHTML = originalButtonText;
@@ -1980,61 +1978,61 @@ async function saveUser(event) {
     }
 }
 
-// Cache para controlar o tempo entre exclus�es de usu�rio
+// Cache para controlar o tempo entre exclusões de usuário
 const lastUserDeleteTime = new WeakMap();
 
 /**
- * Remove um usu�rio ap�s confirma��o
- * @param {string} userId - ID do usu�rio a ser removido
- * @param {HTMLElement} [triggerElement=null] - Elemento que acionou a exclus�o (opcional)
+ * Remove um usuário após confirmação
+ * @param {string} userId - ID do usuário a ser removido
+ * @param {HTMLElement} [triggerElement=null] - Elemento que acionou a exclusão (opcional)
  */
 async function deleteUser(userId, triggerElement = null) {
     try {
-        // Verificar se h� uma exclus�o recente
+        // Verificar se há uma exclusão recente
         const now = Date.now();
         const lastTime = lastUserDeleteTime.get(deleteUser) || 0;
         const timeSinceLastDelete = now - lastTime;
         
         if (timeSinceLastDelete < 2000) {
-            console.log('Tentativa de exclus�o muito r�pida, ignorando...');
+            console.log('Tentativa de exclusão muito rápida, ignorando...');
             return;
         }
         lastUserDeleteTime.set(deleteUser, now);
         
-        // Mostrar feedback visual no elemento que acionou a exclus�o, se fornecido
+        // Mostrar feedback visual no elemento que acionou a exclusão, se fornecido
         const originalButtonContent = triggerElement?.innerHTML;
         if (triggerElement) {
             triggerElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             triggerElement.disabled = true;
         }
         
-        // Buscar dados do usu�rio para mostrar no modal de confirma��o
-        let userName = 'este usu�rio';
+        // Buscar dados do usuário para mostrar no modal de confirmação
+        let userName = 'este usuário';
         try {
             const userResponse = await api.get(`/admin/users/${userId}`);
             if (userResponse?.success && userResponse.data) {
-                userName = userResponse.data.nome || 'este usu�rio';
+                userName = userResponse.data.nome || 'este usuário';
             }
         } catch (error) {
-            console.error('Erro ao buscar dados do usu�rio:', error);
-            // Continuar mesmo se n�o conseguir buscar o nome
+            console.error('Erro ao buscar dados do usuário:', error);
+            // Continuar mesmo se não conseguir buscar o nome
         }
         
-        // Verificar se o usu�rio est� tentando se auto-excluir
+        // Verificar se o usuário está tentando se auto-excluir
         const currentUser = getAuthData();
         const isSelfDelete = currentUser?.id === userId;
         
-        // Mensagem de confirma��o personalizada
+        // Mensagem de confirmação personalizada
         let message = `Tem certeza que deseja remover <strong>${escapeHtml(userName)}</strong>?`;
         
         if (isSelfDelete) {
-            message += '<br><br><span class="text-red-600 font-semibold">Aten��o: Esta � a sua pr�pria conta! Voc� ser� desconectado imediatamente ap�s a exclus�o.</span>';
+            message += '<br><br><span class="text-red-600 font-semibold">Atenção: Esta é a sua própria conta! Você será desconectado imediatamente após a exclusão.</span>';
         }
         
-        message += '<br><br>Esta a��o n�o pode ser desfeita.';
+        message += '<br><br>Esta ação não pode ser desfeita.';
         
         showConfirmationModal(
-            'Confirmar Exclus�o',
+            'Confirmar Exclusão',
             message,
             async () => {
                 const modal = document.getElementById('confirmation-modal');
@@ -2042,34 +2040,34 @@ async function deleteUser(userId, triggerElement = null) {
                 const originalConfirmButtonText = confirmButton?.innerHTML;
                 
                 try {
-                    // Atualizar bot�o de confirma��o
+                    // Atualizar botão de confirmação
                     if (confirmButton) {
                         confirmButton.disabled = true;
                         confirmButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
                     }
                     
-                    // Executar exclus�o
+                    // Executar exclusão
                     const response = await api.del(`/admin/users/${userId}`);
                     
                     if (!response?.success) {
-                        throw new Error(response?.message || 'Falha ao excluir o usu�rio');
+                        throw new Error(response?.message || 'Falha ao excluir o usuário');
                     }
                     
                     // Feedback de sucesso
-                    showNotification('Usu�rio removido com sucesso!', 'success');
+                    showNotification('Usuário removido com sucesso!', 'success');
                     
-                    // Se o usu�rio estiver se auto-excluindo, redirecionar para login
+                    // Se o usuário estiver se auto-excluindo, redirecionar para login
                     if (isSelfDelete) {
-                        // Limpar dados de autentica��o
+                        // Limpar dados de autenticação
                         clearAuthData();
-                        // Redirecionar para a p�gina de login ap�s um curto atraso
+                        // Redirecionar para a página de login após um curto atraso
                         setTimeout(() => {
                             window.location.href = '/login';
                         }, 1500);
                         return;
                     }
                     
-                    // Atualizar a tabela de usu�rios
+                    // Atualizar a tabela de usuários
                     await renderUsersTable();
                     
                     // Disparar evento personalizado
@@ -2078,21 +2076,21 @@ async function deleteUser(userId, triggerElement = null) {
                     }));
                     
                 } catch (error) {
-                    console.error('Erro ao remover usu�rio:', error);
+                    console.error('Erro ao remover usuário:', error);
                     
-                    // Tratar erros espec�ficos
-                    let errorMessage = 'Ocorreu um erro ao remover o usu�rio.';
+                    // Tratar erros específicos
+                    let errorMessage = 'Ocorreu um erro ao remover o usuário.';
                     
                     if (error.response) {
                         if (error.response.status === 403) {
-                            errorMessage = 'Voc� n�o tem permiss�o para remover este usu�rio.';
+                            errorMessage = 'Você não tem permissão para remover este usuário.';
                         } else if (error.response.status === 404) {
-                            errorMessage = 'O usu�rio n�o foi encontrado ou j� foi removido.';
-                            // Atualizar a tabela para refletir que o usu�rio n�o existe mais
+                            errorMessage = 'O usuário não foi encontrado ou já foi removido.';
+                            // Atualizar a tabela para refletir que o usuário não existe mais
                             try {
                                 await renderUsersTable();
                             } catch (e) {
-                                console.error('Erro ao atualizar a tabela de usu�rios:', e);
+                                console.error('Erro ao atualizar a tabela de usuários:', e);
                             }
                         } else if (error.response.data?.message) {
                             errorMessage = error.response.data.message;
@@ -2104,7 +2102,7 @@ async function deleteUser(userId, triggerElement = null) {
                     showNotification(errorMessage, 'error');
                     
                 } finally {
-                    // Restaurar bot�o de confirma��o
+                    // Restaurar botão de confirmação
                     if (confirmButton) {
                         confirmButton.disabled = false;
                         confirmButton.innerHTML = originalConfirmButtonText;
@@ -2118,13 +2116,13 @@ async function deleteUser(userId, triggerElement = null) {
         );
         
     } catch (error) {
-        console.error('Erro ao preparar a exclus�o do usu�rio:', error);
+        console.error('Erro ao preparar a exclusão do usuário:', error);
         showNotification(
-            'Ocorreu um erro ao preparar a exclus�o do usu�rio. Por favor, tente novamente.',
+            'Ocorreu um erro ao preparar a exclusão do usuário. Por favor, tente novamente.',
             'error'
         );
     } finally {
-        // Restaurar o bot�o que acionou a exclus�o, se fornecido
+        // Restaurar o botão que acionou a exclusão, se fornecido
         if (triggerElement) {
             triggerElement.innerHTML = originalButtonContent;
             triggerElement.disabled = false;
@@ -2152,7 +2150,7 @@ function clearTeamsCache() {
 
 /**
  * Busca equipes do servidor ou do cache
- * @param {boolean} forceRefresh - For�a atualiza��o do cache
+ * @param {boolean} forceRefresh - Força atualização do cache
  * @returns {Promise<Array>} Lista de equipes
  */
 async function fetchTeams(forceRefresh = false) {
@@ -2160,7 +2158,7 @@ async function fetchTeams(forceRefresh = false) {
     const isCacheValid = (now - teamsCache.timestamp) < teamsCache.CACHE_DURATION;
     
     if (!forceRefresh && teamsCache.data.length > 0 && isCacheValid) {
-        return [...teamsCache.data]; // Retorna c�pia do cache
+        return [...teamsCache.data]; // Retorna cópia do cache
     }
     
     try {
@@ -2173,34 +2171,34 @@ async function fetchTeams(forceRefresh = false) {
         teamsCache.data = response.data || [];
         teamsCache.timestamp = now;
         
-        return [...teamsCache.data]; // Retorna c�pia
+        return [...teamsCache.data]; // Retorna cópia
         
     } catch (error) {
         console.error('Erro ao buscar equipes:', error);
         
         // Se houver erro mas tivermos dados em cache, usamos os dados antigos
         if (teamsCache.data.length > 0) {
-            console.warn('Usando dados em cache devido ao erro na requisi��o');
-            return [...teamsCache.data]; // Retorna c�pia
+            console.warn('Usando dados em cache devido ao erro na requisição');
+            return [...teamsCache.data]; // Retorna cópia
         }
         
-        throw error; // Propaga o erro se n�o houver cache
+        throw error; // Propaga o erro se não houver cache
     }
 }
 
 /**
- * Popula os selects de equipe na aplica��o
+ * Popula os selects de equipe na aplicação
  * @param {string} selectId - ID do elemento select a ser preenchido (opcional)
- * @param {boolean} forceRefresh - For�a atualiza��o do cache
+ * @param {boolean} forceRefresh - Força atualização do cache
  * @returns {Promise<Array>} Lista de equipes carregadas
  */
 async function populateTeamSelect(selectId = null, forceRefresh = false) {
-    // Se n�o for especificado um select, atualiza todos os selects de equipe
+    // Se não for especificado um select, atualiza todos os selects de equipe
     const selectors = selectId 
         ? [document.getElementById(selectId)]
         : document.querySelectorAll('select[data-team-select]');
 
-    // Se n�o houver selects para preencher, retorna
+    // Se não houver selects para preencher, retorna
     if (!selectors.length || (selectId && !selectors[0])) {
         console.warn('Nenhum seletor de equipe encontrado');
         return [];
@@ -2226,11 +2224,11 @@ async function populateTeamSelect(selectId = null, forceRefresh = false) {
             const isRequired = select.required;
             const placeholder = select.dataset.placeholder || 'Selecione uma equipe';
             
-            // Limpar op��es atuais, mantendo a primeira op��o se existir
+            // Limpar opções atuais, mantendo a primeira opção se existir
             const firstOption = select.querySelector('option:first-child');
             select.innerHTML = firstOption ? firstOption.outerHTML : '';
             
-            // Se n�o houver op��o padr�o, adiciona uma
+            // Se não houver opção padrão, adiciona uma
             if (select.querySelectorAll('option').length === 0) {
                 const defaultOption = document.createElement('option');
                 defaultOption.value = '';
@@ -2239,7 +2237,7 @@ async function populateTeamSelect(selectId = null, forceRefresh = false) {
                 select.appendChild(defaultOption);
             }
             
-            // Adicionar equipes como op��es
+            // Adicionar equipes como opções
             sortedTeams.forEach(team => {
                 const option = document.createElement('option');
                 option.value = team.id;
@@ -2249,7 +2247,7 @@ async function populateTeamSelect(selectId = null, forceRefresh = false) {
                 select.appendChild(option);
             });
             
-            // Restaurar o valor anterior se ainda for v�lido
+            // Restaurar o valor anterior se ainda for válido
             const hasCurrentValue = sortedTeams.some(team => team.id === currentValue);
             if (hasCurrentValue) {
                 select.value = currentValue;
@@ -2257,7 +2255,7 @@ async function populateTeamSelect(selectId = null, forceRefresh = false) {
                 select.selectedIndex = 0;
             }
             
-            // Disparar evento de mudan�a para atualizar depend�ncias
+            // Disparar evento de mudança para atualizar dependências
             select.dispatchEvent(new CustomEvent('teamSelectUpdated', {
                 detail: { 
                     teamId: select.value,
@@ -2271,10 +2269,10 @@ async function populateTeamSelect(selectId = null, forceRefresh = false) {
     } catch (error) {
         console.error('Erro ao carregar lista de equipes:', error);
         
-        // Mostrar mensagem de erro apenas se n�o houver cache
+        // Mostrar mensagem de erro apenas se não houver cache
         if (teamsCache.data.length === 0) {
             showNotification(
-                error.message || 'N�o foi poss�vel carregar a lista de equipes.', 
+                error.message || 'Não foi possível carregar a lista de equipes.', 
                 'error'
             );
         }
@@ -2294,7 +2292,7 @@ document.addEventListener('teamUpdated', () => {
     populateTeamSelect();
 });
 
-// Evento para limpar o cache quando uma equipe for exclu�da
+// Evento para limpar o cache quando uma equipe for excluída
 document.addEventListener('teamDeleted', () => {
     clearTeamsCache();
     populateTeamSelect();

@@ -51,6 +51,16 @@ async function loadAllUsers() {
 function renderUsersTable(users) {
     const tableBody = document.getElementById('users-table-body');
     if (!tableBody) return;
+    
+    // Função para escapar HTML e prevenir XSS
+    function escapeHtml(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
     tableBody.innerHTML = '';
     if (!users || users.length === 0) {
@@ -62,7 +72,7 @@ function renderUsersTable(users) {
         const row = `
             <tr>
                 <td class="py-3 px-4">${user.nome}</td>
-                <td class="py-3 px-4">${user.cargo || 'N/A'}</td>
+                <td class="py-3 px-4">${user.jobTitle ? escapeHtml(user.jobTitle) : '<span class="text-gray-400">N/A</span>'}</td>
                 <td class="py-3 px-4">${user.equipe?.nome || 'Sem equipe'}</td>
                 <td class="py-3 px-4">${user.email}</td>
                 <td class="py-3 px-4">
