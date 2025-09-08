@@ -92,23 +92,30 @@ notificationService.show('Bem-vindo ao Feedback App!', 'info', 3000);
 async function initializeApp() {
     try {
         const authData = getAuthData();
-        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        // Obtém o caminho atual, removendo barras iniciais/finais e parâmetros
+        const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
+        const currentPage = path.split('/').pop() || 'index.html';
 
-        // Se no estiver autenticado e no estiver na pgina de login ou cadastro, redireciona para o login
-        if (!authData && !['index.html', 'cadastro.html', 'recuperar.html'].includes(currentPage)) {
+        // Se não estiver autenticado e não estiver na página de login ou cadastro, redireciona para o login
+        const publicPages = ['index.html', 'cadastro.html', 'recuperar.html', ''];
+        if (!authData && !publicPages.some(page => currentPage === page || currentPage.endsWith(page))) {
             redirectToLogin(currentPage);
             return;
         }
 
-        // Se estiver autenticado e tentando acessar pginas de autenticao, redireciona para o dashboard
-        if (authData && ['index.html', 'cadastro.html', 'recuperar.html'].includes(currentPage)) {
+        // Se estiver autenticado e tentando acessar páginas de autenticação, redireciona para o dashboard
+        if (authData && publicPages.some(page => currentPage === page || currentPage.endsWith(page))) {
             window.location.href = 'dashboard.html';
             return;
         }
 
-        // Configuraes especficas por pgina
-        switch (currentPage) {
-            case 'index.html':
+        // Configura a navegação
+        setupNavigation(currentPage);
+
+        // Configurações específicas por página
+        const pageName = currentPage.split('.')[0]; // Remove a extensão .html para o switch
+        switch (pageName) {
+            case 'index':
                 setupLoginForm();
                 if (authData) {
                     try {
@@ -453,16 +460,88 @@ function setupLogoutButton() {
 }
 
 /**
- * Configura a navegao da aplicao
- * @param {string} currentPage - Pgina atual
+ * Configura a navegação da aplicação
+ * @param {string} currentPage - Página atual
  */
 function setupNavigation(currentPage) {
-    const links = document.querySelectorAll("nav a");
-    links.forEach(link => {
-        if (link.getAttribute("href") === currentPage) {
-            link.classList.add("bg-indigo-900");
+    // Remove a página atual de parâmetros de URL, se houver
+    const cleanPage = currentPage.split('?')[0];
+    const navLinks = document.querySelectorAll("#main-nav a, #sidebar-container a:not(#logout-button)");
+    
+    // Função para normalizar caminhos para comparação
+    const normalizePath = (path) => {
+        if (!path) return '';
+        // Remove barras iniciais/finais e converte para minúsculas
+        return path.replace(/^\/+|\/+$/g, '').toLowerCase();
+    };
+
+    const normalizedCurrentPage = normalizePath(cleanPage);
+    
+    navLinks.forEach(link => {
+        if (!link.href) return;
+        
+        // Remove todas as classes de destaque primeiro
+        link.classList.remove("bg-indigo-900", "text-white");
+        
+        try {
+            // Obtém o caminho do link sem parâmetros e domínio
+            const linkUrl = new URL(link.href, window.location.origin);
+            let linkPath = linkUrl.pathname;
+            
+            // Remove a barra inicial, se houver
+            if (linkPath.startsWith('/')) {
+                linkPath = linkPath.substring(1);
+            }
+            
+            const normalizedLinkPath = normalizePath(linkPath);
+            
+            // Verifica se o link corresponde à página atual
+            if (normalizedLinkPath === normalizedCurrentPage || 
+                (normalizedLinkPath === 'index.html' && (normalizedCurrentPage === '' || normalizedCurrentPage === 'index.html')) ||
+                normalizedCurrentPage.endsWith(normalizedLinkPath)) {
+                
+                link.classList.add("bg-indigo-900", "text-white");
+                link.setAttribute("aria-current", "page");
+                
+                // Rola o item para a visão se estiver em um contêiner rolável
+                if (link.scrollIntoViewIfNeeded) {
+                    link.scrollIntoViewIfNeeded({ behavior: 'smooth', block: 'nearest' });
+                }
+            } else {
+                link.removeAttribute("aria-current");
+            }
+        } catch (e) {
+            console.error('Erro ao processar link de navegação:', e);
         }
     });
+    
+    // Configura o botão de logout
+    const logoutButton = document.getElementById('logout-button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Chama a função de logout existente
+            const authService = new AuthService();
+            authService.logout()
+                .then(() => {
+                    window.location.href = 'index.html';
+                })
+                .catch(error => {
+                    console.error('Erro ao fazer logout:', error);
+                    notificationService.error('Erro ao fazer logout. Tente novamente.');
+                });
+        });
+    }
+    
+    // Esconde o link de administração se o usuário não tiver permissão
+    const adminLinks = document.querySelectorAll('.admin-link');
+    if (adminLinks.length > 0) {
+        const authData = getAuthData();
+        const isAdmin = authData && authData.role === 'ADMIN';
+        adminLinks.forEach(link => {
+            link.style.display = isAdmin ? 'flex' : 'none';
+        });
+    }
 }
 
 /**
