@@ -17,10 +17,23 @@ import { ERROR_MESSAGES } from './constants/index.js';
  * @param {Object} fields - Objeto com configurações dos campos
  * @returns {{isValid: boolean, data: Object}} Resultado da validação e dados do formulário
  */
+/**
+ * Valida os campos de um formulário
 function validateForm(form, fields) {
+    if (!form || !(form instanceof HTMLFormElement)) {
+        console.error('Formulário inválido');
+        return { isValid: false, data: {} };
+    }
+
     const formData = new FormData(form);
     const data = {};
     let isValid = true;
+    
+    // Validação de segurança contra XSS
+    const sanitizeInput = (value) => {
+        if (typeof value !== 'string') return value;
+        return value.replace(/[<>&"']/g, '');
+    };
 
     // Valida cada campo do formulário
     for (const [fieldName, config] of Object.entries(fields)) {
@@ -31,7 +44,11 @@ function validateForm(form, fields) {
             errorElement.textContent = '';
         }
 
-        const value = formData.get(fieldName)?.toString().trim() || '';
+        let value = formData.get(fieldName)?.toString().trim() || '';
+        // Aplica sanitização apenas para campos de texto
+        if (fieldName !== 'password' && fieldName !== 'senha') {
+            value = sanitizeInput(value);
+        }
         data[fieldName] = value;
 
         // Validação de campo obrigatório
@@ -411,8 +428,8 @@ function setupLoginForm() {
 }
 
 /**
- * Atualiza a interface do usurio com os dados do perfil
- * @param {Object} userData - Dados do usurio
+ * Atualiza a interface do usuário com os dados do perfil
+ * @param {Object} userData - Dados do usuário
  */
 function updateUserUI(userData) {
     if (!userData) return;
@@ -440,7 +457,7 @@ function updateUserUI(userData) {
 }
 
 /**
- * Configura o boto de logout
+ * Configura o botão de logout
  */
 function setupLogoutButton() {
     const logoutButton = document.getElementById('logout-button');
@@ -545,7 +562,7 @@ function setupNavigation(currentPage) {
 }
 
 /**
- * Configura o formulrio de cadastro
+ * Configura o formulário de cadastro
  */
 function setupRegistrationForm() {
     const registrationForm = document.getElementById('registration-form');
@@ -660,7 +677,7 @@ function showNotification(message, type = 'info') {
     }, 5000);
   }
 
-  // --- Funes de Loader ---
+  // --- Funções de Loader ---
 
 function showLoader() {
     const loader = document.getElementById('loader');
@@ -677,9 +694,9 @@ function hideLoader() {
 }
 
 /**
- * Exibe um modal de confirmao genrico.
- * @param {string} title - O ttulo do modal.
- * @param {string} message - A mensagem de confirmao.
+ * Exibe um modal de confirmação genérico.
+ * @param {string} title - O título do modal.
+ * @param {string} message - A mensagem de confirmação.
  * @param {function} onConfirm - A funo a ser executada se o usurio confirmar.
  */
 function showConfirmationModal(title, message, onConfirm) {
@@ -716,7 +733,7 @@ function showConfirmationModal(title, message, onConfirm) {
 }
 
 /**
- * Oculta o modal de confirmao.
+ * Oculta o modal de confirmação.
  */
 function hideConfirmationModal() {
     const modal = document.getElementById('confirmation-modal');
@@ -1652,7 +1669,7 @@ async function saveTeam(event) {
             notificationService.error(ERROR_MESSAGES.UNAUTHORIZED);
             // Redirecionar após um curto atraso para permitir que o usuário veja a mensagem
             setTimeout(() => {
-                window.location.href = 'index.html';
+                window.location.href = '/login.html';
             }, 1500);
         } else if (error.response?.status === 403) {
             notificationService.error(ERROR_MESSAGES.FORBIDDEN);
@@ -1738,6 +1755,7 @@ async function deleteTeam(teamId, triggerElement = null) {
     try {
         // Buscar dados da equipe para mostrar no modal de confirmação
         const response = await api.teams.getTeamById(teamId);
+        
         if (!response?.success || !response.data) {
             throw new Error(response?.message || ERROR_MESSAGES.TEAM_NOT_FOUND);
         }
@@ -1857,7 +1875,38 @@ async function deleteTeam(teamId, triggerElement = null) {
     }
 }
 
-// Funes de CRUD para Usurios
+// Funções de CRUD para Usuários
+
+/**
+ * Valida os dados do usuário antes do envio
+ * @param {Object} userData - Dados do usuário a serem validados
+ * @returns {{isValid: boolean, errors: Object}} Resultado da validação
+ */
+function validateUserData(userData) {
+    const errors = {};
+    let isValid = true;
+
+    // Validação de nome
+    if (!userData.nome || userData.nome.trim().length < 3) {
+        errors.nome = 'O nome deve ter pelo menos 3 caracteres';
+        isValid = false;
+    }
+
+    // Validação de e-mail
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!userData.email || !emailRegex.test(userData.email)) {
+        errors.email = 'Por favor, insira um e-mail válido';
+        isValid = false;
+    }
+
+    // Validação de senha (apenas para criação de conta)
+    if (!userData.id && (!userData.senha || userData.senha.length < 6)) {
+        errors.senha = 'A senha deve ter pelo menos 6 caracteres';
+        isValid = false;
+    }
+
+    return { isValid, errors };
+}
 
 function openUserModal(userId = null) {
     const form = document.getElementById('user-form');
@@ -1894,10 +1943,9 @@ const lastSaveTime = new WeakMap();
 async function saveUser(event) {
     event.preventDefault();
     
-    // Elementos do formulário
-    const form = event.target.closest('form');
+    const form = event.target;
     const submitButton = form.querySelector('button[type="submit"]');
-    const originalButtonText = submitButton?.innerHTML || 'Salvar';
+    const originalButtonText = submitButton?.innerHTML;
     
     try {
         // Validar tempo entre envios
@@ -2002,11 +2050,11 @@ async function saveUser(event) {
             'success'
         );
         
-        // Fechar modal e atualizar tabela
+        // Fechar modal e atualizar a tabela
         closeUserModal();
         await renderUsersTable();
         
-        // Disparar evento personalizado
+        // Disparar evento personalizado para notificar sobre a atualização
         document.dispatchEvent(new CustomEvent('userUpdated', {
             detail: { userId: response.data?.id || userId }
         }));
@@ -2369,6 +2417,17 @@ async function populateTeamSelect(selectId = null, forceRefresh = false) {
 document.addEventListener('teamUpdated', () => {
     clearTeamsCache();
     populateTeamSelect();
+    
+    // Se estiver na página de times, recarrega a tabela
+    if (window.location.pathname.endsWith('admin.html') || 
+        window.location.pathname.endsWith('team.html')) {
+        renderTeamsTable();
+    }
+    
+    // Se estiver na página de usuários, recarrega a tabela de usuários
+    if (window.location.pathname.endsWith('users.html')) {
+        renderUsersTable();
+    }
 });
 
 // Evento para limpar o cache quando uma equipe for excluída
@@ -2377,7 +2436,8 @@ document.addEventListener('teamDeleted', () => {
     populateTeamSelect();
 });
 
-// Make function available globally in browser environment
+// Torna as funções disponíveis globalmente no ambiente do navegador
 if (typeof window !== 'undefined') {
     window.populateTeamSelect = populateTeamSelect;
+    window.resetFilters = resetFilters;
 }
