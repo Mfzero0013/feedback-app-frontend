@@ -849,9 +849,8 @@ async function renderUsersTable(users = null) {
                 </td>
             </tr>`;
         
-        // Manter o conteúdo existente, mas adicionar o loader por cima
-        const existingContent = tableBody.innerHTML;
-        tableBody.innerHTML = loadingHtml + existingContent;
+        // Substituir completamente o conteúdo pelo loader
+        tableBody.innerHTML = loadingHtml;
         
         // Mostrar loader global se existir
         const globalLoader = document.getElementById('loader');
