@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: feedback-app-frontend
+    env: node
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: NODE_VERSION
+        value: 16.20.0
+      - key: NPM_CONFIG_PRODUCTION
+        value: false
+      - key: API_URL
+        value: https://feedback-app-backend-x87n.onrender.com

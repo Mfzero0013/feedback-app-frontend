@@ -127,10 +127,7 @@ module.exports = {
             loader: 'sass-loader',
             options: {
               sourceMap: !isProduction,
-              implementation: require('sass'),
-              sassOptions: {
-                fiber: require('fibers'),
-              },
+              implementation: require('sass')
             },
           },
         ],

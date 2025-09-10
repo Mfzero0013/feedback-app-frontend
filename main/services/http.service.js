@@ -68,6 +68,40 @@ class HttpService {
     }
 
     /**
+     * Realiza uma requisição
+     * @param {string} endpoint - Endpoint da API
+     * @param {Object} options - Opções da requisição
+     */
+    async request(endpoint, options = {}) {
+        const url = `${API_BASE_URL}${endpoint}`;
+        const headers = this.getDefaultHeaders();
+
+        console.log(`[HTTP] Fazendo requisição para: ${url}`, { options });
+        
+        const config = {
+            ...options,
+            headers: {
+                ...headers,
+                ...options.headers,
+            },
+            credentials: 'include', // Importante para cookies de autenticação
+        };
+        
+        // Adiciona um timestamp para evitar cache
+        if (config.method === 'GET') {
+            const timestamp = new Date().getTime();
+            const separator = endpoint.includes('?') ? '&' : '?';
+            config.url = `${url}${separator}_t=${timestamp}`;
+        } else {
+            config.url = url;
+        }
+
+        const response = await fetch(config.url, config);
+
+        return this.handleResponse(response);
+    }
+
+    /**
      * Realiza uma requisição GET
      * @param {string} url - Endpoint da API
      * @param {Object} params - Parâmetros de consulta
@@ -76,12 +110,11 @@ class HttpService {
         const queryString = new URLSearchParams(params).toString();
         const fullUrl = `${API_BASE_URL}${url}${queryString ? `?${queryString}` : ''}`;
 
-        const response = await fetch(fullUrl, {
+        const response = await this.request(fullUrl, {
             method: 'GET',
-            headers: this.getDefaultHeaders(),
         });
 
-        return this.handleResponse(response);
+        return response;
     }
 
     /**
