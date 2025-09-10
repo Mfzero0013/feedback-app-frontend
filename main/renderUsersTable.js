@@ -112,18 +112,19 @@ async function renderUsersTable(users = null) {
                 ? 'Nenhum usuário encontrado com os filtros atuais.' 
                 : 'Nenhum usuário cadastrado.';
                 
-            tableBody.innerHTML = `
+            const noResultsHtml = `
                 <tr>
                     <td colspan="5" class="text-center py-8 text-gray-500">
                         <div class="flex flex-col items-center">
                             <i class="fas fa-users-slash text-4xl text-gray-300 mb-2"></i>
                             <p>${noResultsMessage}</p>
                             ${filteredUsers.length === 0 && adminUsers.length > 0 ? 
-                                '<button onclick="resetFilters()" class="mt-2 text-indigo-600 hover:text-indigo-800 text-sm font-medium">\n                                    Limpar filtros\n                                </button>' : ''
+                                '<button onclick="resetFilters()" class="mt-2 text-indigo-600 hover:text-indigo-800 text-sm font-medium">Limpar filtros</button>' : ''
                             }
                         </div>
                     </td>
                 </tr>`;
+            tableBody.innerHTML = noResultsHtml;
         } else {
             paginatedUsers.forEach((user, index) => {
                 const row = document.createElement('tr');

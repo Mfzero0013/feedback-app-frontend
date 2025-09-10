@@ -936,7 +936,7 @@ async function renderUsersTable(users = null) {
                 ? 'Nenhum usuário encontrado com os filtros atuais.' 
                 : 'Nenhum usuário cadastrado.';
                 
-            tableBody.innerHTML = `
+            const noResultsHtml = `
                 <tr>
                     <td colspan="5" class="text-center py-8 text-gray-500">
                         <div class="flex flex-col items-center">
@@ -948,6 +948,7 @@ async function renderUsersTable(users = null) {
                         </div>
                     </td>
                 </tr>`;
+            tableBody.innerHTML = noResultsHtml;
         } else {
             paginatedUsers.forEach((user, index) => {
                 const row = document.createElement('tr');
