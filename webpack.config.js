@@ -56,25 +56,27 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            cacheDirectory: true,
-            cacheCompression: false,
             presets: [
-              [
-                '@babel/preset-env',
-                {
-                  useBuiltIns: 'usage',
-                  corejs: 3,
-                  modules: false,
-                },
-              ],
+              ['@babel/preset-env', {
+                targets: '> 0.5%, last 2 versions, not dead, not ie <= 11',
+                useBuiltIns: 'usage',
+                corejs: 3,
+                modules: false
+              }]
             ],
             plugins: [
-              '@babel/plugin-transform-runtime',
-              '@babel/plugin-proposal-class-properties',
-              '@babel/plugin-syntax-dynamic-import',
+              ['@babel/plugin-transform-runtime', {
+                regenerator: true
+              }],
+              ['@babel/plugin-proposal-class-properties', { loose: true }],
+              ['@babel/plugin-proposal-private-methods', { loose: true }],
+              ['@babel/plugin-proposal-private-property-in-object', { loose: true }],
+              '@babel/plugin-syntax-dynamic-import'
             ],
-          },
-        },
+            cacheDirectory: true,
+            cacheCompression: false,
+          }
+        }
       },
       {
         test: /\.css$/,

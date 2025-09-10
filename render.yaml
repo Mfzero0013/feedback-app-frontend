@@ -2,7 +2,7 @@ services:
   - type: web
     name: feedback-app-frontend
     env: node
-    buildCommand: npm install && npm run build
+    buildCommand: npm run render-build
     staticPublishPath: ./dist
     envVars:
       - key: NODE_VERSION
