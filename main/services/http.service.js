@@ -1,6 +1,6 @@
 import { getAuthData, clearAuthData } from './auth.service';
 
-const API_BASE_URL = 'https://feedback-app-backend-x87n.onrender.com/api';
+const API_BASE_URL = process.env.API_BASE_URL || 'https://feedback-app-backend-x87n.onrender.com/api';
 
 /**
  * Classe para gerenciar requisições HTTP

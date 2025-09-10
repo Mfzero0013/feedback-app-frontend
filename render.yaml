@@ -9,5 +9,9 @@ services:
         value: 16.20.0
       - key: NPM_CONFIG_PRODUCTION
         value: false
-      - key: API_URL
-        value: https://feedback-app-backend-x87n.onrender.com
+      - key: NODE_ENV
+        value: production
+      - key: API_BASE_URL
+        value: https://feedback-app-backend-x87n.onrender.com/api
+      - key: GENERATE_SOURCEMAP
+        value: 'false'

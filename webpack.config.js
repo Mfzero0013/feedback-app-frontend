@@ -7,6 +7,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const Dotenv = require('dotenv-webpack');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -169,6 +170,11 @@ module.exports = {
     ],
   },
   plugins: [
+    new Dotenv({
+      path: isProduction ? '.env.production' : '.env.development',
+      systemvars: true, // Permite sobrescrever variáveis do sistema
+      safe: true, // Carrega o arquivo .env.example para referência
+    }),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: './public/index.html',
